@@ -1420,7 +1420,7 @@ function showReviewerResults(reviewers) {
     }
 
     const html = reviewers.map(reviewer => `
-        <a class="dropdown-item reviewer-option" href="#" data-reviewer-id="${reviewer.id}">
+        <a class="dropdown-item reviewer-option"href="index.html" data-reviewer-id="${reviewer.id}">
             <div>
                 <strong>${reviewer.name}</strong>
                 <small class="text-muted d-block">${reviewer.accountNumber} - ${reviewer.contact}</small>
@@ -1476,7 +1476,7 @@ function showITResults(accounts) {
     }
 
     const html = accounts.map(account => `
-        <a class="dropdown-item it-option" href="#" data-account-id="${account.id}">
+        <a class="dropdown-item it-option"href="index.html" data-account-id="${account.id}">
             <div>
                 <strong>${account.name}</strong>
                 <small class="text-muted d-block">${account.department} - ${account.specialization}</small>
