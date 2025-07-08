@@ -1,0 +1,558 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    
+    <title>Purchase Request List - LTS Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./company_layout.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        /* Page specific styles */
+        .header-container {
+            background-color: #6f42c1;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .content-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: 600;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+        .priority-badge {
+            padding: 3px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 600;
+        }
+        .request-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .request-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #6f42c1;
+            transform: translateY(-2px);
+        }
+        .request-card.selected {
+            border: 2px solid #6f42c1;
+            background-color: #f8f5ff;
+        }
+        .filter-section {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        .stats-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+        }
+        .action-buttons {
+            position: sticky;
+            bottom: 20px;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="brand">
+            <i class="fas fa-cube me-2"></i> LTS MANAGER
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="icon-button me-2">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="icon-button me-3">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div class="user-avatar">
+                TD
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <ul class="nav flex-column">            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-calendar-alt"></i> Quản lý ngày nghỉ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-users"></i> Quản lý QT
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tasks"></i> Quản lý dự án
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-clock"></i> Chấm công
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-chart-line"></i> Đánh giá định kỳ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-graduation-cap"></i> Quản lý kỹ năng
+                </a>
+            </li>
+            <!-- Procurement Section -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="procurementDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-shopping-cart"></i> Procurement
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="procurementDropdown">
+                    <li><a class="dropdown-item" href="index.html">
+                        <i class="fas fa-file-alt"></i> Request List
+                    </a></li>
+                    <li><a class="dropdown-item" href="purchase_list.html">
+                        <i class="fas fa-shopping-bag"></i> Purchase List
+                    </a></li>
+                    <li><a class="dropdown-item" href="supplier_select.html">
+                        <i class="fas fa-users"></i> Suppliers Select</a></li>
+                    <li><a class="dropdown-item" href="it_review_list.html">
+                        <i class="fas fa-laptop"></i> IT Review Queue</a></li>
+                    <li><a class="dropdown-item" href="dl_payment_confirmation_list.html">
+                        <i class="fas fa-truck"></i> DL Confirm Payment</a></li>
+                    <li><a class="dropdown-item" href="accountant_document_review.html">
+                        <i class="fas fa-list"></i> Document Review</a></li>
+                    <li><a class="dropdown-item" href="advance_payment_approval_page.html">
+                        <i class="fas fa-receipt"></i> Advance Payment Approval</a></li>                    <li><a class="dropdown-item" href="accountant_reimbursement_approval.html">
+                        <i class="fas fa-calculator"></i> Reimbursement Processing</a></li>
+                    <li><a class="dropdown-item" href="supplier_management.html">
+                        <i class="fas fa-building"></i> Supplier Management</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-container">
+            <h1>Purchase Requests - Supplier Selection</h1>
+            <p class="mb-0">Select purchase requests that require supplier selection and approval</p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <h3>8</h3>
+                    <p class="mb-0">Pending Selection</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <h3>3</h3>
+                    <p class="mb-0">Urgent Priority</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <h3>$45,200</h3>
+                    <p class="mb-0">Total Value</p>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="stats-card">
+                    <h3>12</h3>
+                    <p class="mb-0">This Month</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="content-container">
+            <div class="filter-section">
+                <h4 class="mb-3"><i class="fas fa-filter me-2"></i>Filters</h4>
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="statusFilter">
+                            <option value="">All Statuses</option>
+                            <option value="pending">Pending Selection</option>
+                            <option value="review">Under Review</option>
+                            <option value="urgent">Urgent</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Priority</label>
+                        <select class="form-select" id="priorityFilter">
+                            <option value="">All Priorities</option>
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Department</label>
+                        <select class="form-select" id="departmentFilter">
+                            <option value="">All Departments</option>
+                            <option value="it">IT</option>
+                            <option value="hr">HR</option>
+                            <option value="finance">Finance</option>
+                            <option value="operations">Operations</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Budget Range</label>
+                        <select class="form-select" id="budgetFilter">
+                            <option value="">All Ranges</option>
+                            <option value="0-1000">$0 - $1,000</option>
+                            <option value="1000-5000">$1,000 - $5,000</option>
+                            <option value="5000-10000">$5,000 - $10,000</option>
+                            <option value="10000+">$10,000+</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="row mt-3">
+                    <div class="col-md-6">
+                        <label class="form-label">Search</label>
+                        <input type="text" class="form-control" id="searchInput" placeholder="Search by request ID, requester, or description...">
+                    </div>
+                    <div class="col-md-6 d-flex align-items-end">
+                        <button class="btn btn-primary me-2" id="applyFilters">
+                            <i class="fas fa-search me-1"></i>Apply Filters
+                        </button>
+                        <button class="btn btn-outline-secondary" id="clearFilters">
+                            <i class="fas fa-times me-1"></i>Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Purchase Request List -->
+        <div class="content-container">
+            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>Purchase Requests Awaiting Supplier Selection</h3>
+                <div>
+                    <span class="text-muted">Selected: </span>
+                    <span class="badge bg-primary" id="selectedCount">0</span>
+                </div>
+            </div>
+
+            <!-- Request Cards -->
+            <div id="requestList">
+                <!-- Request 1 -->
+                <div class="request-card" data-request-id="REQ-2025-0542" data-priority="medium" data-department="it" data-budget="8000">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="mb-1">REQ-2025-0542 - IT Equipment Purchase</h5>
+                                <div>
+                                    <span class="status-badge bg-warning text-dark">Pending Selection</span>
+                                    <span class="priority-badge bg-info text-white ms-2">Medium</span>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-2">Desktop computers and monitors for IT department expansion</p>                            <div class="row">
+                                <div class="col-md-6">
+                                    <small><strong>Requested By:</strong> John Smith (IT)</small><br>
+                                    <small><strong>Department:</strong> IT</small><br>
+                                    <small><strong>Date:</strong> May 25, 2025</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <small><strong>Required By:</strong> June 30, 2025</small><br>
+                                    <small><strong>Budget:</strong> $8,000.00</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="req1" data-request-id="REQ-2025-0542" hidden>
+                                <label class="form-check-label" for="req1">
+                                    Select for Review
+                                </label>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm" onclick="viewDetails('REQ-2025-0542')">
+                                <i class="fas fa-eye me-1"></i>View Details
+                            </button>
+                        </div>
+                    </div>
+                </div>                <!-- Request 2 -->
+                <div class="request-card" data-request-id="REQ-2025-0543" data-priority="high" data-department="operations" data-budget="15000">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="mb-1">REQ-2025-0543 - Manufacturing Equipment</h5>
+                                <div>
+                                    <span class="status-badge bg-warning text-dark">Pending Selection</span>
+                                    <span class="priority-badge bg-danger text-white ms-2">High</span>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-2">Industrial machinery and equipment for production line upgrade</p>
+                            <div class="row">
+                                <div class="col-md-6">
+                                    <small><strong>Requested By:</strong> Operations Team</small><br>
+                                    <small><strong>Department:</strong> Operations</small><br>
+                                    <small><strong>Date:</strong> May 28, 2025</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <small><strong>Required By:</strong> July 15, 2025</small><br>
+                                    <small><strong>Budget:</strong> $15,000.00</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="req2" data-request-id="REQ-2025-0543" hidden>
+                                <label class="form-check-label" for="req2">
+                                    Select for Review
+                                </label>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm" onclick="viewDetails('REQ-2025-0543')">
+                                <i class="fas fa-eye me-1"></i>View Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Request 3 -->
+                <div class="request-card" data-request-id="REQ-2025-0544" data-priority="low" data-department="hr" data-budget="2500">
+                    <div class="row">
+                        <div class="col-md-8">
+                            <div class="d-flex justify-content-between align-items-start mb-2">
+                                <h5 class="mb-1">REQ-2025-0544 - Office Furniture</h5>
+                                <div>
+                                    <span class="status-badge bg-warning text-dark">Pending Selection</span>
+                                    <span class="priority-badge bg-secondary text-white ms-2">Low</span>
+                                </div>
+                            </div>
+                            <p class="text-muted mb-2">Ergonomic chairs and desks for new hires</p>                            <div class="row">
+                                <div class="col-md-6">
+                                    <small><strong>Requested By:</strong> Mike Chen (HR)</small><br>
+                                    <small><strong>Department:</strong> HR</small><br>
+                                    <small><strong>Date:</strong> May 30, 2025</small>
+                                </div>
+                                <div class="col-md-6">
+                                    <small><strong>Required By:</strong> July 15, 2025</small><br>
+                                    <small><strong>Budget:</strong> $2,500.00</small>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-md-4 text-end">
+                            <div class="form-check mb-2">
+                                <input class="form-check-input" type="checkbox" id="req3" data-request-id="REQ-2025-0544" hidden>
+                                <label class="form-check-label" for="req3">
+                                    Select for Review
+                                </label>
+                            </div>
+                            <button class="btn btn-outline-primary btn-sm" onclick="viewDetails('REQ-2025-0544')">
+                                <i class="fas fa-eye me-1"></i>View Details
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Action Buttons -->
+        <div class="action-buttons">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <button class="btn btn-outline-secondary me-2" id="selectAllBtn">
+                        <i class="fas fa-check-square me-1"></i>Select All
+                    </button>
+                    <button class="btn btn-outline-secondary" id="clearSelectionBtn">
+                        <i class="fas fa-times me-1"></i>Clear Selection
+                    </button>
+                </div>
+                <div>                    
+                    <button class="btn btn-primary me-2" id="reviewSelectedBtn" disabled>
+                        <i class="fas fa-users me-1"></i>Review Suppliers (<span id="reviewCount">0</span>)
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const checkboxes = document.querySelectorAll('input[type="checkbox"][data-request-id]');            const selectedCountSpan = document.getElementById('selectedCount');
+            const reviewCountSpan = document.getElementById('reviewCount');
+            const reviewSelectedBtn = document.getElementById('reviewSelectedBtn');
+            const selectAllBtn = document.getElementById('selectAllBtn');
+            const clearSelectionBtn = document.getElementById('clearSelectionBtn');
+
+            // Update selection count and button states
+            function updateSelectionCount() {
+                const selectedRequests = Array.from(checkboxes).filter(cb => cb.checked);
+                const count = selectedRequests.length;
+                  selectedCountSpan.textContent = count;
+                reviewCountSpan.textContent = count;
+                
+                reviewSelectedBtn.disabled = count === 0;
+                
+                if (count === 1) {
+                    reviewSelectedBtn.innerHTML = `<i class="fas fa-users me-1"></i>Review Suppliers (${count})`;
+                } else {
+                    reviewSelectedBtn.innerHTML = `<i class="fas fa-users me-1"></i>Review Suppliers (${count})`;
+                }
+            }
+
+            // Add event listeners to checkboxes
+            checkboxes.forEach(checkbox => {
+                checkbox.addEventListener('change', function() {
+                    const card = this.closest('.request-card');
+                    if (this.checked) {
+                        card.classList.add('selected');
+                    } else {
+                        card.classList.remove('selected');
+                    }
+                    updateSelectionCount();
+                });
+            });
+
+            // Select all button
+            selectAllBtn.addEventListener('click', function() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = true;
+                    checkbox.closest('.request-card').classList.add('selected');
+                });
+                updateSelectionCount();
+            });
+
+            // Clear selection button
+            clearSelectionBtn.addEventListener('click', function() {
+                checkboxes.forEach(checkbox => {
+                    checkbox.checked = false;
+                    checkbox.closest('.request-card').classList.remove('selected');
+                });
+                updateSelectionCount();
+            });
+
+            // Review selected button
+            reviewSelectedBtn.addEventListener('click', function() {
+                const selectedRequests = Array.from(checkboxes)
+                    .filter(cb => cb.checked)
+                    .map(cb => cb.dataset.requestId);
+                
+                if (selectedRequests.length === 1) {
+                    // Single request - go directly to supplier selection
+                    window.location.href = `boddl_supplier_selection.html?requestId=${selectedRequests[0]}`;
+                } else if (selectedRequests.length > 1) {
+                    // Multiple requests - could implement batch processing
+                    alert(`Processing ${selectedRequests.length} requests. This feature will be implemented for batch processing.`);
+                }
+            });
+
+            // Card click functionality
+            const requestCards = document.querySelectorAll('.request-card');
+            requestCards.forEach(card => {
+                card.addEventListener('click', function(e) {
+                    // Don't trigger if clicking on checkbox or button
+                    if (e.target.type === 'checkbox' || e.target.closest('button') || e.target.closest('.form-check')) {
+                        return;
+                    }
+                    
+                    const checkbox = this.querySelector('input[type="checkbox"]');
+                    checkbox.checked = !checkbox.checked;
+                    checkbox.dispatchEvent(new Event('change'));
+                });
+            });
+
+            // Filter functionality
+            document.getElementById('applyFilters').addEventListener('click', function() {
+                // Implementation for filtering logic would go here
+                console.log('Applying filters...');
+            });
+
+            document.getElementById('clearFilters').addEventListener('click', function() {
+                document.getElementById('statusFilter').value = '';
+                document.getElementById('priorityFilter').value = '';
+                document.getElementById('departmentFilter').value = '';
+                document.getElementById('budgetFilter').value = '';
+                document.getElementById('searchInput').value = '';
+            });
+        });        // View details function
+        function viewDetails(requestId) {
+            // Could open a modal or navigate to details page
+            alert(`Viewing details for ${requestId}`);
+        }
+    </script>
+    
+    <script>
+        // Handle nested dropdowns in sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup for submenus
+            const subMenuToggleButtons = document.querySelectorAll('.dropdown-item.dropdown-toggle');
+            
+            subMenuToggleButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Find the nearest submenu to this toggle button
+                    const submenu = this.nextElementSibling;
+                    
+                    // Toggle the show class on this submenu
+                    submenu.classList.toggle('show');
+                    
+                    // Close other submenus at the same level
+                    const siblings = Array.from(this.parentElement.parentElement.children)
+                        .filter(child => child !== this.parentElement)
+                        .map(child => child.querySelector('.dropdown-submenu'))
+                        .filter(Boolean);
+                    
+                    siblings.forEach(sibling => {
+                        sibling.classList.remove('show');
+                    });
+                });
+            });
+            
+            // Close submenus when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown-submenu') && !e.target.classList.contains('dropdown-toggle')) {
+                    document.querySelectorAll('.dropdown-submenu.show').forEach(menu => {
+                        menu.classList.remove('show');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,152 @@
+<!-- Common Layout Template for LTS Manager Procurement System -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{{PAGE_TITLE}} - LTS Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./company_layout.css">
+<body>
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="brand">
+            <i class="fas fa-cube me-2"></i> LTS MANAGER
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="icon-button me-2">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="icon-button me-3">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div class="user-avatar">
+                TD
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <ul class="nav flex-column">            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-calendar-alt"></i> Quản lý ngày nghỉ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-users"></i> Quản lý QT
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tasks"></i> Quản lý dự án
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-clock"></i> Chấm công
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-chart-line"></i> Đánh giá định kỳ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-graduation-cap"></i> Quản lý kỹ năng
+                </a>
+            </li>
+            <!-- Procurement Section -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="procurementDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-shopping-cart"></i> Procurement
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="procurementDropdown">
+                    <li><a class="dropdown-item" href="index.html">
+                        <i class="fas fa-file-alt"></i> Request List
+                    </a></li>
+                    <li><a class="dropdown-item" href="purchase_list.html">
+                        <i class="fas fa-shopping-bag"></i> Purchase List
+                    </a></li>
+                    <li><a class="dropdown-item" href="supplier_select.html">
+                        <i class="fas fa-users"></i> Suppliers Select</a></li>
+                    <li><a class="dropdown-item" href="it_review_list.html">
+                        <i class="fas fa-laptop"></i> IT Review Queue</a></li>
+                    <li><a class="dropdown-item" href="dl_payment_confirmation_list.html">
+                        <i class="fas fa-truck"></i> DL Confirm Payment</a></li>
+                    <li><a class="dropdown-item" href="accountant_document_review.html">
+                        <i class="fas fa-list"></i> Document Review</a></li>
+                    <li><a class="dropdown-item" href="advance_payment_approval_page.html">
+                        <i class="fas fa-receipt"></i> Advance Payment Approval</a></li>                    <li><a class="dropdown-item" href="accountant_reimbursement_approval.html">
+                        <i class="fas fa-calculator"></i> Reimbursement Processing</a></li>
+                    <li><a class="dropdown-item" href="supplier_management.html">
+                        <i class="fas fa-building"></i> Supplier Management</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-container">
+            <h1>{{PAGE_HEADER}}</h1>
+            <p class="mb-0">{{PAGE_DESCRIPTION}}</p>
+        </div>
+        
+        {{MAIN_CONTENT}}
+    </div>    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/js/all.min.js"></script>
+    
+    <script>
+        // Handle nested dropdowns in sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup for submenus
+            const subMenuToggleButtons = document.querySelectorAll('.dropdown-item.dropdown-toggle');
+            
+            subMenuToggleButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Find the nearest submenu to this toggle button
+                    const submenu = this.nextElementSibling;
+                    
+                    // Toggle the show class on this submenu
+                    submenu.classList.toggle('show');
+                    
+                    // Close other submenus at the same level
+                    const siblings = Array.from(this.parentElement.parentElement.children)
+                        .filter(child => child !== this.parentElement)
+                        .map(child => child.querySelector('.dropdown-submenu'))
+                        .filter(Boolean);
+                    
+                    siblings.forEach(sibling => {
+                        sibling.classList.remove('show');
+                    });
+                });
+            });
+            
+            // Close submenus when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown-submenu') && !e.target.classList.contains('dropdown-toggle')) {
+                    document.querySelectorAll('.dropdown-submenu.show').forEach(menu => {
+                        menu.classList.remove('show');
+                    });
+                }
+            });
+        });
+    </script>
+    
+    {{PAGE_SCRIPTS}}
+</body>
+</html>

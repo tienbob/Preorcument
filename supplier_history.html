@@ -1,0 +1,936 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Purchase History - LTS Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./company_layout.css">
+    <style>
+        .header-container {
+            background-color: #17a2b8;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        
+        .content-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        .supplier-info-card {
+            background: linear-gradient(135deg, #17a2b8, #20c997);
+            color: white;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .purchase-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .purchase-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: 600;
+            font-size: 0.8rem;
+        }
+        
+        .status-completed { background-color: #d4edda; color: #155724; }
+        .status-pending { background-color: #fff3cd; color: #856404; }
+        .status-cancelled { background-color: #f8d7da; color: #721c24; }
+        .status-processing { background-color: #d1ecf1; color: #0c5460; }        .request-image-carousel {
+            width: 100%;
+            height: 200px;
+            border-radius: 8px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+        
+        .request-image-carousel .carousel-inner,
+        .request-image-carousel .carousel-item {
+            height: 100%;
+        }
+        
+        .request-image-carousel img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+        
+        .carousel-control-prev,
+        .carousel-control-next {
+            width: 20px;
+            background: rgba(0,0,0,0.3);
+            border-radius: 50%;
+        }
+        
+        .carousel-control-prev-icon,
+        .carousel-control-next-icon {
+            width: 10px;
+            height: 10px;
+        }
+        
+        .stats-card {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            border: 1px solid #e9ecef;
+        }
+        
+        .stats-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #17a2b8;
+        }
+        
+        .filter-section {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+        
+        .purchase-timeline {
+            position: relative;
+            padding-left: 30px;
+        }
+        
+        .purchase-timeline::before {
+            content: '';
+            position: absolute;
+            left: 10px;
+            top: 0;
+            bottom: 0;
+            width: 2px;
+            background: #17a2b8;
+        }
+        
+        .timeline-item {
+            position: relative;
+            margin-bottom: 20px;
+        }
+        
+        .timeline-item::before {
+            content: '';
+            position: absolute;
+            left: -25px;
+            top: 10px;
+            width: 10px;
+            height: 10px;
+            background: #17a2b8;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+       <!-- Top Navigation Bar -->
+    <nav class="top-navbar">
+        <a href="#" class="brand">
+            <i class="fas fa-cube me-2"></i>
+            LTS MANAGER
+        </a>
+        <div class="d-flex align-items-center">
+            <button class="icon-button me-2" title="Notifications">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="icon-button me-2" title="Messages">
+                <i class="fas fa-envelope"></i>
+            </button>
+        </div>
+    </nav>
+    
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <ul class="nav flex-column">            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-calendar-alt"></i> Quản lý ngày nghỉ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-users"></i> Quản lý QT
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tasks"></i> Quản lý dự án
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-clock"></i> Chấm công
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-chart-line"></i> Đánh giá định kỳ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-graduation-cap"></i> Quản lý kỹ năng
+                </a>
+            </li>
+            <!-- Procurement Section -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="procurementDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-shopping-cart"></i> Procurement
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="procurementDropdown">
+                    <li><a class="dropdown-item" href="index.html">
+                        <i class="fas fa-file-alt"></i> Request List
+                    </a></li>
+                    <li><a class="dropdown-item" href="purchase_list.html">
+                        <i class="fas fa-shopping-bag"></i> Purchase List
+                    </a></li>
+                    <li><a class="dropdown-item" href="supplier_select.html">
+                        <i class="fas fa-users"></i> Suppliers Select</a></li>
+                    <li><a class="dropdown-item" href="it_review_list.html">
+                        <i class="fas fa-laptop"></i> IT Review Queue</a></li>
+                    <li><a class="dropdown-item" href="dl_payment_confirmation_list.html">
+                        <i class="fas fa-truck"></i> DL Confirm Payment</a></li>
+                    <li><a class="dropdown-item" href="accountant_document_review.html">
+                        <i class="fas fa-list"></i> Document Review</a></li>
+                    <li><a class="dropdown-item" href="advance_payment_approval_page.html">                        <i class="fas fa-receipt"></i> Advance Payment Approval</a></li>
+                    <li><a class="dropdown-item" href="accountant_reimbursement_approval.html">
+                        <i class="fas fa-calculator"></i> Reimbursement Processing</a></li>
+                    <li><a class="dropdown-item" href="supplier_management.html">
+                        <i class="fas fa-building"></i> Supplier Management</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <div class="main-content">
+        <div class="container-fluid">
+            <div class="header-container">
+                <div class="d-flex justify-content-between align-items-center">
+                    <div>
+                        <h1><i class="fas fa-history me-2"></i>Supplier Purchase History</h1>
+                        <p class="mb-0">View past purchases and transaction history</p>
+                    </div>
+                    <div>
+                        <button class="btn btn-light" onclick="history.back()">
+                            <i class="fas fa-arrow-left me-1"></i> Back
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Supplier Information Card -->
+            <div class="supplier-info-card">
+                <div class="row align-items-center">
+                    <div class="col-md-8">
+                        <h3 id="supplierName">Loading Supplier...</h3>
+                        <p class="mb-0" id="supplierDetails">Supplier information will be loaded here</p>
+                    </div>
+                    <div class="col-md-4 text-end">
+                        <button class="btn btn-light" onclick="location.href='supplier_management.html'">
+                            <i class="fas fa-cog me-1"></i> Manage Supplier
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Statistics Cards -->
+            <div class="row mb-4">
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number" id="totalOrders">0</div>
+                        <div class="text-muted">Total Orders</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number" id="totalAmount">$0</div>
+                        <div class="text-muted">Total Amount</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number" id="avgOrderValue">$0</div>
+                        <div class="text-muted">Avg Order Value</div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="stats-card">
+                        <div class="stats-number" id="lastOrderDate">N/A</div>
+                        <div class="text-muted">Last Order</div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Filter Section -->
+            <div class="filter-section">
+                <div class="row">
+                    <div class="col-md-3">
+                        <label class="form-label">Date Range</label>
+                        <select class="form-select" id="dateRangeFilter">
+                            <option value="all">All Time</option>
+                            <option value="30">Last 30 Days</option>
+                            <option value="90">Last 3 Months</option>
+                            <option value="365">Last Year</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label class="form-label">Status</label>
+                        <select class="form-select" id="statusFilter">
+                            <option value="all">All Status</option>
+                            <option value="completed">Completed</option>
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="cancelled">Cancelled</option>
+                        </select>
+                    </div>
+                    <div class="col-md-4">
+                        <label class="form-label">Search Products</label>
+                        <input type="text" class="form-control" id="searchProducts" placeholder="Search by product name or order ID...">
+                    </div>
+                    <div class="col-md-2">
+                        <label class="form-label">&nbsp;</label>
+                        <button class="btn btn-primary w-100" onclick="applyFilters()">
+                            <i class="fas fa-filter me-1"></i> Filter
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Purchase History Content -->
+            <div class="content-container">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>Purchase History</h3>
+                    <div>
+                        <button class="btn btn-outline-primary me-2" onclick="toggleView('list')">
+                            <i class="fas fa-list me-1"></i> List View
+                        </button>
+                        <button class="btn btn-outline-primary" onclick="toggleView('timeline')">
+                            <i class="fas fa-project-diagram me-1"></i> Timeline View
+                        </button>
+                    </div>
+                </div>
+
+                <!-- List View -->
+                <div id="listView">
+                    <div id="purchaseHistoryContainer">
+                        <!-- Purchase history will be loaded here -->
+                        <div class="text-center py-5">
+                            <div class="spinner-border text-primary" role="status">
+                                <span class="visually-hidden">Loading...</span>
+                            </div>
+                            <p class="mt-3 text-muted">Loading purchase history...</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Timeline View -->
+                <div id="timelineView" style="display: none;">
+                    <div class="purchase-timeline" id="purchaseTimelineContainer">
+                        <!-- Timeline will be loaded here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Product Detail Modal -->
+    <div class="modal fade" id="productDetailModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"><i class="fas fa-box me-2"></i>Product Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body" id="productDetailContent">
+                    <!-- Product details will be loaded here -->
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Image Modal -->
+    <div class="modal fade" id="imageModal" tabindex="-1">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Product Image</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="modalImage" src="" class="img-fluid" style="max-height: 80vh;">
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>        // Mock purchase history data
+        const purchaseHistory = [
+            {
+                id: 'PO-2024-001',
+                date: '2024-12-01',
+                products: [
+                    {
+                        name: 'Dell OptiPlex 7010 Desktop',
+                        quantity: 5,
+                        unitPrice: 899.99,
+                        totalPrice: 4499.95,
+                        specifications: 'Intel Core i7, 16GB RAM, 512GB SSD'
+                    },
+                    {
+                        name: 'HP LaserJet Pro M404n',
+                        quantity: 2,
+                        unitPrice: 229.99,
+                        totalPrice: 459.98,
+                        specifications: 'Monochrome Laser Printer, Network Ready'
+                    }
+                ],
+                requestImages: ['img.jpg', 'flowchart.png'],
+                totalAmount: 4959.93,
+                status: 'completed',
+                deliveryDate: '2024-12-05',
+                notes: 'Delivered on time, all items in perfect condition'            },
+            {
+                id: 'PO-2024-015',
+                date: '2024-11-15',
+                products: [
+                    {
+                        name: 'Cisco Catalyst 2960-X Switch',
+                        quantity: 1,
+                        unitPrice: 1299.99,
+                        totalPrice: 1299.99,
+                        specifications: '24-port Gigabit Ethernet Switch'
+                    }
+                ],
+                requestImages: ['img.jpg'],
+                totalAmount: 1299.99,
+                status: 'completed',
+                deliveryDate: '2024-11-20',
+                notes: 'Installation support provided'
+            },
+            {
+                id: 'PO-2024-028',
+                date: '2024-10-22',
+                products: [
+                    {
+                        name: 'Microsoft Surface Pro 9',
+                        quantity: 3,
+                        unitPrice: 1199.99,
+                        totalPrice: 3599.97,
+                        specifications: 'Intel Core i5, 8GB RAM, 256GB SSD'
+                    },
+                    {
+                        name: 'Surface Type Cover',
+                        quantity: 3,
+                        unitPrice: 129.99,
+                        totalPrice: 389.97,
+                        specifications: 'Platinum color, backlit keys'
+                    }
+                ],
+                requestImages: ['flowchart.png', 'img.jpg'],
+                totalAmount: 3989.94,
+                status: 'completed',
+                deliveryDate: '2024-10-28',
+                notes: 'Executive team equipment upgrade'
+            },            {
+                id: 'PO-2024-042',
+                date: '2024-09-10',
+                products: [
+                    {
+                        name: 'Canon EOS R6 Mark II',
+                        quantity: 1,
+                        unitPrice: 2499.99,
+                        totalPrice: 2499.99,
+                        specifications: 'Mirrorless Camera with 24-105mm lens'
+                    }
+                ],
+                requestImages: ['img.jpg', 'flowchart.png'],
+                totalAmount: 2499.99,
+                status: 'processing',
+                deliveryDate: '2024-09-20',
+                notes: 'For marketing department photo shoots'
+            },
+            {
+                id: 'PO-2024-055',
+                date: '2024-08-05',
+                products: [
+                    {
+                        name: 'Lenovo ThinkPad X1 Carbon',
+                        quantity: 10,
+                        unitPrice: 1899.99,
+                        totalPrice: 18999.90,
+                        specifications: 'Intel Core i7, 32GB RAM, 1TB SSD'
+                    }
+                ],
+                requestImages: ['flowchart.png'],
+                totalAmount: 18999.90,
+                status: 'completed',
+                deliveryDate: '2024-08-12',
+                notes: 'Bulk order for development team'
+            },
+            {
+                id: 'PO-2024-067',
+                date: '2024-07-18',                products: [
+                    {
+                        name: 'iPhone 15 Pro Max',
+                        quantity: 8,
+                        unitPrice: 1199.99,
+                        totalPrice: 9599.92,
+                        specifications: '256GB, Natural Titanium'
+                    }
+                ],
+                requestImages: ['img.jpg'],
+                totalAmount: 9599.92,
+                status: 'completed',
+                deliveryDate: '2024-07-25',
+                notes: 'Management team mobile upgrade'
+            }
+        ];
+
+        // Generate carousel for request images
+        function generateImageCarousel(orderId, requestImages) {
+            if (!requestImages || requestImages.length === 0) {
+                return `
+                    <div class="request-image-carousel">
+                        <div class="d-flex align-items-center justify-content-center bg-light" style="height: 100%; border-radius: 8px;">
+                            <i class="fas fa-image text-muted"></i>
+                        </div>
+                    </div>
+                `;
+            }
+
+            const carouselId = `carousel-${orderId.replace(/[^a-zA-Z0-9]/g, '-')}`;
+            
+            if (requestImages.length === 1) {
+                // Single image - no carousel needed
+                return `
+                    <div class="request-image-carousel">
+                        <img src="../${requestImages[0]}" alt="Request Image" 
+                             onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center bg-light h-100\\' style=\\'border-radius: 8px;\\'><i class=\\'fas fa-image text-muted\\'></i></div>';">
+                    </div>
+                `;
+            }
+
+            // Multiple images - create carousel
+            const indicators = requestImages.map((_, index) => 
+                `<button type="button" data-bs-target="#${carouselId}" data-bs-slide-to="${index}" ${index === 0 ? 'class="active" aria-current="true"' : ''}></button>`
+            ).join('');
+
+            const carouselItems = requestImages.map((image, index) => `
+                <div class="carousel-item ${index === 0 ? 'active' : ''}">
+                    <img src="../${image}" alt="Request Image ${index + 1}" 
+                         onerror="this.style.display='none'; this.parentElement.innerHTML='<div class=\\'d-flex align-items-center justify-content-center bg-light h-100\\' style=\\'border-radius: 8px;\\'><i class=\\'fas fa-image text-muted\\'></i></div>';">
+                </div>
+            `).join('');
+
+            return `
+                <div class="request-image-carousel">
+                    <div id="${carouselId}" class="carousel slide h-100" data-bs-ride="carousel">
+                        <div class="carousel-indicators">
+                            ${indicators}
+                        </div>
+                        <div class="carousel-inner">
+                            ${carouselItems}
+                        </div>
+                        <button class="carousel-control-prev" type="button" data-bs-target="#${carouselId}" data-bs-slide="prev">
+                            <span class="carousel-control-prev-icon"></span>
+                        </button>
+                        <button class="carousel-control-next" type="button" data-bs-target="#${carouselId}" data-bs-slide="next">
+                            <span class="carousel-control-next-icon"></span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        let currentView = 'list';
+        let filteredHistory = [...purchaseHistory];
+        let currentSupplierId = null;
+        let currentSupplierName = null;        // Initialize page
+        document.addEventListener('DOMContentLoaded', function() {
+            try {
+                // Get URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                currentSupplierId = urlParams.get('supplierId');
+                currentSupplierName = urlParams.get('supplierName');
+
+                // Validate parameters
+                if (!currentSupplierId || !currentSupplierName) {
+                    console.error('Missing supplier parameters:', { currentSupplierId, currentSupplierName });
+                    alert('No supplier information provided. Redirecting back...');
+                    setTimeout(() => history.back(), 1000);
+                    return;
+                }
+
+                // Initialize page components
+                loadSupplierInfo();
+                loadPurchaseHistory();
+                calculateStatistics();
+
+                // Add event listeners with error handling
+                const dateFilter = document.getElementById('dateRangeFilter');
+                const statusFilter = document.getElementById('statusFilter');
+                const searchInput = document.getElementById('searchProducts');
+
+                if (dateFilter) {
+                    dateFilter.addEventListener('change', applyFilters);
+                } else {
+                    console.warn('Date range filter element not found');
+                }
+
+                if (statusFilter) {
+                    statusFilter.addEventListener('change', applyFilters);
+                } else {
+                    console.warn('Status filter element not found');
+                }
+
+                if (searchInput) {
+                    searchInput.addEventListener('input', debounce(applyFilters, 300));
+                } else {
+                    console.warn('Search input element not found');
+                }
+
+            } catch (error) {
+                console.error('Error initializing page:', error);
+                alert('Error loading page. Please try again.');
+            }
+        });        // Load supplier information
+        function loadSupplierInfo() {
+            try {
+                const supplierNameEl = document.getElementById('supplierName');
+                const supplierDetailsEl = document.getElementById('supplierDetails');
+
+                if (supplierNameEl && currentSupplierName) {
+                    supplierNameEl.textContent = decodeURIComponent(currentSupplierName);
+                }
+
+                if (supplierDetailsEl && currentSupplierId) {
+                    supplierDetailsEl.textContent = `Supplier ID: ${currentSupplierId} • Viewing purchase history and transaction records`;
+                }
+            } catch (error) {
+                console.error('Error loading supplier info:', error);
+            }
+        }        // Load purchase history
+        function loadPurchaseHistory() {
+            try {
+                const container = document.getElementById('purchaseHistoryContainer');
+                if (!container) {
+                    console.error('Purchase history container not found');
+                    return;
+                }
+                
+                if (filteredHistory.length === 0) {
+                    container.innerHTML = `
+                        <div class="text-center py-5">
+                            <i class="fas fa-inbox fa-3x text-muted mb-3"></i>
+                            <h5 class="text-muted">No Purchase History Found</h5>
+                            <p class="text-muted">No purchases found for the selected filters.</p>
+                        </div>
+                    `;
+                    return;
+                }
+
+                // Helper function to safely escape HTML
+                const escapeHtml = (text) => {
+                    if (!text) return '';
+                    const div = document.createElement('div');
+                    div.textContent = text.toString();
+                    return div.innerHTML;
+                };
+
+                const historyHTML = filteredHistory.map(order => {
+                    // Validate order data
+                    if (!order || !order.id) {
+                        console.warn('Invalid order data:', order);
+                        return '';
+                    }
+
+                    const orderDate = order.date ? new Date(order.date) : new Date();
+                    const deliveryDate = order.deliveryDate ? new Date(order.deliveryDate) : null;
+                    const products = order.products || [];
+                    const status = order.status || 'unknown';
+                    const totalAmount = order.totalAmount || 0;                    return `
+                        <div class="purchase-card">
+                            <div class="row">
+                                <div class="col-md-8">
+                                    <div class="d-flex justify-content-between align-items-start mb-3">
+                                        <div>
+                                            <h5 class="mb-1">${escapeHtml(order.id)}</h5>
+                                            <p class="text-muted mb-0">
+                                                <i class="fas fa-calendar me-1"></i>Order Date: ${orderDate.toLocaleDateString()}
+                                                ${deliveryDate ? ` • <i class="fas fa-truck me-1"></i>Delivered: ${deliveryDate.toLocaleDateString()}` : ''}
+                                            </p>
+                                        </div>
+                                        <span class="status-badge status-${status}">${status.charAt(0).toUpperCase() + status.slice(1)}</span>
+                                    </div>
+                                      <div class="mb-3">
+                                        ${generateImageCarousel(order.id, order.requestImages)}
+                                    </div>
+                                    
+                                    ${order.notes ? `
+                                        <div class="mb-2">
+                                            <strong>Notes:</strong>
+                                            <p class="text-muted mb-0">${escapeHtml(order.notes)}</p>
+                                        </div>
+                                    ` : ''}
+                                </div>
+                                <div class="col-md-4 text-end">
+                                    <div class="mb-3">
+                                        <h4 class="text-success mb-0">$${totalAmount.toFixed(2)}</h4>
+                                        <small class="text-muted">Total Amount</small>
+                                    </div>
+                                    <div class="btn-group-vertical w-100">
+                                        <button class="btn btn-outline-primary btn-sm" onclick="showOrderDetails('${escapeHtml(order.id)}')">
+                                            <i class="fas fa-eye me-1"></i>View Details
+                                        </button>
+                                        <button class="btn btn-outline-secondary btn-sm" onclick="downloadInvoice('${escapeHtml(order.id)}')">
+                                            <i class="fas fa-download me-1"></i>Download Invoice
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    `;
+                }).filter(html => html !== '').join('');                container.innerHTML = historyHTML;
+                // Only update timeline if we're not already in a timeline update
+                if (currentView === 'list') {
+                    loadTimelineView();
+                }
+            } catch (error) {
+                console.error('Error loading purchase history:', error);
+                const container = document.getElementById('purchaseHistoryContainer');
+                if (container) {
+                    container.innerHTML = `
+                        <div class="text-center py-5">
+                            <i class="fas fa-exclamation-triangle fa-3x text-warning mb-3"></i>
+                            <h5 class="text-warning">Error Loading Purchase History</h5>
+                            <p class="text-muted">Please refresh the page and try again.</p>
+                        </div>
+                    `;
+                }
+            }
+        }
+
+        // Load timeline view
+        function loadTimelineView() {
+            const container = document.getElementById('purchaseTimelineContainer');
+            
+            const timelineHTML = filteredHistory.map(order => `
+                <div class="timeline-item">
+                    <div class="purchase-card">
+                        <div class="d-flex justify-content-between align-items-start mb-2">
+                            <h6 class="mb-0">${order.id}</h6>
+                            <span class="status-badge status-${order.status}">${order.status.charAt(0).toUpperCase() + order.status.slice(1)}</span>
+                        </div>
+                        <p class="text-muted mb-2">
+                            <i class="fas fa-calendar me-1"></i>${new Date(order.date).toLocaleDateString()}
+                            <span class="ms-3"><i class="fas fa-dollar-sign me-1"></i>$${order.totalAmount.toFixed(2)}</span>
+                        </p>
+                        <p class="mb-0">${order.products.length} product${order.products.length > 1 ? 's' : ''}: ${order.products.map(p => p.name).join(', ')}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            container.innerHTML = timelineHTML;
+        }        // Calculate statistics
+        function calculateStatistics() {
+            const totalOrders = filteredHistory.length;
+            const totalAmount = filteredHistory.reduce((sum, order) => sum + (order.totalAmount || 0), 0);
+            const avgOrderValue = totalOrders > 0 ? totalAmount / totalOrders : 0;
+            
+            // Sort by date to get the most recent order
+            const sortedHistory = [...filteredHistory].sort((a, b) => new Date(b.date) - new Date(a.date));
+            const lastOrder = sortedHistory.length > 0 ? sortedHistory[0].date : null;
+
+            // Safely update DOM elements
+            const totalOrdersEl = document.getElementById('totalOrders');
+            const totalAmountEl = document.getElementById('totalAmount');
+            const avgOrderValueEl = document.getElementById('avgOrderValue');
+            const lastOrderDateEl = document.getElementById('lastOrderDate');
+
+            if (totalOrdersEl) totalOrdersEl.textContent = totalOrders.toString();
+            if (totalAmountEl) totalAmountEl.textContent = `$${totalAmount.toFixed(2)}`;
+            if (avgOrderValueEl) avgOrderValueEl.textContent = `$${avgOrderValue.toFixed(2)}`;
+            if (lastOrderDateEl) lastOrderDateEl.textContent = lastOrder ? new Date(lastOrder).toLocaleDateString() : 'N/A';
+        }        // Apply filters
+        function applyFilters() {
+            try {
+                const dateRangeEl = document.getElementById('dateRangeFilter');
+                const statusEl = document.getElementById('statusFilter');
+                const searchEl = document.getElementById('searchProducts');
+
+                const dateRange = dateRangeEl ? dateRangeEl.value : 'all';
+                const status = statusEl ? statusEl.value : 'all';
+                const search = searchEl ? searchEl.value.toLowerCase() : '';
+
+                filteredHistory = purchaseHistory.filter(order => {
+                    // Validate order object
+                    if (!order || !order.date) {
+                        console.warn('Invalid order object:', order);
+                        return false;
+                    }
+
+                    // Date filter
+                    if (dateRange !== 'all') {
+                        try {
+                            const orderDate = new Date(order.date);
+                            const daysAgo = parseInt(dateRange);
+                            const cutoffDate = new Date();
+                            cutoffDate.setDate(cutoffDate.getDate() - daysAgo);
+                            
+                            if (isNaN(orderDate.getTime()) || orderDate < cutoffDate) {
+                                return false;
+                            }
+                        } catch (error) {
+                            console.warn('Error parsing date:', order.date, error);
+                            return false;
+                        }
+                    }
+
+                    // Status filter
+                    if (status !== 'all' && order.status !== status) return false;
+
+                    // Search filter
+                    if (search) {
+                        const searchMatch = (order.id && order.id.toLowerCase().includes(search)) ||
+                                          (order.products && order.products.some(product => 
+                                              product.name && product.name.toLowerCase().includes(search)
+                                          ));
+                        if (!searchMatch) return false;
+                    }
+
+                    return true;
+                });                loadPurchaseHistory();
+                // Only load timeline view if we're in timeline view
+                if (currentView === 'timeline') {
+                    loadTimelineView();
+                }
+                calculateStatistics();
+            } catch (error) {
+                console.error('Error applying filters:', error);
+                // Reset to show all data if filtering fails
+                filteredHistory = [...purchaseHistory];
+                loadPurchaseHistory();
+                calculateStatistics();
+            }
+        }        // Toggle between list and timeline view
+        function toggleView(view) {
+            if (currentView === view) return; // Avoid unnecessary reloading
+            
+            currentView = view;
+            const listView = document.getElementById('listView');
+            const timelineView = document.getElementById('timelineView');
+
+            if (view === 'list') {
+                listView.style.display = 'block';
+                timelineView.style.display = 'none';
+            } else {
+                listView.style.display = 'none';
+                timelineView.style.display = 'block';
+                // Only load timeline view if we're switching to it
+                loadTimelineView();
+            }
+        }// Show product detail modal
+        function showProductDetail(orderId, productName) {
+            try {
+                const order = purchaseHistory.find(o => o.id === orderId);
+                if (!order) {
+                    console.error('Order not found:', orderId);
+                    alert('Order not found');
+                    return;
+                }
+                
+                const product = order.products.find(p => p.name === productName);
+                if (!product) {
+                    console.error('Product not found:', productName);
+                    alert('Product not found');
+                    return;
+                }
+
+                const modal = new bootstrap.Modal(document.getElementById('productDetailModal'));
+                const content = document.getElementById('productDetailContent');
+                
+                // Escape HTML to prevent injection
+                const escapeHtml = (text) => {
+                    const div = document.createElement('div');
+                    div.textContent = text;
+                    return div.innerHTML;
+                };                content.innerHTML = `
+                    <div class="row">
+                        <div class="col-md-5">
+                            <div style="height: 250px;">
+                                ${generateImageCarousel(`modal-${orderId}`, order.requestImages)}
+                            </div>
+                        </div>
+                        <div class="col-md-7">
+                            <h5>${escapeHtml(product.name || 'Unknown Product')}</h5>
+                            <p class="text-muted">${escapeHtml(product.specifications || 'No specifications available')}</p>
+                            <table class="table table-borderless">
+                                <tr><td><strong>Order ID:</strong></td><td>${escapeHtml(orderId)}</td></tr>
+                                <tr><td><strong>Quantity:</strong></td><td>${product.quantity || 0}</td></tr>
+                                <tr><td><strong>Unit Price:</strong></td><td>$${(product.unitPrice || 0).toFixed(2)}</td></tr>
+                                <tr><td><strong>Total Price:</strong></td><td>$${(product.totalPrice || 0).toFixed(2)}</td></tr>
+                                <tr><td><strong>Order Date:</strong></td><td>${new Date(order.date).toLocaleDateString()}</td></tr>
+                                <tr><td><strong>Status:</strong></td><td><span class="status-badge status-${order.status || 'unknown'}">${(order.status || 'unknown').charAt(0).toUpperCase() + (order.status || 'unknown').slice(1)}</span></td></tr>
+                            </table>
+                        </div>
+                    </div>
+                `;
+                
+                modal.show();
+            } catch (error) {
+                console.error('Error showing product detail:', error);
+                alert('Error loading product details');
+            }
+        }
+
+        // Show order details (placeholder)
+        function showOrderDetails(orderId) {
+            alert(`Order details for ${orderId} would be shown here.`);
+        }
+
+        // Download invoice (placeholder)
+        function downloadInvoice(orderId) {
+            alert(`Downloading invoice for ${orderId}...`);
+        }
+
+        // Debounce function for search
+        function debounce(func, wait) {
+            let timeout;
+            return function executedFunction(...args) {
+                const later = () => {
+                    clearTimeout(timeout);
+                    func(...args);
+                };
+                clearTimeout(timeout);
+                timeout = setTimeout(later, wait);
+            };
+        }
+    </script>
+</body>
+</html>

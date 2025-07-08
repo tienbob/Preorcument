@@ -1,0 +1,1557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Đề Nghị Thanh Toán - LTS Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./company_layout.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        /* Top navbar */
+        .top-navbar {
+            background-color: #051e34;
+            color: white;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .top-navbar .brand {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .top-navbar .icon-button {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 16px;
+            width: 32px;
+            height: 32px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            opacity: 0.8;
+        }
+        .top-navbar .icon-button:hover {
+            background-color: rgba(255,255,255,0.1);
+            opacity: 1;
+        }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: #28a745;
+            color: white;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        /* Left sidebar */
+        .sidebar {
+            position: fixed;
+            top: 48px; /* Below the top navbar */
+            left: 0;
+            height: calc(100vh - 48px);
+            width: 240px;
+            background: #051e34;
+            color: #fff;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .sidebar .nav {
+            flex: 1;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        .sidebar .nav-item {
+            width: 100%;
+        }
+        .sidebar .nav-link {
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            opacity: 1;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        .sidebar .dropdown-toggle::after {
+            margin-left: auto;
+        }
+        .sidebar .dropdown-menu {
+            background: #0a2b4a;
+            border: none;
+            margin: 0;
+            border-radius: 0;
+            padding: 0;
+            width: 100%;
+            position: static !important;
+            transform: none !important;
+        }
+        .sidebar .dropdown-item {
+            color: #fff;
+            opacity: 0.8;
+            padding: 8px 15px 8px 45px;
+            transition: all 0.2s;
+        }        .sidebar .dropdown-item:hover, .sidebar .dropdown-item:focus {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            opacity: 1;
+        }
+        .sidebar .dropdown-item i {
+            margin-right: 10px;
+            width: 16px;
+            text-align: center;
+            font-size: 14px;
+        }
+        
+        /* Multi-level dropdown styles */
+        .sidebar .dropdown-submenu {
+            position: relative;
+            left: 100%;
+            top: -38px;
+            display: none;
+            background: #0a2b4a;
+            border: none;
+            margin: 0;
+            border-radius: 0;
+            padding: 0;
+            width: 200px;
+        }
+        
+        .sidebar .dropdown-submenu.show {
+            display: block;
+        }
+        
+        .sidebar .dropdown-item.dropdown-toggle {
+            position: relative;
+        }
+        
+        .sidebar .dropdown-item.dropdown-toggle::after {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        /* Main content */
+        .main-content {
+            margin-left: 240px;
+            margin-top: 48px;
+            padding: 24px;
+        }
+        .header-container {
+            border-radius: 8px;
+            background-color: #e9ecef;
+            padding: 15px 20px;
+            margin-bottom: 24px;
+        }
+        .content-container {
+            background-color: #ffffff;
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 24px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .required-field::after {
+            content: " *";
+            color: red;
+        }
+        .hidden-field {
+            display: none;
+        }
+        .table th {
+            background-color: #f8f9fa;
+        }        .payment-header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        .info-row {
+            margin-bottom: 20px;
+        }
+        .payment-table {
+            margin-top: 30px;
+            margin-bottom: 25px;
+        }
+        .table {
+            border-collapse: separate;
+            border-spacing: 0;
+            border-radius: 6px;
+            overflow: hidden;
+        }
+        .table thead th {
+            background-color: #f1f5f9;
+            color: #334155;
+            font-weight: 600;
+            border-bottom: 2px solid #e2e8f0;
+        }
+        .table tbody tr:hover {
+            background-color: rgba(241, 245, 249, 0.5);
+        }
+        .table input, .table select {
+            border-radius: 4px;
+            border: 1px solid #cbd5e1;
+        }
+        .total-row {
+            font-weight: bold;
+            color: #1e40af;
+            background-color: #f8fafc;
+        }
+        .amount-text {
+            background-color: #f8fafc;
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 25px;
+            border-left: 4px solid #0ea5e9;
+        }
+        .bank-info {
+            margin-top: 30px;
+            margin-bottom: 25px;
+            padding: 20px;
+            background-color: #f0f9ff;
+            border-radius: 6px;
+            border: 1px solid #bae6fd;
+        }
+        .signature-section {
+            text-align: right;
+            margin-top: 40px;
+            padding-top: 20px;
+            border-top: 1px solid #e2e8f0;
+        }
+        .form-control:focus, .form-select:focus {
+            box-shadow: 0 0 0 0.25rem rgba(13, 110, 253, 0.15);
+            border-color: #0d6efd;
+        }
+        .btn-add-row {
+            border-radius: 50px;
+            padding-left: 18px;
+            padding-right: 18px;
+            transition: all 0.2s;
+        }
+        .btn-add-row:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+        /* Responsive adjustments */
+        @media (max-width: 992px) {
+            .sidebar {
+                width: 64px;
+            }
+            .sidebar .nav-link span {
+                display: none;
+            }
+            .main-content {
+                margin-left: 64px;
+            }
+        }
+        @media (max-width: 768px) {
+            .sidebar {
+                display: none;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px 10px;
+                margin-top: 48px;
+            }
+        }
+
+        /* Print styles to match the document format */
+        @media print {
+            @page {
+                margin: 0.5in;
+                size: A4;
+                /* Remove default headers and footers */
+                @top-left { content: ""; }
+                @top-center { content: ""; }
+                @top-right { content: ""; }
+                @bottom-left { content: ""; }
+                @bottom-center { content: ""; }
+                @bottom-right { content: ""; }
+            }
+            
+            * {
+                visibility: hidden;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .print-layout, .print-layout * {
+                visibility: visible;
+            }
+            
+            .print-layout {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 15px 20px;
+                background: white !important;
+            }
+            
+            /* Hide everything else completely */
+            .top-navbar,
+            .sidebar,
+            .header-container,
+            .d-print-none,
+            form,
+            .card,
+            .btn,
+            .alert,
+            .modal {
+                display: none !important;
+                visibility: hidden !important;
+            }
+            
+            body {
+                margin: 0;
+                padding: 0;
+                background: white !important;
+            }
+            
+            .main-content {
+                margin: 0;
+                padding: 0;
+                background: white !important;
+                position: static;
+            }
+            
+            .content-container {
+                margin: 0;
+                padding: 0;
+                background: white !important;
+                box-shadow: none !important;
+            }
+            
+            .print-header {
+                text-align: center;
+                margin-bottom: 25px;
+                font-weight: bold;
+                font-size: 16px;
+                text-transform: uppercase;
+            }
+            .print-date {
+                text-align: right;
+                margin-bottom: 15px;
+                font-size: 12px;
+            }
+            .print-form {
+                font-size: 11px;
+                line-height: 1.3;
+                width: 100%;
+                margin: 0;
+                padding: 0;
+            }
+            .print-form > div {
+                margin-bottom: 12px;
+                font-weight: bold;
+            }
+            .print-info-grid {
+                width: 100%;
+                margin-bottom: 15px;
+            }
+            .print-info-item {
+                display: flex;
+                align-items: center;
+                margin-bottom: 6px;
+                width: 100%;
+            }
+            .print-info-item label {
+                font-weight: bold;
+                margin-right: 8px;
+                min-width: 120px;
+                flex-shrink: 0;
+            }
+            .print-info-item .value {
+                border-bottom: 1px solid #000;
+                flex: 1;
+                min-height: 18px;
+                padding: 1px 5px;
+                margin-right: 20px;
+            }
+            .print-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 15px 0;
+                font-size: 10px;
+            }
+            .print-table th,
+            .print-table td {
+                border: 1px solid #000;
+                padding: 4px 6px;
+                text-align: center;
+                vertical-align: middle;
+            }
+            .print-table th {
+                background-color: #f0f0f0;
+                font-weight: bold;
+                font-size: 9px;
+            }
+            .print-table .content-cell {
+                text-align: left;
+                min-height: 20px;
+                font-size: 10px;
+            }
+            .print-amount-text {
+                margin: 15px 0;
+                font-weight: bold;
+                font-size: 11px;
+            }
+            .print-bank-info {
+                margin: 15px 0;
+                font-size: 11px;
+            }
+            .print-bank-info .bank-item {
+                margin-bottom: 6px;
+                display: flex;
+                align-items: center;
+            }
+            .print-bank-info .bank-item span {
+                border-bottom: 1px solid #000;
+                flex: 1;
+                min-height: 16px;
+                margin-left: 8px;
+                padding: 1px 5px;
+            }
+            .print-request-text {
+                text-align: center;
+                margin: 25px 0;
+                font-weight: bold;
+                font-style: italic;
+                font-size: 12px;
+            }
+            .print-signatures {
+                display: grid;
+                grid-template-columns: 1fr 1fr 1fr 1fr;
+                gap: 15px;
+                margin-top: 40px;
+                text-align: center;
+                font-size: 11px;
+            }
+            .print-signature-box {
+                text-align: center;
+            }
+            .print-signature-title {
+                font-weight: bold;
+                margin-bottom: 50px;
+            }
+            .sidebar, .top-navbar, .btn, .alert, .modal, .card-header {
+                display: none !important;
+            }
+            
+            /* Fix specific layout issues */
+            .print-info-grid {
+                display: block !important;
+            }
+            .print-info-item:nth-child(odd) {
+                width: 100%;
+                display: flex;
+            }
+            .print-info-item:nth-child(even) {
+                width: 100%;
+                display: flex;
+                margin-top: -6px;
+                margin-left: 50%;
+            }
+            
+            /* Two column layout for basic info */
+            .print-basic-info {
+                display: flex;
+                flex-wrap: wrap;
+                margin-bottom: 15px;
+            }
+            .print-basic-info .print-info-item {
+                width: 50%;
+                margin-bottom: 8px;
+            }
+            .print-basic-info .print-info-item:nth-child(even) {
+                margin-left: 0;
+                margin-top: 0;
+            }
+            
+            /* Full width items */
+            .print-full-width {
+                width: 100% !important;
+                margin-left: 0 !important;
+                margin-top: 0 !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="brand">
+            <i class="fas fa-cube me-2"></i> LTS MANAGER
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="icon-button me-2">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="icon-button me-3">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div class="user-avatar">
+                TD
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <ul class="nav flex-column">            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-calendar-alt"></i> Quản lý ngày nghỉ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-users"></i> Quản lý QT
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tasks"></i> Quản lý dự án
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-clock"></i> Chấm công
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-chart-line"></i> Đánh giá định kỳ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-graduation-cap"></i> Quản lý kỹ năng
+                </a>
+            </li>
+            <!-- Procurement Section -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="procurementDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-shopping-cart"></i> Procurement
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="procurementDropdown">
+                    <li><a class="dropdown-item" href="index.html">
+                        <i class="fas fa-file-alt"></i> Request List
+                    </a></li>
+                    <li><a class="dropdown-item" href="purchase_list.html">
+                        <i class="fas fa-shopping-bag"></i> Purchase List
+                    </a></li>
+                    <li><a class="dropdown-item" href="supplier_select.html">
+                        <i class="fas fa-users"></i> Suppliers Select</a></li>
+                    <li><a class="dropdown-item" href="it_review_list.html">
+                        <i class="fas fa-laptop"></i> IT Review Queue</a></li>
+                    <li><a class="dropdown-item" href="dl_payment_confirmation_list.html">
+                        <i class="fas fa-truck"></i> DL Confirm Payment</a></li>
+                    <li><a class="dropdown-item" href="accountant_document_review.html">
+                        <i class="fas fa-list"></i> Document Review</a></li>
+                    <li><a class="dropdown-item" href="advance_payment_approval_page.html">
+                        <i class="fas fa-receipt"></i> Advance Payment Approval</a></li>                    <li><a class="dropdown-item" href="accountant_reimbursement_approval.html">
+                        <i class="fas fa-calculator"></i> Reimbursement Processing</a></li>
+                    <li><a class="dropdown-item" href="supplier_management.html">
+                        <i class="fas fa-building"></i> Supplier Management</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-container">
+            <h1><i class="fas fa-file-invoice-dollar me-2"></i>Đề Nghị Thanh Toán</h1>
+            <p class="mb-0">Mẫu yêu cầu thanh toán chi phí</p>
+        </div>
+        
+        <!-- Payment Request Form -->
+        <div class="content-container">
+            <!-- Print Layout -->
+            <div class="print-layout d-none d-print-block">
+                <div class="print-header">ĐỀ NGHỊ THANH TOÁN</div>
+                <div class="print-date">Ngày <span id="printDay">10</span> Tháng <span id="printMonth">02</span> Năm <span id="printYear">2025</span></div>
+                
+                <div class="print-form">
+                    <div style="margin-bottom: 15px; font-weight: bold;">Kính gửi: Ban giám đốc công ty</div>
+                    
+                    <div class="print-basic-info">
+                        <div class="print-info-item">
+                            <label>* Họ tên người đề nghị:</label>
+                            <span class="value" id="printRequesterName"></span>
+                        </div>
+                        <div class="print-info-item">
+                            <label>Số CT (kế toán ghi):</label>
+                            <span class="value" id="printAccountingNumber"></span>
+                        </div>
+                        <div class="print-info-item">
+                            <label>* Bộ phận:</label>
+                            <span class="value" id="printDepartment"></span>
+                        </div>
+                        <div class="print-info-item">
+                            <label>Đơn vị:</label>
+                            <span class="value" id="printUnit"></span>
+                        </div>
+                    </div>
+                    
+                    <div class="print-info-item print-full-width">
+                        <label>* Nội dung thanh toán:</label>
+                        <span class="value" id="printPaymentContent"></span>
+                    </div>
+                    
+                    <div class="print-info-item print-full-width">
+                        <label>* Hạn thanh toán:</label>
+                        <span class="value" id="printPaymentDeadline"></span>
+                    </div>
+                    
+                    <div style="font-weight: bold; margin: 15px 0 10px 0;">Đề nghị thanh toán theo bảng dưới đây:</div>
+                    
+                    <table class="print-table">
+                        <thead>
+                            <tr>
+                                <th style="width: 5%;">STT</th>
+                                <th style="width: 35%;">Nội dung chi tiết</th>
+                                <th style="width: 15%;">Số hóa đơn</th>
+                                <th style="width: 15%;">Số tiền (VNĐ)</th>
+                                <th style="width: 15%;">Hình thức TT</th>
+                                <th style="width: 15%;">Note</th>
+                            </tr>
+                        </thead>
+                        <tbody id="printTableBody">
+                            <!-- Rows will be populated by JavaScript -->
+                        </tbody>
+                        <tfoot>
+                            <tr>
+                                <td colspan="3" style="text-align: right; font-weight: bold;">Tổng cộng</td>
+                                <td style="font-weight: bold; text-align: right;" id="printTotalAmount">0 ₫</td>
+                                <td colspan="2"></td>
+                            </tr>
+                        </tfoot>
+                    </table>
+                    
+                    <div class="print-amount-text">
+                        (Số tiền viết bằng chữ: <span id="printAmountWords">…..................</span>)
+                    </div>
+                    
+                    <div class="print-bank-info">
+                        <div style="font-weight: bold; margin-bottom: 8px;">Thông tin nhận tiền chuyển khoản:</div>
+                        <div class="bank-item">Số tài khoản: <span id="printAccountNumber">...................................</span></div>
+                        <div class="bank-item">Chủ tài khoản: <span id="printAccountHolder">...................................</span></div>
+                        <div class="bank-item">Ngân hàng: <span id="printBankName">...................................</span></div>
+                    </div>
+                    
+                    <div class="print-request-text">Kính mong Ban giám đốc duyệt!</div>
+                    
+                    <div class="print-signatures">
+                        <div class="print-signature-box">
+                            <div class="print-signature-title">Giám đốc</div>
+                        </div>
+                        <div class="print-signature-box">
+                            <div class="print-signature-title">Kế toán trưởng</div>
+                        </div>
+                        <div class="print-signature-box">
+                            <div class="print-signature-title">Trưởng bộ phận</div>
+                        </div>
+                        <div class="print-signature-box">
+                            <div class="print-signature-title">Người đề nghị</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <form id="paymentRequestForm" class="needs-validation d-print-none" novalidate>
+                <div class="payment-header">
+                    <h3 class="fw-bold">Kính gửi: Ban giám đốc công ty</h3>
+                </div>
+                  <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i class="fas fa-user-edit me-2 text-primary"></i>Thông tin người đề nghị</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="requesterName" class="form-label required-field">Họ tên người đề nghị</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user"></i></span>
+                                        <input type="text" class="form-control" id="requesterName" name="requesterName" placeholder="Nhập họ và tên" required>
+                                    </div>
+                                    <div class="invalid-feedback">Vui lòng nhập họ tên người đề nghị</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="accountingNumber" class="form-label">Số CT (kế toán ghi)</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                                        <input type="text" class="form-control bg-light" id="accountingNumber" name="accountingNumber" placeholder="Tự động sinh" readonly>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="department" class="form-label required-field">Bộ phận</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-building"></i></span>
+                                        <select class="form-select" id="department" name="department" required>
+                                            <option value="">Chọn bộ phận</option>
+                                            <option value="IT">Công nghệ thông tin</option>
+                                            <option value="HR">Nhân sự</option>
+                                            <option value="Finance">Tài chính</option>
+                                            <option value="Marketing">Marketing</option>
+                                            <option value="Operations">Vận hành</option>
+                                            <option value="Research">Nghiên cứu & Phát triển</option>
+                                            <option value="Legal">Pháp chế</option>
+                                            <option value="Sales">Kinh doanh</option>
+                                        </select>
+                                    </div>
+                                    <div class="invalid-feedback">Vui lòng chọn bộ phận</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="unit" class="form-label">Đơn vị</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-sitemap"></i></span>
+                                        <input type="text" class="form-control" id="unit" name="unit" placeholder="Nhập đơn vị">
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i class="fas fa-info-circle me-2 text-primary"></i>Thông tin thanh toán</h5>
+                    </div>
+                    <div class="card-body">
+                        <div class="row">
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="paymentContent" class="form-label required-field">Nội dung thanh toán</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-align-left"></i></span>
+                                        <textarea class="form-control" id="paymentContent" name="paymentContent" rows="2" 
+                                            placeholder="Nhập nội dung thanh toán" required></textarea>
+                                    </div>
+                                    <div class="invalid-feedback">Vui lòng nhập nội dung thanh toán</div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3">
+                                    <label for="paymentDeadline" class="form-label required-field">Hạn thanh toán</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-calendar-alt"></i></span>
+                                        <input type="text" class="form-control datepicker" id="paymentDeadline" 
+                                            name="paymentDeadline" placeholder="DD/MM/YYYY" required>
+                                    </div>
+                                    <div class="invalid-feedback">Vui lòng chọn hạn thanh toán</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                  <div class="payment-table">
+                    <div class="d-flex justify-content-between align-items-center mb-3">
+                        <h5 class="fw-bold"><i class="fas fa-table me-2"></i>Đề nghị thanh toán theo bảng dưới đây:</h5>
+                        <button type="button" id="addItemBtn" class="btn btn-add-row btn-outline-primary">
+                            <i class="fas fa-plus me-2"></i>Thêm dòng
+                        </button>
+                    </div>
+                    
+                    <div class="table-responsive">
+                        <table class="table table-bordered shadow-sm">
+                            <thead>
+                                <tr>
+                                    <th style="width: 5%">STT</th>
+                                    <th style="width: 35%">Nội dung chi tiết</th>
+                                    <th style="width: 15%">Số hóa đơn</th>
+                                    <th style="width: 15%">Số tiền (VNĐ)</th>
+                                    <th style="width: 15%">Hình thức TT</th>
+                                    <th style="width: 10%">Note</th>
+                                    <th style="width: 5%" class="text-center">Xóa</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentItemsBody">
+                                <tr class="payment-item" data-id="1">
+                                    <td class="item-number text-center fw-bold">1</td>
+                                    <td>
+                                        <input type="text" class="form-control" name="item-content[]" placeholder="Mô tả chi tiết" required>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="item-invoice[]" placeholder="Số hóa đơn">
+                                    </td>
+                                    <td>
+                                        <div class="input-group">
+                                            <input type="number" class="form-control item-amount" name="item-amount[]" min="0" step="1000" placeholder="0" required>
+                                            <span class="input-group-text">₫</span>
+                                        </div>
+                                    </td>
+                                    <td>
+                                        <select class="form-select" name="item-payment-type[]" required>
+                                            <option value="">Chọn</option>
+                                            <option value="TM">Tiền mặt (TM)</option>
+                                            <option value="CK">Chuyển khoản (CK)</option>
+                                        </select>
+                                    </td>
+                                    <td>
+                                        <input type="text" class="form-control" name="item-note[]" placeholder="Ghi chú">
+                                    </td>
+                                    <td class="text-center">
+                                        <button type="button" class="btn btn-sm btn-outline-danger remove-item rounded-circle" data-bs-toggle="tooltip" title="Xóa dòng này">
+                                            <i class="fas fa-times"></i>
+                                        </button>
+                                    </td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="3" class="text-end total-row">Tổng cộng:</td>
+                                    <td id="totalAmount" class="fw-bold">-</td>
+                                    <td colspan="3"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                </div>
+                  <div class="amount-text">
+                    <div class="d-flex align-items-center mb-2">
+                        <i class="fas fa-pen-fancy me-2 text-primary"></i>
+                        <label class="form-label fw-bold mb-0">Số tiền viết bằng chữ:</label>
+                    </div>
+                    <div class="input-group">
+                        <input type="text" class="form-control" id="amountInWords" name="amountInWords" readonly>
+                        <span class="input-group-text"><i class="fas fa-lock"></i></span>
+                    </div>
+                    <div class="form-text ms-2 mt-2">Số tiền bằng chữ sẽ được tự động điền khi bạn nhập số tiền ở bảng trên</div>
+                </div>
+                
+                <div class="bank-info" id="bankInfoSection">
+                    <div class="d-flex align-items-center mb-4">
+                        <i class="fas fa-university me-2 text-primary fa-lg"></i>
+                        <h5 class="mb-0 fw-bold">Thông tin nhận tiền chuyển khoản</h5>
+                    </div>
+                    
+                    <div class="row">
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="accountNumber" class="form-label">
+                                    <i class="fas fa-credit-card me-1"></i> Số tài khoản
+                                </label>
+                                <input type="text" class="form-control" id="accountNumber" name="accountNumber" placeholder="Nhập số tài khoản">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="accountHolder" class="form-label">
+                                    <i class="fas fa-user me-1"></i> Chủ tài khoản
+                                </label>
+                                <input type="text" class="form-control" id="accountHolder" name="accountHolder" placeholder="Nhập tên chủ tài khoản">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <div class="mb-3">
+                                <label for="bankName" class="form-label">
+                                    <i class="fas fa-landmark me-1"></i> Ngân hàng
+                                </label>
+                                <input type="text" class="form-control" id="bankName" name="bankName" placeholder="Nhập tên ngân hàng">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                  <div class="card shadow-sm mb-4">
+                    <div class="card-header bg-white">
+                        <h5 class="mb-0"><i class="fas fa-pen-alt me-2 text-primary"></i>Xác nhận và ký tên</h5>
+                    </div>
+                    <div class="card-body">
+                        <p class="fw-bold mb-4 text-center">Kính mong Ban giám đốc duyệt!</p>
+                        
+                        <div class="row align-items-center">
+                            <div class="col-md-6">
+                                <div class="mb-4">
+                                    <label for="signatureDate" class="form-label">Ngày ký</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                        <input type="text" class="form-control datepicker" id="signatureDate" name="signatureDate" value="30/05/2025">
+                                    </div>
+                                </div>
+                                <div class="mb-3">
+                                    <label for="requesterPosition" class="form-label">Chức vụ</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-user-tag"></i></span>
+                                        <input type="text" class="form-control" id="requesterPosition" name="requesterPosition" placeholder="Nhập chức vụ">
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="col-md-6">
+                                <div class="mb-3 text-center">
+                                    <label for="signature" class="form-label d-block">Ký tên</label>
+                                    <div class="signature-pad rounded mx-auto" id="signaturePad" style="border: 1px solid #dee2e6; background-color: #fff; height: 150px; width: 100%; max-width: 350px;"></div>
+                                    <button type="button" class="btn btn-sm btn-outline-secondary mt-2" id="clearSignatureBtn">
+                                        <i class="fas fa-eraser me-1"></i> Xóa chữ ký
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>                <div class="card shadow-sm mb-4 border-0">
+                    <div class="card-body">
+                        <div class="d-flex justify-content-between align-items-center">
+                            <button type="button" class="btn btn-light shadow-sm rounded-pill px-4" id="cancelBtn">
+                                <i class="fas fa-times me-2"></i>Hủy bỏ
+                            </button>                            <div>
+                                <button type="button" class="btn btn-outline-info me-3 px-4 shadow-sm" id="printBtn">
+                                    <i class="fas fa-print me-2"></i>In biểu mẫu
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Success Message -->
+                <div class="alert alert-success shadow-sm mt-4" id="successAlert" style="display: none;">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-check-circle fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5>Thành công!</h5>
+                            <span id="successMessage"></span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Error Message -->
+                <div class="alert alert-danger shadow-sm mt-4" id="errorAlert" style="display: none;">
+                    <div class="d-flex">
+                        <div class="me-3">
+                            <i class="fas fa-exclamation-circle fa-2x"></i>
+                        </div>
+                        <div>
+                            <h5>Lỗi!</h5>
+                            <span id="errorMessage"></span>
+                        </div>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@4.0.0/dist/signature_pad.umd.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Sample approvers data
+            const approversData = [
+                {
+                    id: 'APP001',
+                    name: 'Nguyễn Văn A',
+                    email: 'nguyenvana@company.com',
+                    position: 'CEO',
+                    department: 'Management',
+                    avatar: 'NA',
+                    phone: '0123456789',
+                    approvalLevel: 'Level 3'
+                },
+                {
+                    id: 'APP002',
+                    name: 'Trần Thị B',
+                    email: 'tranthib@company.com',
+                    position: 'CFO',
+                    department: 'Finance',
+                    avatar: 'TB',
+                    phone: '0123456788',
+                    approvalLevel: 'Level 3'
+                },
+                {
+                    id: 'APP003',
+                    name: 'Lê Văn C',
+                    email: 'levanc@company.com',
+                    position: 'Manager',
+                    department: 'Finance',
+                    avatar: 'LC',
+                    phone: '0123456787',
+                    approvalLevel: 'Level 2'
+                },
+                {
+                    id: 'APP004',
+                    name: 'Phạm Thị D',
+                    email: 'phamthid@company.com',
+                    position: 'Director',
+                    department: 'Operations',
+                    avatar: 'PD',
+                    phone: '0123456786',
+                    approvalLevel: 'Level 2'
+                },
+                {
+                    id: 'APP005',
+                    name: 'Hoàng Văn E',
+                    email: 'hoangvane@company.com',
+                    position: 'Manager',
+                    department: 'IT',
+                    avatar: 'HE',
+                    phone: '0123456785',
+                    approvalLevel: 'Level 2'
+                }
+            ];
+
+            let selectedApprover = null;
+
+            // Initialize date pickers
+            flatpickr(".datepicker", {
+                dateFormat: "d/m/Y",
+                allowInput: true
+            });
+            
+            // Initialize tooltip
+            const tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+            
+            // Initialize signature pad
+            let signaturePad;
+            const signatureCanvas = document.getElementById('signaturePad');
+            
+            function initSignaturePad() {
+                if (signatureCanvas) {
+                    // Create canvas element if it doesn't exist
+                    let canvas = signatureCanvas.querySelector('canvas');
+                    if (!canvas) {
+                        canvas = document.createElement('canvas');
+                        signatureCanvas.appendChild(canvas);
+                    }
+                    
+                    // Set canvas size
+                    const rect = signatureCanvas.getBoundingClientRect();
+                    canvas.width = rect.width;
+                    canvas.height = rect.height;
+                    canvas.style.width = '100%';
+                    canvas.style.height = '100%';
+                    
+                    signaturePad = new SignaturePad(canvas, {
+                        backgroundColor: 'rgb(255, 255, 255)',
+                        penColor: 'rgb(0, 0, 128)'
+                    });
+                }
+            }
+            
+            // Initialize signature pad after a short delay to ensure DOM is ready
+            setTimeout(initSignaturePad, 100);
+            
+            // Clear signature
+            document.getElementById('clearSignatureBtn').addEventListener('click', function() {
+                if (signaturePad) {
+                    signaturePad.clear();
+                }
+            });
+            
+            // Handle window resize for signature pad
+            window.addEventListener('resize', function() {
+                if (signaturePad) {
+                    const canvas = signatureCanvas.querySelector('canvas');
+                    if (canvas) {
+                        const rect = signatureCanvas.getBoundingClientRect();
+                        canvas.width = rect.width;
+                        canvas.height = rect.height;
+                        signaturePad.clear();
+                    }
+                }
+            });
+            
+            // Add payment item
+            document.getElementById('addItemBtn').addEventListener('click', function() {
+                const tbody = document.getElementById('paymentItemsBody');
+                const rowCount = tbody.getElementsByClassName('payment-item').length;
+                const newRow = document.createElement('tr');
+                
+                newRow.className = 'payment-item';
+                newRow.dataset.id = rowCount + 1;
+                newRow.innerHTML = `
+                    <td class="item-number text-center fw-bold">${rowCount + 1}</td>
+                    <td>
+                        <input type="text" class="form-control" name="item-content[]" placeholder="Mô tả chi tiết" required>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" name="item-invoice[]" placeholder="Số hóa đơn">
+                    </td>
+                    <td>
+                        <div class="input-group">
+                            <input type="number" class="form-control item-amount" name="item-amount[]" min="0" step="1000" placeholder="0" required>
+                            <span class="input-group-text">₫</span>
+                        </div>
+                    </td>
+                    <td>
+                        <select class="form-select" name="item-payment-type[]" required>
+                            <option value="">Chọn</option>
+                            <option value="TM">Tiền mặt (TM)</option>
+                            <option value="CK">Chuyển khoản (CK)</option>
+                        </select>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" name="item-note[]" placeholder="Ghi chú">
+                    </td>
+                    <td class="text-center">
+                        <button type="button" class="btn btn-sm btn-outline-danger remove-item rounded-circle" data-bs-toggle="tooltip" title="Xóa dòng này">
+                            <i class="fas fa-times"></i>
+                        </button>
+                    </td>
+                `;
+                
+                tbody.appendChild(newRow);
+                
+                // Reinitialize tooltips for new buttons
+                const newTooltips = [].slice.call(newRow.querySelectorAll('[data-bs-toggle="tooltip"]'));
+                newTooltips.forEach(function (tooltipTriggerEl) {
+                    new bootstrap.Tooltip(tooltipTriggerEl);
+                });
+                
+                // Add event listener for the new row
+                addRowEventListeners(newRow);
+                
+                // Update total
+                calculateTotal();
+            });
+            
+            // Function to add event listeners to a row
+            function addRowEventListeners(row) {
+                // Remove item event
+                const removeBtn = row.querySelector('.remove-item');
+                removeBtn.addEventListener('click', function() {
+                    row.remove();
+                    renumberRows();
+                    calculateTotal();
+                });
+                
+                // Amount change event
+                const amountInput = row.querySelector('.item-amount');
+                amountInput.addEventListener('input', function() {
+                    calculateTotal();
+                });
+            }
+            
+            // Add event listeners to initial row
+            const initialRows = document.querySelectorAll('.payment-item');
+            initialRows.forEach(row => {
+                addRowEventListeners(row);
+            });
+            
+            // Function to renumber rows after deletion
+            function renumberRows() {
+                const rows = document.querySelectorAll('.payment-item');
+                rows.forEach((row, index) => {
+                    row.querySelector('.item-number').textContent = index + 1;
+                    row.dataset.id = index + 1;
+                });
+            }
+            
+            // Function to calculate total amount
+            function calculateTotal() {
+                const amountInputs = document.querySelectorAll('.item-amount');
+                let total = 0;
+                
+                amountInputs.forEach(input => {
+                    const amount = parseFloat(input.value) || 0;
+                    total += amount;
+                });
+                
+                document.getElementById('totalAmount').textContent = formatCurrency(total);
+                document.getElementById('amountInWords').value = numberToWordsVietnamese(total);
+                
+                // Toggle bank info section based on payment types
+                toggleBankInfoSection();
+            }
+            
+            // Function to toggle bank info section based on payment types
+            function toggleBankInfoSection() {
+                const paymentTypes = document.querySelectorAll('[name="item-payment-type[]"]');
+                let showBankInfo = false;
+                
+                paymentTypes.forEach(select => {
+                    if (select.value === 'CK') {
+                        showBankInfo = true;
+                    }
+                });
+                
+                const bankInfoSection = document.getElementById('bankInfoSection');
+                if (showBankInfo) {
+                    bankInfoSection.classList.remove('hidden-field');
+                } else {
+                    bankInfoSection.classList.add('hidden-field');
+                }
+            }
+            
+            // Event listener for payment type changes
+            document.getElementById('paymentItemsBody').addEventListener('change', function(e) {
+                if (e.target.name === 'item-payment-type[]') {
+                    toggleBankInfoSection();
+                }
+            });
+            
+            // Format currency
+            function formatCurrency(amount) {
+                return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount);
+            }
+            
+            // Convert number to Vietnamese words
+            function numberToWordsVietnamese(number) {
+                if (number === 0) return "Không đồng";
+                
+                const units = ['', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
+                const positions = ['', 'nghìn', 'triệu', 'tỷ', 'nghìn tỷ', 'triệu tỷ'];
+                
+                // Simple implementation - for a complete solution, consider a dedicated library
+                let words = '';
+                let numStr = Math.floor(number).toString();
+                
+                // Basic conversion - not handling all Vietnamese number naming rules
+                if (numStr.length <= 3) {
+                    // Simple case for numbers under 1000
+                    for (let i = 0; i < numStr.length; i++) {
+                        const digit = parseInt(numStr[i]);
+                        words += units[digit] + ' ';
+                    }
+                } else {
+                    words = numStr + ' '; // Fallback
+                }
+                
+                return words.trim() + ' đồng';
+            }
+            
+            // Form validation and modal trigger
+            const form = document.getElementById('paymentRequestForm');
+            form.addEventListener('submit', function(event) {
+                event.preventDefault(); // Always prevent default submission
+                
+                if (!form.checkValidity()) {
+                    event.stopPropagation();
+                    
+                    // Show error message
+                    document.getElementById('errorMessage').textContent = 'Vui lòng điền đầy đủ thông tin bắt buộc.';
+                    document.getElementById('errorAlert').style.display = 'block';
+                    
+                    // Hide error after 5 seconds
+                    setTimeout(function() {
+                        document.getElementById('errorAlert').style.display = 'none';
+                    }, 5000);
+                } else {
+                    // Form is valid, show approver selection modal
+                    showApproverSelectionModal();
+                }
+                
+                form.classList.add('was-validated');
+            });
+
+            // Show approver selection modal
+            function showApproverSelectionModal() {
+                try {
+                    // Reset modal state
+                    selectedApprover = null;
+                    document.getElementById('selectedApproverSection').style.display = 'none';
+                    document.getElementById('submitWithApproverBtn').disabled = true;
+                    document.getElementById('approverSearch').value = '';
+                    document.getElementById('departmentFilter').value = '';
+                    document.getElementById('positionFilter').value = '';
+                    document.getElementById('approverComments').value = '';
+                    
+                    // Load approvers list
+                    loadApprovers();
+                    
+                    // Show modal
+                    const modal = new bootstrap.Modal(document.getElementById('approverSelectionModal'));
+                    modal.show();
+                } catch (error) {
+                    console.error('Error showing modal:', error);
+                    alert('Có lỗi xảy ra khi mở modal. Vui lòng thử lại.');
+                }
+            }
+
+            // Load and display approvers
+            function loadApprovers(searchTerm = '', department = '', position = '') {
+                try {
+                    const approversList = document.getElementById('approversList');
+                    const noApproversMessage = document.getElementById('noApproversMessage');
+                    
+                    // Filter approvers
+                    let filteredApprovers = approversData.filter(approver => {
+                        const matchesSearch = !searchTerm || 
+                            approver.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            approver.email.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                            approver.department.toLowerCase().includes(searchTerm.toLowerCase());
+                        
+                        const matchesDepartment = !department || approver.department === department;
+                        const matchesPosition = !position || approver.position === position;
+                        
+                        return matchesSearch && matchesDepartment && matchesPosition;
+                    });
+
+                    // Clear current list
+                    approversList.innerHTML = '';
+
+                    if (filteredApprovers.length === 0) {
+                        noApproversMessage.style.display = 'block';
+                        return;
+                    } else {
+                        noApproversMessage.style.display = 'none';
+                    }
+
+                    // Display approvers
+                    filteredApprovers.forEach(approver => {
+                        const approverCard = createApproverCard(approver);
+                        approversList.appendChild(approverCard);
+                    });
+                } catch (error) {
+                    console.error('Error loading approvers:', error);
+                }
+            }
+
+            // Create approver card element
+            function createApproverCard(approver) {
+                const cardDiv = document.createElement('div');
+                cardDiv.className = 'approver-card border rounded p-3 mb-2';
+                cardDiv.style.cursor = 'pointer';
+                cardDiv.style.transition = 'all 0.2s';
+                
+                cardDiv.innerHTML = `
+                    <div class="d-flex align-items-center">
+                        <div class="me-3">
+                            <div class="avatar bg-primary text-white rounded-circle d-flex align-items-center justify-content-center" 
+                                 style="width: 50px; height: 50px; font-weight: bold;">
+                                ${approver.avatar}
+                            </div>
+                        </div>
+                        <div class="flex-grow-1">
+                            <h6 class="mb-1 fw-bold">${approver.name}</h6>
+                            <p class="mb-1 text-muted small">${approver.position} - ${approver.department}</p>
+                            <p class="mb-0 text-muted small">
+                                <i class="fas fa-envelope me-1"></i>${approver.email}
+                                <span class="ms-3"><i class="fas fa-phone me-1"></i>${approver.phone}</span>
+                            </p>
+                        </div>
+                        <div class="text-end">
+                            <span class="badge bg-info">${approver.approvalLevel}</span>
+                        </div>
+                    </div>
+                `;
+
+                // Add hover effects
+                cardDiv.addEventListener('mouseenter', function() {
+                    if (selectedApprover?.id !== approver.id) {
+                        this.style.backgroundColor = '#f8f9fa';
+                        this.style.borderColor = '#0d6efd';
+                    }
+                });
+
+                cardDiv.addEventListener('mouseleave', function() {
+                    if (selectedApprover?.id !== approver.id) {
+                        this.style.backgroundColor = '';
+                        this.style.borderColor = '#dee2e6';
+                    }
+                });
+
+                // Add click handler
+                cardDiv.addEventListener('click', function() {
+                    selectApprover(approver, cardDiv);
+                });
+
+                return cardDiv;
+            }
+
+            // Cancel button
+            document.getElementById('cancelBtn').addEventListener('click', function() {
+                if (confirm('Bạn có chắc chắn muốn hủy bỏ form này không?')) {
+                    window.location.href = 'request_list.html';
+                }
+            });
+              // Print button
+            document.getElementById('printBtn').addEventListener('click', function() {
+                // Update print layout with form data
+                updatePrintLayout();
+                
+                // Hide the action buttons temporarily for cleaner print
+                const actionCard = document.querySelector('.card.shadow-sm.mb-4.border-0');
+                const originalDisplay = actionCard.style.display;
+                actionCard.style.display = 'none';
+                
+                // Hide alerts for print
+                const successAlert = document.getElementById('successAlert');
+                const errorAlert = document.getElementById('errorAlert');
+                const successOriginalDisplay = successAlert.style.display;
+                const errorOriginalDisplay = errorAlert.style.display;
+                successAlert.style.display = 'none';
+                errorAlert.style.display = 'none';
+                
+                // Trigger print
+                window.print();
+                
+                // Restore elements after print
+                setTimeout(function() {
+                    actionCard.style.display = originalDisplay;
+                    successAlert.style.display = successOriginalDisplay;
+                    errorAlert.style.display = errorOriginalDisplay;
+                }, 100);
+            });
+
+            // Function to update print layout with form data
+            function updatePrintLayout() {
+                // Update date
+                const today = new Date();
+                document.getElementById('printDay').textContent = today.getDate().toString().padStart(2, '0');
+                document.getElementById('printMonth').textContent = (today.getMonth() + 1).toString().padStart(2, '0');
+                document.getElementById('printYear').textContent = today.getFullYear();
+
+                // Update basic info
+                document.getElementById('printRequesterName').textContent = document.getElementById('requesterName').value || '';
+                document.getElementById('printAccountingNumber').textContent = document.getElementById('accountingNumber').value || '';
+                
+                const departmentSelect = document.getElementById('department');
+                document.getElementById('printDepartment').textContent = departmentSelect.value ? 
+                    departmentSelect.options[departmentSelect.selectedIndex].text : '';
+                
+                document.getElementById('printUnit').textContent = document.getElementById('unit').value || '';
+                document.getElementById('printPaymentContent').textContent = document.getElementById('paymentContent').value || '';
+                document.getElementById('printPaymentDeadline').textContent = document.getElementById('paymentDeadline').value || '';
+
+                // Update table data
+                const printTableBody = document.getElementById('printTableBody');
+                printTableBody.innerHTML = '';
+                
+                const paymentItems = document.querySelectorAll('.payment-item');
+                let totalAmount = 0;
+                let rowsAdded = 0;
+
+                paymentItems.forEach((row, index) => {
+                    const content = row.querySelector('[name="item-content[]"]').value;
+                    const invoice = row.querySelector('[name="item-invoice[]"]').value;
+                    const amount = parseFloat(row.querySelector('[name="item-amount[]"]').value) || 0;
+                    const paymentTypeSelect = row.querySelector('[name="item-payment-type[]"]');
+                    const paymentType = paymentTypeSelect.value ? 
+                        paymentTypeSelect.options[paymentTypeSelect.selectedIndex].text : '';
+                    const note = row.querySelector('[name="item-note[]"]').value;
+
+                    totalAmount += amount;
+
+                    const printRow = document.createElement('tr');
+                    printRow.innerHTML = `
+                        <td>${index + 1}</td>
+                        <td class="content-cell" style="text-align: left;">${content}</td>
+                        <td class="content-cell">${invoice}</td>
+                        <td class="content-cell" style="text-align: right;">${amount ? amount.toLocaleString('vi-VN') + ' ₫' : ''}</td>
+                        <td class="content-cell">${paymentType}</td>
+                        <td class="content-cell">${note}</td>
+                    `;
+                    printTableBody.appendChild(printRow);
+                    rowsAdded++;
+                });
+
+                // Add empty rows to ensure at least 2 rows
+                while (rowsAdded < 2) {
+                    const emptyRow = document.createElement('tr');
+                    emptyRow.innerHTML = `
+                        <td>${rowsAdded + 1}</td>
+                        <td class="content-cell"></td>
+                        <td class="content-cell"></td>
+                        <td class="content-cell"></td>
+                        <td class="content-cell"></td>
+                        <td class="content-cell"></td>
+                    `;
+                    printTableBody.appendChild(emptyRow);
+                    rowsAdded++;
+                }
+
+                // Update total amount
+                document.getElementById('printTotalAmount').textContent = totalAmount ? 
+                    totalAmount.toLocaleString('vi-VN') + ' ₫' : '0 ₫';
+                
+                // Update amount in words
+                const amountInWords = document.getElementById('amountInWords').value;
+                document.getElementById('printAmountWords').textContent = amountInWords || '…..................';
+
+                // Update bank info
+                document.getElementById('printAccountNumber').textContent = document.getElementById('accountNumber').value || '...................................';
+                document.getElementById('printAccountHolder').textContent = document.getElementById('accountHolder').value || '...................................';
+                document.getElementById('printBankName').textContent = document.getElementById('bankName').value || '...................................';
+            }
+        });
+        
+        // Dropdown functionality for sidebar navigation
+        document.addEventListener('DOMContentLoaded', function() {
+            // Handle dropdown toggles
+            const dropdownToggles = document.querySelectorAll('.sidebar .dropdown-toggle');
+            
+            dropdownToggles.forEach(function(toggle) {
+                toggle.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    const submenu = this.nextElementSibling;
+                    const isOpen = submenu.style.display === 'block';
+                    
+                    // Close all other submenus
+                    document.querySelectorAll('.sidebar .dropdown-submenu').forEach(function(menu) {
+                        menu.style.display = 'none';
+                    });
+                    
+                    // Toggle current submenu
+                    if (!isOpen) {
+                        submenu.style.display = 'block';
+                    }
+                });
+            });
+            
+            // Close submenus when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.sidebar')) {
+                    document.querySelectorAll('.sidebar .dropdown-submenu').forEach(function(menu) {
+                        menu.style.display = 'none';
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

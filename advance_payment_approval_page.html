@@ -1,0 +1,1366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advance Payment Request Approval - LTS Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./company_layout.css">
+    <style>
+        /* Header styles */
+        .header-container {
+            background-color: #198754;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .form-container, .content-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        /* Table and status styles */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-approved {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #842029;
+        }
+        
+        .view-details-link {
+            color: #0d6efd;
+            cursor: pointer;
+            text-decoration: underline;
+        }
+        .view-details-link:hover {
+            color: #0a58ca;
+        }
+        
+        .btn-action {
+            margin: 0 2px;
+        }
+        
+        .hidden {
+            display: none !important;
+        }
+        
+        /* Detail view styles */
+        .detail-header {
+            border-bottom: 1px solid #dee2e6;
+            padding-bottom: 15px;
+            margin-bottom: 20px;
+        }
+        
+        .detail-section {
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+        
+        .detail-section:last-child {
+            border-bottom: none;
+        }
+        
+        .business-trip-section {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .expense-item {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            background-color: #f8f9fa;
+        }
+        
+        .document-item {
+            display: inline-block;
+            text-align: center;
+            margin: 10px;
+            padding: 10px;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .document-item:hover {
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            transform: translateY(-2px);
+        }
+        
+        .document-preview {
+            max-width: 100px;
+            max-height: 100px;
+            border-radius: 4px;
+        }
+        
+        .document-name {
+            margin-top: 8px;
+            font-size: 0.85rem;
+            color: #6c757d;
+        }
+        
+        .back-to-list {
+            margin-bottom: 20px;
+        }
+        
+        .approval-history {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="brand">
+            <i class="fas fa-cube me-2"></i> LTS MANAGER
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="icon-button me-2">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="icon-button me-3">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div class="user-avatar">
+                TD
+            </div>
+            <span id="currentUser" class="ms-2" style="display: none;">TD (BOD Member)</span>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <ul class="nav flex-column">            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-calendar-alt"></i> Quản lý ngày nghỉ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-users"></i> Quản lý QT
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tasks"></i> Quản lý dự án
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-clock"></i> Chấm công
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-chart-line"></i> Đánh giá định kỳ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-graduation-cap"></i> Quản lý kỹ năng
+                </a>
+            </li>
+            <!-- Procurement Section -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="procurementDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-shopping-cart"></i> Procurement
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="procurementDropdown">
+                    <li><a class="dropdown-item" href="index.html">
+                        <i class="fas fa-file-alt"></i> Request List
+                    </a></li>
+                    <li><a class="dropdown-item" href="purchase_list.html">
+                        <i class="fas fa-shopping-bag"></i> Purchase List
+                    </a></li>
+                    <li><a class="dropdown-item" href="supplier_select.html">
+                        <i class="fas fa-users"></i> Suppliers Select</a></li>
+                    <li><a class="dropdown-item" href="it_review_list.html">
+                        <i class="fas fa-laptop"></i> IT Review Queue</a></li>
+                    <li><a class="dropdown-item" href="dl_payment_confirmation_list.html">
+                        <i class="fas fa-truck"></i> DL Confirm Payment</a></li>
+                    <li><a class="dropdown-item" href="accountant_document_review.html">
+                        <i class="fas fa-list"></i> Document Review</a></li>
+                    <li><a class="dropdown-item" href="advance_payment_approval_page.html">
+                        <i class="fas fa-receipt"></i> Advance Payment Approval</a></li>                    <li><a class="dropdown-item" href="accountant_reimbursement_approval.html">
+                        <i class="fas fa-calculator"></i> Reimbursement Processing</a></li>
+                    <li><a class="dropdown-item" href="supplier_management.html">
+                        <i class="fas fa-building"></i> Supplier Management</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-container">
+            <h1>Advance Payment Request Approval</h1>
+            <p class="mb-0">Manage your Reimbursement Request Approval efficiently</p>
+        </div>
+
+        <!-- Access Control Check -->
+        <div id="roleAccessError" class="alert alert-danger hidden">
+            <h4 class="alert-heading"><i class="fas fa-exclamation-triangle me-2"></i>Access Denied</h4>
+            <p>You do not have permission to access the reimbursement approval system. This feature is restricted to BOD Members and DL Members only.</p>
+        </div>
+
+        <!-- Main Approval Content -->
+        <div id="approvalContent">
+            <!-- Requests List View -->
+            <div id="requestsListView">
+                <!-- Search and Filter Section -->
+                <div class="content-container">
+                    <div class="row mb-3">
+                        <div class="col-md-3">
+                            <label for="searchInput" class="form-label">Search</label>
+                            <input type="text" class="form-control" id="searchInput" placeholder="Search by employee name, title...">
+                        </div>
+                        <div class="col-md-3">
+                            <label for="departmentFilter" class="form-label">Department</label>
+                            <select class="form-select" id="departmentFilter">
+                                <option value="">All Departments</option>
+                                <option value="IT">IT</option>
+                                <option value="Marketing">Marketing</option>
+                                <option value="Sales">Sales</option>
+                                <option value="HR">HR</option>
+                                <option value="Finance">Finance</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="typeFilter" class="form-label">Request Type</label>
+                            <select class="form-select" id="typeFilter">
+                                <option value="">All Types</option>
+                                <option value="General Expense">General Expense</option>
+                                <option value="Business Trip">Business Trip</option>
+                            </select>
+                        </div>
+                        <div class="col-md-3">
+                            <label for="statusFilter" class="form-label">Status</label>
+                            <select class="form-select" id="statusFilter">
+                                <option value="">All Status</option>
+                                <option value="Pending" selected>Pending</option>
+                                <option value="Approved">Approved</option>
+                                <option value="Rejected">Rejected</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="content-container">
+                    <div class="table-responsive">
+                        <table class="table table-hover requests-table">
+                            <thead>
+                                <tr>
+                                    <th>Request ID</th>
+                                    <th>Employee Name</th>
+                                    <th>Department</th>
+                                    <th>Request Title</th>
+                                    <th>Request Type</th>
+                                    <th>Total Amount</th>
+                                    <th>Date Requested</th>
+                                    <th>Status</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="requestsTableBody">
+                                <!-- Requests will be loaded dynamically -->
+                            </tbody>
+                        </table>
+                    </div>
+                    <div id="noRequestsMessage" class="alert alert-info hidden">
+                        No pending reimbursement requests found.
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Request Details View (Initially Hidden) -->
+        <div id="requestDetailsView" class="hidden">
+            <div class="back-to-list">
+                <button class="btn btn-outline-secondary" id="backToListBtn">
+                    <i class="fas fa-arrow-left me-2"></i>Back to List
+                </button>
+            </div>
+            
+            <div class="content-container">
+                <div class="detail-header">
+                    <div class="row">
+                        <div class="col-md-9">
+                            <h3 id="detailRequestTitle">Loading request details...</h3>
+                            <p class="mb-0">
+                                <span class="me-3"><strong>Request ID:</strong> <span id="detailRequestId"></span></span>
+                                <span class="me-3"><strong>Employee:</strong> <span id="detailEmployeeName"></span></span>
+                                <span class="me-3"><strong>Department:</strong> <span id="detailDepartment"></span></span>
+                            </p>
+                        </div>
+                        <div class="col-md-3 text-end">
+                            <span id="detailStatus" class="status-badge status-pending">Pending</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="row detail-section">
+                    <div class="col-md-4">
+                        <p><strong>Date Requested:</strong> <span id="detailDateRequested"></span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Request Type:</strong> <span id="detailRequestType"></span></p>
+                    </div>
+                    <div class="col-md-4">
+                        <p><strong>Total Amount:</strong> $<span id="detailTotalAmount"></span></p>
+                    </div>
+                </div>
+                
+                <!-- Business Trip Section (conditionally displayed) -->
+                <div id="detailBusinessTripSection" class="business-trip-section hidden">
+                    <h4>Business Trip Information</h4>
+                    <div class="row">
+                        <div class="col-md-12">
+                            <p><strong>Trip Purpose:</strong> <span id="detailTripPurpose"></span></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <p><strong>Departure Date:</strong> <span id="detailDepartureDate"></span></p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Return Date:</strong> <span id="detailReturnDate"></span></p>
+                        </div>
+                        <div class="col-md-4">
+                            <p><strong>Destination:</strong> <span id="detailDestination"></span></p>
+                        </div>
+                    </div>
+                    <div class="row">
+                        <div class="col-md-3">
+                            <p><strong>Airfare:</strong> $<span id="detailAirfare">0.00</span></p>
+                        </div>
+                        <div class="col-md-3">
+                            <p><strong>Hotel:</strong> $<span id="detailHotel">0.00</span></p>
+                        </div>
+                        <div class="col-md-3">
+                            <p><strong>Visa Expenses:</strong> $<span id="detailVisaExpenses">0.00</span></p>
+                        </div>
+                        <div class="col-md-3">
+                            <p><strong>Other Travel Expenses:</strong> $<span id="detailOtherTravelExpenses">0.00</span></p>
+                        </div>
+                    </div>
+                    
+                    <div class="row mt-3">
+                        <div class="col-md-12">
+                            <h5>Travel Documents</h5>
+                            <div id="detailTravelDocuments" class="mt-2">
+                                <!-- Travel documents will be added here dynamically -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Expense Items Section -->
+                <div class="detail-section">
+                    <h4>Expense Items</h4>
+                    <div id="detailExpenseItemsContainer">
+                        <!-- Expense items will be loaded dynamically -->
+                    </div>
+                </div>
+                
+                <!-- Justification Section -->
+                <div class="detail-section">
+                    <h4>Justification</h4>
+                    <p id="detailJustification"></p>
+                </div>
+                
+                <!-- Approval History Section -->
+                <div class="detail-section">
+                    <h4>Approval History</h4>
+                    <div class="approval-history">
+                        <table class="table table-sm">
+                            <thead>
+                                <tr>
+                                    <th>Date</th>
+                                    <th>User</th>
+                                    <th>Action</th>
+                                    <th>Comments</th>
+                                </tr>
+                            </thead>
+                            <tbody id="approvalHistoryTable">
+                                <tr>
+                                    <td colspan="4" class="text-center">No approval history yet</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                
+                <!-- Approval Action Section (only for pending requests) -->
+                <div id="approvalActionSection" class="detail-section">
+                    <div class="card">
+                        <div class="card-header bg-light">
+                            <h4 class="mb-0">Approval Decision</h4>
+                        </div>
+                        <div class="card-body">
+                            <form id="approvalForm">
+                                <input type="hidden" id="approvalRequestId">
+                                <div class="row mb-3">
+                                    <div class="col-md-12">
+                                        <label for="approvalComments" class="form-label">Comments</label>
+                                        <textarea class="form-control" id="approvalComments" rows="3"></textarea>
+                                        <div class="invalid-feedback">Comments are required when rejecting a request</div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="col-md-12 d-flex justify-content-end">
+                                        <button type="button" id="rejectBtn" class="btn btn-danger me-2">
+                                            <i class="fas fa-times me-2"></i>Reject
+                                        </button>
+                                        <button type="button" id="approveBtn" class="btn btn-success" onclick="location.href='advance_payment_settlement_form.html'">
+                                            <i class="fas fa-check me-2"></i>Approve & Settlement
+                                        </button>
+                                    </div>
+                                </div>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Success Alert (initially hidden) -->
+        <div id="successAlert" class="alert alert-success alert-dismissible fade show hidden" role="alert">
+            <h4 class="alert-heading" id="successTitle">Success!</h4>
+            <p id="successMessage"></p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <!-- Error Alert (initially hidden) -->
+        <div id="errorAlert" class="alert alert-danger alert-dismissible fade show hidden" role="alert">
+            <h4 class="alert-heading">Error!</h4>
+            <p id="errorMessage"></p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+    
+    <!-- Document Preview Modal -->
+    <div class="modal fade" id="documentPreviewModal" tabindex="-1" aria-labelledby="documentPreviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="documentPreviewModalLabel">Document Preview</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body text-center">
+                    <img id="documentPreviewImage" src="" alt="Document Preview" style="max-width: 100%;">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary" id="documentDownloadBtn">
+                        <i class="fas fa-download me-2"></i>Download
+                    </button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Role-based access control
+            checkUserRole();
+            
+            // Load mock data for the requests list
+            loadRequestsList();
+            
+            // Set up event listeners
+            document.getElementById('backToListBtn').addEventListener('click', function() {
+                document.getElementById('requestDetailsView').classList.add('hidden');
+                document.getElementById('requestsListView').classList.remove('hidden');
+            });
+            
+            document.getElementById('approveBtn').addEventListener('click', function() {
+                approveRequest();
+            });
+            
+            document.getElementById('rejectBtn').addEventListener('click', function() {
+                rejectRequest();
+            });
+            
+            // Add event listeners for search and filters
+            document.getElementById('searchInput').addEventListener('keyup', filterRequests);
+            document.getElementById('departmentFilter').addEventListener('change', filterRequests);
+            document.getElementById('typeFilter').addEventListener('change', filterRequests);
+            document.getElementById('statusFilter').addEventListener('change', filterRequests);
+            
+            // Initialize Bootstrap components
+            const documentPreviewModal = new bootstrap.Modal(document.getElementById('documentPreviewModal'));
+        });
+        
+        // Check if user has appropriate role
+        function checkUserRole() {
+            // In a real application, this would check the user's role from the authentication system
+            const userRole = getUserRole(); // This is a mock function
+            
+            if (!isAuthorizedRole(userRole)) {
+                document.getElementById('approvalContent').classList.add('hidden');
+                document.getElementById('roleAccessError').classList.remove('hidden');
+            }
+        }
+        
+        // Check if the role is authorized
+        function isAuthorizedRole(role) {
+            const authorizedRoles = ['BOD Member', 'DL Member'];
+            return authorizedRoles.includes(role);
+        }
+        
+        // Mock function to get user role
+        function getUserRole() {
+            // For demo purposes, let's assume the user is a BOD Member
+            return 'BOD Member';
+            
+            // Uncomment below to test access denied
+            // return 'Regular Employee';
+        }
+        
+        // Format date as YYYY-MM-DD
+        function formatDate(dateString) {
+            const date = new Date(dateString);
+            return date.toISOString().split('T')[0];
+        }
+        
+        // Load requests list with mock data
+        function loadRequestsList() {
+            const tableBody = document.getElementById('requestsTableBody');
+            tableBody.innerHTML = '';
+            
+            // Mock data for testing
+            const requests = [
+                {
+                    id: 'REIMB-123456',
+                    employeeName: 'John Doe',
+                    department: 'IT',
+                    title: 'Office Supplies Reimbursement',
+                    requestType: 'General Expense',
+                    amount: 245.75,
+                    dateRequested: '2025-05-20',
+                    status: 'Pending'
+                },
+                {
+                    id: 'REIMB-123457',
+                    employeeName: 'Jane Smith',
+                    department: 'Marketing',
+                    title: 'Client Meeting Expenses',
+                    requestType: 'General Expense',
+                    amount: 350.00,
+                    dateRequested: '2025-05-19',
+                    status: 'Pending'
+                },
+                {
+                    id: 'REIMB-123458',
+                    employeeName: 'Michael Brown',
+                    department: 'Sales',
+                    title: 'Conference in New York',
+                    requestType: 'Business Trip',
+                    amount: 1845.50,
+                    dateRequested: '2025-05-18',
+                    status: 'Pending'
+                },
+                {
+                    id: 'REIMB-123459',
+                    employeeName: 'Emily Johnson',
+                    department: 'HR',
+                    title: 'Training Materials',
+                    requestType: 'General Expense',
+                    amount: 125.99,
+                    dateRequested: '2025-05-17',
+                    status: 'Approved'
+                },
+                {
+                    id: 'REIMB-123460',
+                    employeeName: 'David Wilson',
+                    department: 'Finance',
+                    title: 'Tokyo Client Visit',
+                    requestType: 'Business Trip',
+                    amount: 3250.75,
+                    dateRequested: '2025-05-15',
+                    status: 'Rejected'
+                }
+            ];
+            
+            // Filter for pending requests by default
+            const statusFilter = document.getElementById('statusFilter').value;
+            const filteredRequests = statusFilter ? 
+                requests.filter(request => request.status.toLowerCase() === statusFilter.toLowerCase()) : 
+                requests;
+            
+            if (filteredRequests.length === 0) {
+                document.getElementById('noRequestsMessage').classList.remove('hidden');
+            } else {
+                document.getElementById('noRequestsMessage').classList.add('hidden');
+                
+                filteredRequests.forEach(request => {
+                    const row = document.createElement('tr');
+                    
+                    const statusClass = 
+                        request.status === 'Pending' ? 'status-pending' :
+                        request.status === 'Approved' ? 'status-approved' : 'status-rejected';
+                    
+                    row.innerHTML = `
+                        <td>${request.id}</td>
+                        <td>${request.employeeName}</td>
+                        <td>${request.department}</td>
+                        <td class="view-details-link" data-id="${request.id}">${request.title}</td>
+                        <td>${request.requestType}</td>
+                        <td>$${request.amount.toFixed(2)}</td>
+                        <td>${request.dateRequested}</td>
+                        <td><span class="status-badge ${statusClass}">${request.status}</span></td>
+                        <td>
+                            <button class="btn btn-sm btn-primary btn-action view-details" data-id="${request.id}">
+                                <i class="fas fa-eye"></i> View
+                            </button>
+                        </td>
+                    `;
+                    
+                    tableBody.appendChild(row);
+                });
+                
+                // Add event listeners to view details links/buttons
+                document.querySelectorAll('.view-details, .view-details-link').forEach(element => {
+                    element.addEventListener('click', function() {
+                        const requestId = this.getAttribute('data-id');
+                        showRequestDetails(requestId);
+                    });
+                });
+            }
+        }
+        
+        // Filter requests based on search and filter inputs
+        function filterRequests() {
+            const searchInput = document.getElementById('searchInput').value.toLowerCase();
+            const departmentFilter = document.getElementById('departmentFilter').value;
+            const typeFilter = document.getElementById('typeFilter').value;
+            const statusFilter = document.getElementById('statusFilter').value;
+            
+            const rows = document.getElementById('requestsTableBody').querySelectorAll('tr');
+            
+            rows.forEach(row => {
+                const employeeName = row.cells[1].textContent.toLowerCase();
+                const department = row.cells[2].textContent;
+                const title = row.cells[3].textContent.toLowerCase();
+                const requestType = row.cells[4].textContent;
+                const status = row.cells[7].querySelector('.status-badge').textContent;
+                
+                const matchesSearch = employeeName.includes(searchInput) || 
+                                     title.includes(searchInput) || 
+                                     department.toLowerCase().includes(searchInput);
+                                     
+                const matchesDepartment = !departmentFilter || department === departmentFilter;
+                const matchesType = !typeFilter || requestType === typeFilter;
+                const matchesStatus = !statusFilter || status === statusFilter;
+                
+                if (matchesSearch && matchesDepartment && matchesType && matchesStatus) {
+                    row.style.display = '';
+                } else {
+                    row.style.display = 'none';
+                }
+            });
+            
+            // Check if any visible rows remain
+            let visibleRows = false;
+            rows.forEach(row => {
+                if (row.style.display !== 'none') {
+                    visibleRows = true;
+                }
+            });
+            
+            if (visibleRows) {
+                document.getElementById('noRequestsMessage').classList.add('hidden');
+            } else {
+                document.getElementById('noRequestsMessage').classList.remove('hidden');
+            }
+        }
+        
+        // Show request details
+        function showRequestDetails(requestId) {
+            document.getElementById('approvalRequestId').value = requestId;
+            
+            // In a real application, you would fetch the details from the server
+            // For demo purposes, we're using mock data
+            const requestDetails = getMockRequestDetails(requestId);
+            
+            populateRequestDetails(requestDetails);
+            
+            document.getElementById('requestsListView').classList.add('hidden');
+            document.getElementById('requestDetailsView').classList.remove('hidden');
+            
+            // Show/hide approval action section based on status
+            if (requestDetails.status === 'Pending') {
+                document.getElementById('approvalActionSection').classList.remove('hidden');
+            } else {
+                document.getElementById('approvalActionSection').classList.add('hidden');
+            }
+            
+            // Scroll to top
+            window.scrollTo(0, 0);
+        }
+        
+        // Get mock request details
+        function getMockRequestDetails(requestId) {
+            // In a real application, this would be fetched from the server
+            
+            // Mock a business trip reimbursement
+            if (requestId === 'REIMB-123458') {
+                return {
+                    id: 'REIMB-123458',
+                    title: 'Conference in New York',
+                    employeeName: 'Michael Brown',
+                    department: 'Sales',
+                    dateRequested: '2025-05-18',
+                    requestType: 'Business Trip',
+                    totalAmount: 1845.50,
+                    justification: 'Annual sales conference attendance for networking and learning about new industry trends.',
+                    status: 'Pending',
+                    
+                    // Business trip specific fields
+                    tripPurpose: 'Attending Annual Sales Tech Conference in New York',
+                    departureDate: '2025-06-10',
+                    returnDate: '2025-06-14',
+                    destination: 'New York, NY',
+                    airfare: 450.00,
+                    hotel: 1200.00,
+                    visaExpenses: 0.00,
+                    otherTravelExpenses: 75.00,
+                    
+                    // Documents and receipts
+                    travelDocuments: [
+                        { name: 'Flight_Itinerary.pdf', type: 'application/pdf', url: '#' },
+                        { name: 'Hotel_Confirmation.pdf', type: 'application/pdf', url: '#' },
+                        { name: 'Conference_Registration.pdf', type: 'application/pdf', url: '#' }
+                    ],
+                    
+                    // Expense items
+                    expenseItems: [
+                        {
+                            id: 1,
+                            category: 'Meals',
+                            date: '2025-06-11',
+                            description: 'Lunch with potential clients',
+                            amount: 45.50,
+                            currency: 'USD',
+                            paymentMethod: 'Credit Card',
+                            receipt: { name: 'Lunch_Receipt.jpg', type: 'image/jpeg', url: '#' }
+                        },
+                        {
+                            id: 2,
+                            category: 'Transportation',
+                            date: '2025-06-12',
+                            description: 'Taxi fares around NYC',
+                            amount: 75.00,
+                            currency: 'USD',
+                            paymentMethod: 'Cash',
+                            receipt: { name: 'Taxi_Receipts.jpg', type: 'image/jpeg', url: '#' }
+                        }
+                    ],
+                    
+                    // Approval history
+                    approvalHistory: []
+                };
+            } 
+            // Mock a general expense reimbursement
+            else if (requestId === 'REIMB-123456') {
+                return {
+                    id: 'REIMB-123456',
+                    title: 'Office Supplies Reimbursement',
+                    employeeName: 'John Doe',
+                    department: 'IT',
+                    dateRequested: '2025-05-20',
+                    requestType: 'General Expense',
+                    totalAmount: 245.75,
+                    justification: 'Purchased items needed urgently for the new project setup.',
+                    status: 'Pending',
+                    
+                    // Expense items
+                    expenseItems: [
+                        {
+                            id: 1,
+                            category: 'Office Supplies',
+                            date: '2025-05-15',
+                            description: 'Monitors and cables for new developers',
+                            amount: 199.99,
+                            currency: 'USD',
+                            paymentMethod: 'Personal Credit Card',
+                            receipt: { name: 'Monitor_Receipt.pdf', type: 'application/pdf', url: '#' }
+                        },
+                        {
+                            id: 2,
+                            category: 'Office Supplies',
+                            date: '2025-05-16',
+                            description: 'Keyboard and mouse',
+                            amount: 45.76,
+                            currency: 'USD',
+                            paymentMethod: 'Personal Credit Card',
+                            receipt: { name: 'Keyboard_Receipt.jpg', type: 'image/jpeg', url: '#' }
+                        }
+                    ],
+                    
+                    // Approval history
+                    approvalHistory: []
+                };
+            }
+            // Mock a rejected business trip reimbursement
+            else if (requestId === 'REIMB-123460') {
+                return {
+                    id: 'REIMB-123460',
+                    title: 'Tokyo Client Visit',
+                    employeeName: 'David Wilson',
+                    department: 'Finance',
+                    dateRequested: '2025-05-15',
+                    requestType: 'Business Trip',
+                    totalAmount: 3250.75,
+                    justification: 'Meeting with prospective clients in Tokyo.',
+                    status: 'Rejected',
+                    
+                    // Business trip specific fields
+                    tripPurpose: 'Client meetings in Tokyo',
+                    departureDate: '2025-05-25',
+                    returnDate: '2025-05-30',
+                    destination: 'Tokyo, Japan',
+                    airfare: 1750.00,
+                    hotel: 1000.00,
+                    visaExpenses: 200.00,
+                    otherTravelExpenses: 100.00,
+                    
+                    // Documents and receipts
+                    travelDocuments: [
+                        { name: 'Flight_Booking.pdf', type: 'application/pdf', url: '#' },
+                        { name: 'Hotel_Reservation.pdf', type: 'application/pdf', url: '#' }
+                    ],
+                    
+                    // Expense items
+                    expenseItems: [
+                        {
+                            id: 1,
+                            category: 'Meals',
+                            date: '2025-05-26',
+                            description: 'Dinner with clients',
+                            amount: 150.75,
+                            currency: 'USD',
+                            paymentMethod: 'Credit Card',
+                            receipt: { name: 'Dinner_Receipt.jpg', type: 'image/jpeg', url: '#' }
+                        },
+                        {
+                            id: 2,
+                            category: 'Transportation',
+                            date: '2025-05-27',
+                            description: 'Taxi fares in Tokyo',
+                            amount: 50.00,
+                            currency: 'USD',
+                            paymentMethod: 'Cash',
+                            receipt: { name: 'Taxi_Receipt.jpg', type: 'image/jpeg', url: '#' }
+                        }
+                    ],
+                    
+                    // Approval history
+                    approvalHistory: [
+                        {
+                            date: '2025-05-16',
+                            user: 'Sarah Johnson (DL Member)',
+                            action: 'Rejected',
+                            comments: 'Business case for in-person meeting not strong enough. Please arrange virtual meetings instead due to budget constraints.'
+                        }
+                    ]
+                };
+            } 
+            // Mock an approved general expense reimbursement
+            else if (requestId === 'REIMB-123459') {
+                return {
+                    id: 'REIMB-123459',
+                    title: 'Training Materials',
+                    employeeName: 'Emily Johnson',
+                    department: 'HR',
+                    dateRequested: '2025-05-17',
+                    requestType: 'General Expense',
+                    totalAmount: 125.99,
+                    justification: 'Materials needed for new employee orientation.',
+                    status: 'Approved',
+                    
+                    // Expense items
+                    expenseItems: [
+                        {
+                            id: 1,
+                            category: 'Training',
+                            date: '2025-05-15',
+                            description: 'Employee handbooks printing',
+                            amount: 75.99,
+                            currency: 'USD',
+                            paymentMethod: 'Personal Debit Card',
+                            receipt: { name: 'Printing_Receipt.pdf', type: 'application/pdf', url: '#' }
+                        },
+                        {
+                            id: 2,
+                            category: 'Office Supplies',
+                            date: '2025-05-16',
+                            description: 'Name tags and folders',
+                            amount: 50.00,
+                            currency: 'USD',
+                            paymentMethod: 'Cash',
+                            receipt: { name: 'Office_Supplies.jpg', type: 'image/jpeg', url: '#' }
+                        }
+                    ],
+                    
+                    // Approval history
+                    approvalHistory: [
+                        {
+                            date: '2025-05-18',
+                            user: 'Robert Miller (BOD Member)',
+                            action: 'Approved',
+                            comments: 'Approved. Essential materials for new employee onboarding.'
+                        }
+                    ]
+                };
+            }
+            // Default / other request
+            else {
+                return {
+                    id: 'REIMB-123457',
+                    title: 'Client Meeting Expenses',
+                    employeeName: 'Jane Smith',
+                    department: 'Marketing',
+                    dateRequested: '2025-05-19',
+                    requestType: 'General Expense',
+                    totalAmount: 350.00,
+                    justification: 'Expenses from meeting with potential major client.',
+                    status: 'Pending',
+                    
+                    // Expense items
+                    expenseItems: [
+                        {
+                            id: 1,
+                            category: 'Meals',
+                            date: '2025-05-18',
+                            description: 'Business lunch with ABC Corp representatives',
+                            amount: 250.00,
+                            currency: 'USD',
+                            paymentMethod: 'Credit Card',
+                            receipt: { name: 'Restaurant_Bill.pdf', type: 'application/pdf', url: '#' }
+                        },
+                        {
+                            id: 2,
+                            category: 'Transportation',
+                            date: '2025-05-18',
+                            description: 'Parking fee at client office',
+                            amount: 30.00,
+                            currency: 'USD',
+                            paymentMethod: 'Cash',
+                            receipt: { name: 'Parking_Receipt.jpg', type: 'image/jpeg', url: '#' }
+                        },
+                        {
+                            id: 3,
+                            category: 'Entertainment',
+                            date: '2025-05-18',
+                            description: 'Client outing after meeting',
+                            amount: 70.00,
+                            currency: 'USD',
+                            paymentMethod: 'Credit Card',
+                            receipt: { name: 'Entertainment_Receipt.jpg', type: 'image/jpeg', url: '#' }
+                        }
+                    ],
+                    
+                    // Approval history
+                    approvalHistory: []
+                };
+            }
+        }
+        
+        // Populate request details
+        function populateRequestDetails(details) {
+            // Basic information
+            document.getElementById('detailRequestTitle').textContent = details.title;
+            document.getElementById('detailRequestId').textContent = details.id;
+            document.getElementById('detailEmployeeName').textContent = details.employeeName;
+            document.getElementById('detailDepartment').textContent = details.department;
+            document.getElementById('detailDateRequested').textContent = details.dateRequested;
+            document.getElementById('detailRequestType').textContent = details.requestType;
+            document.getElementById('detailTotalAmount').textContent = details.totalAmount.toFixed(2);
+            document.getElementById('detailJustification').textContent = details.justification || 'No justification provided.';
+            
+            // Status
+            const statusBadge = document.getElementById('detailStatus');
+            statusBadge.textContent = details.status;
+            statusBadge.className = 'status-badge';
+            
+            if (details.status === 'Pending') {
+                statusBadge.classList.add('status-pending');
+            } else if (details.status === 'Approved') {
+                statusBadge.classList.add('status-approved');
+            } else {
+                statusBadge.classList.add('status-rejected');
+            }
+            
+            // Business Trip Information
+            const businessTripSection = document.getElementById('detailBusinessTripSection');
+            
+            if (details.requestType === 'Business Trip') {
+                businessTripSection.classList.remove('hidden');
+                
+                document.getElementById('detailTripPurpose').textContent = details.tripPurpose;
+                document.getElementById('detailDepartureDate').textContent = details.departureDate;
+                document.getElementById('detailReturnDate').textContent = details.returnDate;
+                document.getElementById('detailDestination').textContent = details.destination;
+                document.getElementById('detailAirfare').textContent = details.airfare.toFixed(2);
+                document.getElementById('detailHotel').textContent = details.hotel.toFixed(2);
+                document.getElementById('detailVisaExpenses').textContent = details.visaExpenses.toFixed(2);
+                document.getElementById('detailOtherTravelExpenses').textContent = details.otherTravelExpenses.toFixed(2);
+                
+                // Travel Documents
+                const travelDocsContainer = document.getElementById('detailTravelDocuments');
+                travelDocsContainer.innerHTML = '';
+                
+                if (details.travelDocuments && details.travelDocuments.length > 0) {
+                    details.travelDocuments.forEach(doc => {
+                        const docElement = createDocumentElement(doc);
+                        travelDocsContainer.appendChild(docElement);
+                    });
+                } else {
+                    travelDocsContainer.innerHTML = '<p>No travel documents attached.</p>';
+                }
+            } else {
+                businessTripSection.classList.add('hidden');
+            }
+            
+            // Expense Items
+            const expenseItemsContainer = document.getElementById('detailExpenseItemsContainer');
+            expenseItemsContainer.innerHTML = '';
+            
+            if (details.expenseItems && details.expenseItems.length > 0) {
+                details.expenseItems.forEach((item, index) => {
+                    const expenseElement = document.createElement('div');
+                    expenseElement.className = 'expense-item';
+                    
+                    expenseElement.innerHTML = `
+                        <h5>Expense Item #${index + 1}</h5>
+                        <div class="row mb-3">
+                            <div class="col-md-4">
+                                <p><strong>Category:</strong> ${item.category}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Date:</strong> ${item.date}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Payment Method:</strong> ${item.paymentMethod}</p>
+                            </div>
+                        </div>
+                        <div class="row mb-3">
+                            <div class="col-md-8">
+                                <p><strong>Description:</strong> ${item.description}</p>
+                            </div>
+                            <div class="col-md-4">
+                                <p><strong>Amount:</strong> ${item.currency} ${item.amount.toFixed(2)}</p>
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-12">
+                                <p><strong>Receipt:</strong></p>
+                                <div class="receipt-container"></div>
+                            </div>
+                        </div>
+                    `;
+                    
+                    expenseItemsContainer.appendChild(expenseElement);
+                    
+                    // Add receipt preview
+                    if (item.receipt) {
+                        const receiptContainer = expenseElement.querySelector('.receipt-container');
+                        const docElement = createDocumentElement(item.receipt);
+                        receiptContainer.appendChild(docElement);
+                    }
+                });
+            } else {
+                expenseItemsContainer.innerHTML = '<p>No expense items found.</p>';
+            }
+            
+            // Approval History
+            const historyTable = document.getElementById('approvalHistoryTable');
+            historyTable.innerHTML = '';
+            
+            if (details.approvalHistory && details.approvalHistory.length > 0) {
+                details.approvalHistory.forEach(entry => {
+                    const row = document.createElement('tr');
+                    row.innerHTML = `
+                        <td>${entry.date}</td>
+                        <td>${entry.user}</td>
+                        <td>${entry.action}</td>
+                        <td>${entry.comments || 'No comments'}</td>
+                    `;
+                    historyTable.appendChild(row);
+                });
+            } else {
+                historyTable.innerHTML = `
+                    <tr>
+                        <td colspan="4" class="text-center">No approval history yet</td>
+                    </tr>
+                `;
+            }
+        }
+        
+        // Create a document preview element
+        function createDocumentElement(doc) {
+            const docContainer = document.createElement('div');
+            docContainer.className = 'document-item';
+            
+            const docPreview = document.createElement('div');
+            
+            // Choose icon based on file type
+            let iconClass = 'fa-file';
+            
+            if (doc.type) {
+                if (doc.type.includes('pdf')) {
+                    iconClass = 'fa-file-pdf';
+                } else if (doc.type.includes('image')) {
+                    iconClass = 'fa-file-image';
+                } else if (doc.type.includes('word')) {
+                    iconClass = 'fa-file-word';
+                } else if (doc.type.includes('excel')) {
+                    iconClass = 'fa-file-excel';
+                }
+            }
+            
+            // For images, show preview
+            if (doc.type && doc.type.includes('image')) {
+                // In a real app, this would be the actual URL to the image
+                const imgPreview = document.createElement('img');
+                imgPreview.className = 'document-preview';
+                imgPreview.src = 'https://via.placeholder.com/150';  // Placeholder image
+                imgPreview.alt = doc.name;
+                docPreview.appendChild(imgPreview);
+                
+                // Add click event for preview modal
+                imgPreview.addEventListener('click', function() {
+                    showDocumentPreview(doc);
+                });
+            } else {
+                // For non-images, show icon
+                const docIcon = document.createElement('i');
+                docIcon.className = `fas ${iconClass} fa-3x`;
+                docIcon.style.color = '#0d6efd';
+                docPreview.appendChild(docIcon);
+                
+                // Add click event for preview
+                docIcon.addEventListener('click', function() {
+                    alert(`Viewing document: ${doc.name}`);
+                });
+            }
+            
+            docContainer.appendChild(docPreview);
+            
+            const docName = document.createElement('p');
+            docName.className = 'document-name';
+            docName.textContent = doc.name;
+            docContainer.appendChild(docName);
+            
+            return docContainer;
+        }
+        
+        // Show document preview in modal
+        function showDocumentPreview(doc) {
+            const previewModal = new bootstrap.Modal(document.getElementById('documentPreviewModal'));
+            const modalTitle = document.getElementById('documentPreviewModalLabel');
+            const previewImage = document.getElementById('documentPreviewImage');
+            const downloadButton = document.getElementById('documentDownloadBtn');
+            
+            modalTitle.textContent = doc.name;
+            
+            // In a real app, this would be the actual URL to the image
+            previewImage.src = 'https://via.placeholder.com/800x600';
+            previewImage.alt = doc.name;
+            
+            downloadButton.onclick = function() {
+                alert(`Downloading file: ${doc.name}`);
+            };
+            
+            previewModal.show();
+        }
+        
+        // Approve a request
+        function approveRequest() {
+            const requestId = document.getElementById('approvalRequestId').value;
+            const comments = document.getElementById('approvalComments').value;
+            
+            // In a real application, you would send this to the server
+            // For demo purposes, we'll just show a success message
+            
+            document.getElementById('successTitle').textContent = 'Request Approved';
+            document.getElementById('successMessage').innerHTML = 
+                `Reimbursement request ${requestId} has been approved. The employee will be notified.<br>
+                <div class="mt-3">
+                    <button type="button" class="btn btn-primary btn-sm me-2" onclick="location.href='create_payment_document.html?requestId=${requestId}'">
+                        <i class="fas fa-arrow-right me-1"></i>Create Payment Document
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm me-2" onclick="location.href='Reimbursement Request Form.html'">
+                        <i class="fas fa-arrow-left me-1"></i>Return to Request Form
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="location.href='exist_system_dashboard_page.html'">
+                        <i class="fas fa-home me-1"></i>Go to Dashboard
+                    </button>
+                </div>`;
+            
+            document.getElementById('successAlert').classList.remove('hidden');
+            
+            // Add entry to approval history table
+            addApprovalHistoryEntry('Approved', comments);
+            
+            // Update status in UI
+            document.getElementById('detailStatus').textContent = 'Approved';
+            document.getElementById('detailStatus').className = 'status-badge status-approved';
+            
+            // Hide approval action section
+            document.getElementById('approvalActionSection').classList.add('hidden');
+            
+            // Scroll to top to show success message
+            window.scrollTo(0, 0);
+        }
+        
+        // Reject a request
+        function rejectRequest() {
+            const requestId = document.getElementById('approvalRequestId').value;
+            const comments = document.getElementById('approvalComments').value;
+            const commentsField = document.getElementById('approvalComments');
+            
+            // Validate comments are provided for rejection
+            if (!comments.trim()) {
+                commentsField.classList.add('is-invalid');
+                return;
+            }
+            
+            commentsField.classList.remove('is-invalid');
+            
+            // In a real application, you would send this to the server
+            // For demo purposes, we'll just show a success message
+            
+            document.getElementById('successTitle').textContent = 'Request Rejected';
+            document.getElementById('successMessage').innerHTML = 
+                `Reimbursement request ${requestId} has been rejected. The employee will be notified.<br>
+                <div class="mt-3">
+                    <button type="button" class="btn btn-primary btn-sm me-2" onclick="location.href='create_payment_document.html?requestId=${requestId}'">
+                        <i class="fas fa-arrow-right me-1"></i>Create Payment Document
+                    </button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm me-2" onclick="location.href='Reimbursement Request Form.html'">
+                        <i class="fas fa-arrow-left me-1"></i>Return to Request Form
+                    </button>
+                    <button type="button" class="btn btn-outline-primary btn-sm" onclick="location.href='exist_system_dashboard_page.html'">
+                        <i class="fas fa-home me-1"></i>Go to Dashboard
+                    </button>
+                </div>`;
+            
+            document.getElementById('successAlert').classList.remove('hidden');
+            
+            // Add entry to approval history table
+            addApprovalHistoryEntry('Rejected', comments);
+            
+            // Update status in UI
+            document.getElementById('detailStatus').textContent = 'Rejected';
+            document.getElementById('detailStatus').className = 'status-badge status-rejected';
+            
+            // Hide approval action section
+            document.getElementById('approvalActionSection').classList.add('hidden');
+            
+            // Scroll to top to show success message
+            window.scrollTo(0, 0);
+        }
+        
+        // Add entry to approval history table
+        function addApprovalHistoryEntry(action, comments) {
+            const historyTable = document.getElementById('approvalHistoryTable');
+            const emptyRow = historyTable.querySelector('tr td[colspan="4"]');
+            
+            if (emptyRow) {
+                historyTable.innerHTML = '';
+            }
+            
+            const newRow = document.createElement('tr');
+            const today = new Date();
+            const formattedDate = today.getFullYear() + '-' + 
+                String(today.getMonth() + 1).padStart(2, '0') + '-' + 
+                String(today.getDate()).padStart(2, '0');
+                
+            // Get current user from display
+            const currentUser = document.getElementById('currentUser').textContent.trim();
+                
+            newRow.innerHTML = `
+                <td>${formattedDate}</td>
+                <td>${currentUser}</td>
+                <td>${action}</td>
+                <td>${comments || 'No comments'}</td>
+            `;
+            
+            historyTable.appendChild(newRow);
+        }
+    </script>
+
+    <script>
+        // Handle nested dropdowns in sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup for submenus
+            const subMenuToggleButtons = document.querySelectorAll('.dropdown-item.dropdown-toggle');
+            
+            subMenuToggleButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Find the nearest submenu to this toggle button
+                    const submenu = this.nextElementSibling;
+                    
+                    // Toggle the show class on this submenu
+                    submenu.classList.toggle('show');
+                    
+                    // Close other submenus at the same level
+                    const siblings = Array.from(this.parentElement.parentElement.children)
+                        .filter(child => child !== this.parentElement)
+                        .map(child => child.querySelector('.dropdown-submenu'))
+                        .filter(Boolean);
+                    
+                    siblings.forEach(sibling => {
+                        sibling.classList.remove('show');
+                    });
+                });
+            });
+            
+            // Close submenus when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown-submenu') && !e.target.classList.contains('dropdown-toggle')) {
+                    document.querySelectorAll('.dropdown-submenu.show').forEach(menu => {
+                        menu.classList.remove('show');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,1464 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Đề Nghị Hoàn Ứng - LTS Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./company_layout.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        /* Top navbar */
+        .top-navbar {
+            background-color: #051e34;
+            color: white;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .top-navbar .brand {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .top-navbar .icon-button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .top-navbar .icon-button:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        .user-avatar {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            background-color: white;
+            color: #051e34;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        /* Left sidebar */
+        .sidebar {
+            position: fixed;
+            top: 48px;
+            left: 0;
+            height: calc(100vh - 48px);
+            width: 240px;
+            background: #051e34;
+            color: #fff;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .sidebar .nav {
+            flex: 1;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        .sidebar .nav-item {
+            width: 100%;
+        }
+        .sidebar .nav-link {
+            color: #fff;
+            opacity: 0.8;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            opacity: 1;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        .sidebar .dropdown-toggle::after {
+            margin-left: auto;
+        }
+        .sidebar .dropdown-menu {
+            background: #0a2b4a;
+            border: none;
+            margin: 0;
+            border-radius: 0;
+            padding: 0;
+            width: 100%;
+            position: static !important;
+            transform: none !important;
+        }
+        .sidebar .dropdown-item {
+            color: #fff;
+            padding: 8px 15px 8px 45px;
+            opacity: 0.8;
+        }
+        .sidebar .dropdown-item:hover, .sidebar .dropdown-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            opacity: 1;
+        }
+        .sidebar .dropdown-item i {
+            margin-right: 8px;
+            width: 16px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        /* Main content */
+        .main-content {
+            margin-left: 240px;
+            margin-top: 48px;
+            padding: 20px;
+            min-height: calc(100vh - 48px);
+            background: #f8f9fa;
+        }
+        
+        /* Header styles */
+        .header-container {
+            background-color: #dc3545;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        
+        .form-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        /* Print styles */
+        @media print {
+            @page {
+                margin: 0.5in;
+                size: A4;
+                @top-left { content: ""; }
+                @top-center { content: ""; }
+                @top-right { content: ""; }
+                @bottom-left { content: ""; }
+                @bottom-center { content: ""; }
+                @bottom-right { content: ""; }
+            }
+            
+            * {
+                visibility: hidden;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .print-area, .print-area * {
+                visibility: visible;
+            }
+            
+            .print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 15px 20px;
+                background: white !important;
+                font-family: 'Times New Roman', serif;
+                font-size: 12px;
+                line-height: 1.4;
+                color: black;
+            }
+            
+            .top-navbar,
+            .sidebar,
+            .header-container,
+            .form-container,
+            .no-print,
+            .btn,
+            .alert,
+            .modal {
+                display: none !important;
+                visibility: hidden !important;
+            }
+            
+            body {
+                margin: 0;
+                padding: 0;
+                background: white !important;
+            }
+            
+            .main-content {
+                margin: 0;
+                padding: 0;
+                background: white !important;
+                position: static;
+            }
+            
+            .print-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 15px 0;
+                font-size: 11px;
+            }
+            .print-table th, .print-table td {
+                border: 1px solid black;
+                padding: 6px 8px;
+                text-align: left;
+                vertical-align: top;
+            }
+            .print-table th {
+                background-color: #f0f0f0;
+                font-weight: bold;
+                text-align: center;
+                font-size: 10px;
+            }
+            .print-signatures {
+                margin-top: 50px;
+                display: flex;
+                justify-content: space-between;
+                text-align: center;
+                font-size: 11px;
+            }
+            .print-signature {
+                width: 22%;
+            }
+            .print-signature-title {
+                font-weight: bold;
+                margin-bottom: 60px;
+            }
+        }
+        
+        .settlement-request-form {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        
+        .form-section {
+            background: #fff;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+            border-left: 4px solid #dc3545;
+            transition: transform 0.2s ease, box-shadow 0.2s ease;
+        }
+        
+        .form-section:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 20px rgba(0,0,0,0.12);
+        }
+        
+        .section-title {
+            color: #dc3545;
+            font-size: 1.1rem;
+            font-weight: 600;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f8f9fa;
+            display: flex;
+            align-items: center;
+        }
+        
+        .section-title i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        
+        .form-row-inline {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .form-row-inline label {
+            min-width: 160px;
+            margin-bottom: 0;
+            font-weight: 500;
+            color: #495057;
+        }
+        
+        .form-row-inline label.required::after {
+            content: " *";
+            color: #dc3545;
+        }
+        
+        .underline-input {
+            border: none;
+            border-bottom: 2px solid #dee2e6;
+            background: transparent;
+            padding: 8px 5px;
+            min-width: 200px;
+            transition: border-color 0.3s ease;
+            font-size: 14px;
+        }
+        
+        .underline-input:focus {
+            outline: none;
+            border-bottom-color: #dc3545;
+            background-color: #fff8f8;
+        }
+        
+        .underline-input.is-invalid {
+            border-bottom-color: #dc3545;
+            background-color: #fff5f5;
+        }
+        
+        .date-inputs {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #f8f9fa;
+            padding: 10px 15px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+        }
+        
+        .date-inputs input {
+            border: 1px solid #ced4da;
+            border-radius: 4px;
+            padding: 5px 8px;
+            text-align: center;
+            background: white;
+        }
+        
+        .settlement-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 20px 0;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        
+        .settlement-table th {
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            padding: 12px 8px;
+            text-align: center;
+            font-weight: 600;
+            font-size: 13px;
+            border: 1px solid #c82333;
+        }
+        
+        .settlement-table td {
+            border: 1px solid #dee2e6;
+            padding: 10px 8px;
+            text-align: center;
+            vertical-align: middle;
+            background: white;
+            transition: background-color 0.2s ease;
+        }
+        
+        .settlement-table tr:hover td {
+            background-color: #fff8f8;
+        }
+        
+        .settlement-table .section-header {
+            background: linear-gradient(135deg, #6c757d, #5a6268);
+            color: white;
+            font-weight: 600;
+            text-align: left;
+            padding: 12px 15px;
+        }
+        
+        .settlement-table .form-control,
+        .settlement-table .form-select {
+            border: none;
+            background: transparent;
+            padding: 8px;
+            border-radius: 4px;
+            transition: background-color 0.2s ease;
+        }
+        
+        .settlement-table .form-control:focus,
+        .settlement-table .form-select:focus {
+            background-color: #fff;
+            box-shadow: 0 0 0 2px rgba(220,53,69,0.25);
+        }
+        
+        .amount-display {
+            font-weight: 600;
+            color: #dc3545;
+            font-size: 14px;
+        }
+        
+        .calculation-summary {
+            background: linear-gradient(135deg, #f8f9fa, #e9ecef);
+            border-radius: 8px;
+            padding: 20px;
+            margin: 20px 0;
+            border-left: 4px solid #28a745;
+        }
+        
+        .calculation-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .calculation-row:last-child {
+            border-bottom: none;
+            font-weight: 600;
+            font-size: 16px;
+            color: #dc3545;
+        }
+        
+        .signature-section {
+            margin-top: 40px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            padding: 30px;
+            border: 2px dashed #dee2e6;
+        }
+        
+        .signature-section h5 {
+            text-align: center;
+            color: #495057;
+            margin-bottom: 30px;
+            font-weight: 600;
+        }
+        
+        .signature-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            text-align: center;
+        }
+        
+        .signature-box {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            border: 1px solid #dee2e6;
+            transition: transform 0.2s ease;
+        }
+        
+        .signature-box:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+        }
+        
+        .signature-title {
+            font-weight: 600;
+            color: #495057;
+            margin-bottom: 60px;
+            font-size: 14px;
+        }
+        
+        .btn-action {
+            padding: 12px 30px;
+            font-weight: 600;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            border: none;
+            font-size: 14px;
+            min-width: 140px;
+        }
+        
+        .btn-action:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+        }
+        
+        .btn-action i {
+            margin-right: 8px;
+        }
+        
+        .form-actions {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 -2px 10px rgba(0,0,0,0.1);
+            margin-top: 30px;
+            border-top: 3px solid #dc3545;
+        }
+        
+        .alert {
+            border-radius: 10px;
+            border: none;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+        
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda, #c3e6cb);
+            border-left: 4px solid #28a745;
+        }
+        
+        .alert-danger {
+            background: linear-gradient(135deg, #f8d7da, #f5c6cb);
+            border-left: 4px solid #dc3545;
+        }
+        
+        .floating-help {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 1000;
+        }
+        
+        .help-btn {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #dc3545, #c82333);
+            color: white;
+            border: none;
+            box-shadow: 0 4px 12px rgba(220,53,69,0.3);
+            transition: all 0.3s ease;
+        }
+        
+        .help-btn:hover {
+            transform: scale(1.1);
+            box-shadow: 0 6px 20px rgba(220,53,69,0.4);
+        }
+        
+        .progress-indicator {
+            background: white;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+        
+        .progress-steps {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .progress-step {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            flex: 1;
+            position: relative;
+        }
+        
+        .progress-step-circle {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: #dee2e6;
+            color: #6c757d;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            font-size: 12px;
+            margin-bottom: 5px;
+        }
+        
+        .progress-step.active .progress-step-circle {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .progress-step.completed .progress-step-circle {
+            background: #28a745;
+            color: white;
+        }
+        
+        .progress-step-label {
+            font-size: 11px;
+            color: #6c757d;
+            text-align: center;
+        }
+        
+        .progress-step.active .progress-step-label {
+            color: #dc3545;
+            font-weight: 600;
+        }
+        
+        .table-container {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.08);
+        }
+        
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+        
+        .form-section {
+            animation: fadeInUp 0.5s ease-out;
+        }
+        
+        .tooltip-custom {
+            position: relative;
+            cursor: help;
+        }
+        
+        .tooltip-custom::after {
+            content: attr(data-tooltip);
+            position: absolute;
+            bottom: 100%;
+            left: 50%;
+            transform: translateX(-50%);
+            background: #333;
+            color: white;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 12px;
+            white-space: nowrap;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+        
+        .tooltip-custom:hover::after {
+            opacity: 1;
+            visibility: visible;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="brand">
+            <i class="fas fa-cube me-2"></i> LTS MANAGER
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="icon-button me-2">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="icon-button me-3">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div class="user-avatar">
+                TD
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-container">
+            <h1><i class="fas fa-money-check-alt me-2"></i>Đề Nghị Hoàn Ứng</h1>
+            <p class="mb-0">Quản lý đề nghị hoàn ứng tạm ứng một cách hiệu quả và chuyên nghiệp</p>
+        </div>
+        
+        <!-- Progress Indicator -->
+        <div class="progress-indicator">
+            <div class="progress-steps">
+                <div class="progress-step active">
+                    <div class="progress-step-circle">1</div>
+                    <div class="progress-step-label">Thông tin cơ bản</div>
+                </div>
+                <div class="progress-step">
+                    <div class="progress-step-circle">2</div>
+                    <div class="progress-step-label">Chi tiết thanh toán</div>
+                </div>
+                <div class="progress-step">
+                    <div class="progress-step-circle">3</div>
+                    <div class="progress-step-label">Xác nhận</div>
+                </div>
+                <div class="progress-step">
+                    <div class="progress-step-circle">4</div>
+                    <div class="progress-step-label">Hoàn thành</div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="settlement-request-form">
+            <form id="settlementRequestForm">
+                <!-- Basic Information Section -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-user-edit"></i>
+                        Thông tin đề nghị
+                    </div>
+                    
+                    <!-- Header Section -->
+                    <div class="text-center mb-4">
+                        <h2 class="fw-bold text-uppercase" style="color: #dc3545;">ĐỀ NGHỊ HOÀN ỨNG</h2>
+                    </div>
+                    
+                    <div class="text-end mb-4">
+                        <div class="date-inputs">
+                            <label>Ngày</label>
+                            <input type="number" class="form-control" id="requestDay" min="1" max="31" style="width: 60px;">
+                            <label>tháng</label>
+                            <input type="number" class="form-control" id="requestMonth" min="1" max="12" style="width: 60px;">
+                            <label>năm</label>
+                            <input type="number" class="form-control" id="requestYear" value="2023" style="width: 80px;">
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <p><strong style="color: #dc3545;">Kính gửi: Ban giám đốc công ty</strong></p>
+                        
+                        <div class="form-row-inline">
+                            <label class="required">Họ tên người đề nghị:</label>
+                            <input type="text" class="underline-input flex-grow-1" id="requesterName" required>
+                            <label>Số CT (kế toán ghi):</label>
+                            <input type="text" class="underline-input" id="accountingNumber" style="width: 150px;">
+                        </div>
+                        
+                        <div class="form-row-inline">
+                            <label class="required">Bộ phận:</label>
+                            <input type="text" class="underline-input" id="department" required style="width: 200px;">
+                            <label>Đơn vị:</label>
+                            <input type="text" class="underline-input flex-grow-1" id="unit">
+                        </div>
+                        
+                        <div class="form-row-inline">
+                            <label class="required">Nội dung thanh toán:</label>
+                            <input type="text" class="underline-input flex-grow-1" id="paymentContent" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Settlement Table Section -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-table"></i>
+                        Chi tiết thanh toán
+                    </div>
+                    
+                    <p><strong>Đề nghị thanh toán theo bảng dưới đây:</strong></p>
+                    
+                    <div class="table-container">
+                        <div class="table-responsive">
+                            <table class="settlement-table">
+                                <thead>
+                                    <tr>
+                                        <th style="width: 5%;">STT</th>
+                                        <th style="width: 35%;">Nội dung chi tiết</th>
+                                        <th style="width: 15%;">Số hóa đơn</th>
+                                        <th style="width: 15%;">Số tiền</th>
+                                        <th style="width: 15%;">Hình thức TU/HU</th>
+                                        <th style="width: 15%;">Ghi chú</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <!-- Section I: Advance Amount -->
+                                    <tr>
+                                        <td class="section-header">I</td>
+                                        <td class="section-header">Số tiền đã tạm ứng</td>
+                                        <td></td>
+                                        <td>
+                                            <input type="number" class="form-control advance-amount" id="advanceAmount" min="0" placeholder="Nhập số tiền">
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td></td>
+                                        <td>
+                                            <div class="d-flex align-items-center justify-content-start gap-2">
+                                                <span>(Ngày</span>
+                                                <input type="number" class="form-control" id="advanceDay" min="1" max="31" style="width: 50px;">
+                                                <span>tháng</span>
+                                                <input type="number" class="form-control" id="advanceMonth" min="1" max="12" style="width: 50px;">
+                                                <span>năm</span>
+                                                <input type="number" class="form-control" id="advanceYear" style="width: 70px;">
+                                                <span>)</span>
+                                            </div>
+                                        </td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    
+                                    <!-- Section II: Spent Amount -->
+                                    <tr>
+                                        <td class="section-header">II</td>
+                                        <td class="section-header">Số tiền đã chi (Diễn giải nội dung)</td>
+                                        <td></td>
+                                        <td class="amount-display" id="totalSpentAmount">-</td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    
+                                    <!-- Expense rows -->
+                                    <tbody id="expenseTableBody">
+                                        <tr class="expense-row">
+                                            <td>1</td>
+                                            <td><input type="text" class="form-control" name="expenseDetail[]" placeholder="Mô tả chi phí"></td>
+                                            <td><input type="text" class="form-control" name="invoiceNumber[]" placeholder="Số hóa đơn"></td>
+                                            <td><input type="number" class="form-control expense-amount" name="expenseAmount[]" min="0" placeholder="Số tiền"></td>
+                                            <td>
+                                                <select class="form-select" name="paymentType[]">
+                                                    <option value="">Chọn</option>
+                                                    <option value="TM">TM</option>
+                                                    <option value="CK">CK</option>
+                                                </select>
+                                            </td>
+                                            <td><input type="text" class="form-control" name="expenseNote[]" placeholder="Ghi chú"></td>
+                                        </tr>
+                                    </tbody>
+                                    
+                                    <!-- Section III: Difference -->
+                                    <tr>
+                                        <td class="section-header">III</td>
+                                        <td class="section-header">Chênh lệch</td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>1</td>
+                                        <td>Số tiền hoàn lại công ty (I-II)</td>
+                                        <td></td>
+                                        <td class="amount-display" id="refundAmount">-</td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                    <tr>
+                                        <td>2</td>
+                                        <td>Số tiền đề nghị thanh toán thêm (II-I)</td>
+                                        <td></td>
+                                        <td class="amount-display" id="additionalAmount">-</td>
+                                        <td></td>
+                                        <td></td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                        
+                        <div class="text-center mt-3">
+                            <button type="button" class="btn btn-outline-primary btn-action" id="addExpenseRowBtn">
+                                <i class="fas fa-plus"></i>Thêm dòng chi phí
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Summary Section -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-calculator"></i>
+                        Tóm tắt tính toán
+                    </div>
+                    
+                    <div class="calculation-summary">
+                        <div class="calculation-row">
+                            <span>Số tiền đã tạm ứng:</span>
+                            <span class="amount-display" id="summaryAdvanceAmount">0 VNĐ</span>
+                        </div>
+                        <div class="calculation-row">
+                            <span>Tổng số tiền đã chi:</span>
+                            <span class="amount-display" id="summarySpentAmount">0 VNĐ</span>
+                        </div>
+                        <div class="calculation-row">
+                            <span><strong>Chênh lệch:</strong></span>
+                            <span class="amount-display" id="summaryDifference">0 VNĐ</span>
+                        </div>
+                    </div>
+                    
+                    <div class="form-row-inline">
+                        <label>Số tiền bằng chữ:</label>
+                        <input type="text" class="underline-input flex-grow-1" id="amountInWords" readonly style="background-color: #f8f9fa;">
+                    </div>
+                </div>
+                
+                <!-- Bank Information Section -->
+                <div class="form-section">
+                    <div class="section-title">
+                        <i class="fas fa-university"></i>
+                        Thông tin nhận tiền chuyển khoản
+                    </div>
+                    
+                    <div class="form-row-inline">
+                        <label>Số tài khoản:</label>
+                        <input type="text" class="underline-input flex-grow-1" id="bankAccount" placeholder="Nhập số tài khoản">
+                    </div>
+                    
+                    <div class="form-row-inline">
+                        <label>Chủ tài khoản:</label>
+                        <input type="text" class="underline-input flex-grow-1" id="accountHolder" placeholder="Tên chủ tài khoản">
+                    </div>
+                    
+                    <div class="form-row-inline">
+                        <label>Ngân hàng:</label>
+                        <input type="text" class="underline-input flex-grow-1" id="bankName" placeholder="Tên ngân hàng">
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="form-actions no-print">
+                    <div class="text-center">
+                        <button type="button" id="previewBtn" class="btn btn-info btn-action me-3">
+                            <i class="fas fa-eye"></i>Xem trước
+                        </button>
+                        <button type="button" id="printBtn" class="btn btn-primary btn-action">
+                            <i class="fas fa-print"></i>In đề nghị
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Print Preview Area (Hidden) -->
+        <div class="print-area" id="printArea" style="display: none;">
+            <!-- Print content will be generated here -->
+        </div>
+        
+        <!-- Success Alert -->
+        <div id="success-alert" class="alert alert-success" role="alert" style="display: none;">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-check-circle fa-2x me-3" style="color: #28a745;"></i>
+                <div>
+                    <h4 class="alert-heading mb-2">Đề nghị đã được gửi thành công!</h4>
+                    <p class="mb-2">Đề nghị hoàn ứng của bạn đã được gửi để phê duyệt. Bạn có thể theo dõi trạng thái đề nghị trong dashboard.</p>
+                    <p class="mb-0"><strong>Mã đề nghị:</strong> <span id="displayRequestId" class="badge bg-success"></span></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Error Alert -->
+        <div id="error-alert" class="alert alert-danger" role="alert" style="display: none;">
+            <div class="d-flex align-items-center">
+                <i class="fas fa-exclamation-circle fa-2x me-3" style="color: #dc3545;"></i>
+                <div>
+                    <h4 class="alert-heading mb-2">Lỗi!</h4>
+                    <p class="mb-2">Có vấn đề xảy ra khi gửi đề nghị. Vui lòng thử lại.</p>
+                    <p class="mb-0" id="error-message"></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Floating Help Button -->
+    <div class="floating-help">
+        <button class="help-btn" data-bs-toggle="tooltip" data-bs-placement="left" title="Cần trợ giúp?">
+            <i class="fas fa-question"></i>
+        </button>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date
+            const today = new Date();
+            document.getElementById('requestDay').value = today.getDate();
+            document.getElementById('requestMonth').value = today.getMonth() + 1;
+            document.getElementById('requestYear').value = today.getFullYear();
+            
+            // Set advance date (example: 30 days ago)
+            const advanceDate = new Date();
+            advanceDate.setDate(advanceDate.getDate() - 30);
+            document.getElementById('advanceDay').value = advanceDate.getDate();
+            document.getElementById('advanceMonth').value = advanceDate.getMonth() + 1;
+            document.getElementById('advanceYear').value = advanceDate.getFullYear();
+            
+            // Event listeners
+            document.getElementById('addExpenseRowBtn').addEventListener('click', addExpenseRow);
+            document.getElementById('previewBtn').addEventListener('click', showPreview);
+            document.getElementById('printBtn').addEventListener('click', printDocument);
+            
+            // Calculate amounts when values change
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('expense-amount') || 
+                    e.target.classList.contains('advance-amount')) {
+                    calculateAmounts();
+                }
+            });
+            
+            // Set default values
+            document.getElementById('requesterName').value = 'John Doe';
+            document.getElementById('department').value = 'IT';
+            document.getElementById('unit').value = 'LTS Group';
+            document.getElementById('advanceAmount').value = 0;
+            
+            // Initial calculation
+            calculateAmounts();
+        });
+        
+        function addExpenseRow() {
+            const tbody = document.getElementById('expenseTableBody');
+            const rowCount = tbody.querySelectorAll('.expense-row').length + 1;
+            
+            const newRow = document.createElement('tr');
+            newRow.className = 'expense-row';
+            newRow.innerHTML = `
+                <td>${rowCount}</td>
+                <td><input type="text" class="form-control" name="expenseDetail[]" placeholder="Mô tả chi phí"></td>
+                <td><input type="text" class="form-control" name="invoiceNumber[]" placeholder="Số hóa đơn"></td>
+                <td><input type="number" class="form-control expense-amount" name="expenseAmount[]" min="0" placeholder="Số tiền"></td>
+                <td>
+                    <select class="form-select" name="paymentType[]">
+                        <option value="">Chọn</option>
+                        <option value="TM">TM</option>
+                        <option value="CK">CK</option>
+                    </select>
+                </td>
+                <td><input type="text" class="form-control" name="expenseNote[]" placeholder="Ghi chú"></td>
+            `;
+            
+            tbody.appendChild(newRow);
+        }
+        
+        function convertNumberToVietnameseWords(number) {
+            if (number === 0) return 'Không đồng';
+            
+            // Simple Vietnamese number to words conversion
+            const ones = ['', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
+            const tens = ['', '', 'hai mươi', 'ba mươi', 'bốn mươi', 'năm mươi', 'sáu mươi', 'bảy mươi', 'tám mươi', 'chín mươi'];
+            const scales = ['', 'nghìn', 'triệu', 'tỷ'];
+            
+            if (number < 0) {
+                return 'âm ' + convertNumberToVietnameseWords(-number);
+            }
+            
+            if (number < 10) {
+                return ones[number] + ' đồng';
+            }
+            
+            if (number < 100) {
+                const ten = Math.floor(number / 10);
+                const one = number % 10;
+                if (ten === 1) {
+                    return 'mười' + (one > 0 ? ' ' + ones[one] : '') + ' đồng';
+                }
+                return tens[ten] + (one > 0 ? ' ' + ones[one] : '') + ' đồng';
+            }
+            
+            // For larger numbers, use a simplified approach
+            if (number >= 1000000000) {
+                const billions = Math.floor(number / 1000000000);
+                const remainder = number % 1000000000;
+                let result = convertNumberToVietnameseWords(billions).replace(' đồng', '') + ' tỷ';
+                if (remainder > 0) {
+                    result += ' ' + convertNumberToVietnameseWords(remainder).replace(' đồng', '');
+                }
+                return result + ' đồng';
+            }
+            
+            if (number >= 1000000) {
+                const millions = Math.floor(number / 1000000);
+                const remainder = number % 1000000;
+                let result = convertNumberToVietnameseWords(millions).replace(' đồng', '') + ' triệu';
+                if (remainder > 0) {
+                    result += ' ' + convertNumberToVietnameseWords(remainder).replace(' đồng', '');
+                }
+                return result + ' đồng';
+            }
+            
+            if (number >= 1000) {
+                const thousands = Math.floor(number / 1000);
+                const remainder = number % 1000;
+                let result = convertNumberToVietnameseWords(thousands).replace(' đồng', '') + ' nghìn';
+                if (remainder > 0) {
+                    result += ' ' + convertNumberToVietnameseWords(remainder).replace(' đồng', '');
+                }
+                return result + ' đồng';
+            }
+            
+            const hundreds = Math.floor(number / 100);
+            const remainder = number % 100;
+            let result = ones[hundreds] + ' trăm';
+            if (remainder > 0) {
+                if (remainder < 10) {
+                    result += ' lẻ ' + ones[remainder];
+                } else {
+                    result += ' ' + convertNumberToVietnameseWords(remainder).replace(' đồng', '');
+                }
+            }
+            return result + ' đồng';
+        }
+        
+        function calculateAmounts() {
+            const advanceAmount = parseFloat(document.getElementById('advanceAmount').value) || 0;
+            const expenseAmountInputs = document.querySelectorAll('.expense-amount');
+            
+            let totalSpent = 0;
+            expenseAmountInputs.forEach(input => {
+                if (input.value && input !== document.getElementById('advanceAmount')) {
+                    totalSpent += parseFloat(input.value);
+                }
+            });
+            
+            // Update display values
+            document.getElementById('totalSpentAmount').textContent = totalSpent > 0 ? totalSpent.toLocaleString('vi-VN') : '-';
+            document.getElementById('summaryAdvanceAmount').textContent = advanceAmount.toLocaleString('vi-VN') + ' VNĐ';
+            document.getElementById('summarySpentAmount').textContent = totalSpent.toLocaleString('vi-VN') + ' VNĐ';
+            
+            // Calculate difference
+            const difference = advanceAmount - totalSpent;
+            const absoluteDifference = Math.abs(difference);
+            
+            if (difference > 0) {
+                // Company should be refunded
+                document.getElementById('refundAmount').textContent = difference.toLocaleString('vi-VN');
+                document.getElementById('additionalAmount').textContent = '-';
+                document.getElementById('summaryDifference').textContent = difference.toLocaleString('vi-VN') + ' VNĐ (hoàn lại)';
+                document.getElementById('amountInWords').value = convertNumberToVietnameseWords(difference) + ' (hoàn lại công ty)';
+            } else if (difference < 0) {
+                // Additional payment needed
+                document.getElementById('refundAmount').textContent = '-';
+                document.getElementById('additionalAmount').textContent = absoluteDifference.toLocaleString('vi-VN');
+                document.getElementById('summaryDifference').textContent = absoluteDifference.toLocaleString('vi-VN') + ' VNĐ (thanh toán thêm)';
+                document.getElementById('amountInWords').value = convertNumberToVietnameseWords(absoluteDifference) + ' (công ty thanh toán thêm)';
+            } else {
+                // Balanced
+                document.getElementById('refundAmount').textContent = '-';
+                document.getElementById('additionalAmount').textContent = '-';
+                document.getElementById('summaryDifference').textContent = '0 VNĐ (cân bằng)';
+                document.getElementById('amountInWords').value = 'Không có chênh lệch - đã quyết toán đủ';
+            }
+            
+            // Update progress indicator
+            updateProgressIndicator();
+        }
+        
+        function updateProgressIndicator() {
+            const steps = document.querySelectorAll('.progress-step');
+            const requesterName = document.getElementById('requesterName').value;
+            const department = document.getElementById('department').value;
+            const paymentContent = document.getElementById('paymentContent').value;
+            const advanceAmount = document.getElementById('advanceAmount').value;
+            const expenseAmountInputs = document.querySelectorAll('.expense-amount');
+            
+            // Reset all steps
+            steps.forEach(step => {
+                step.classList.remove('active', 'completed');
+            });
+            
+            let currentStep = 0;
+            
+            // Step 1: Basic information
+            if (requesterName && department && paymentContent) {
+                steps[0].classList.add('completed');
+                currentStep = 1;
+            } else {
+                steps[0].classList.add('active');
+                return;
+            }
+            
+            // Step 2: Payment details - check if advance amount is entered
+            if (advanceAmount && parseFloat(advanceAmount) > 0) {
+                steps[1].classList.add('completed');
+                currentStep = 2;
+            } else {
+                steps[1].classList.add('active');
+                return;
+            }
+            
+            // Step 3: Expense details - check if at least one expense is entered
+            let hasExpenses = false;
+            expenseAmountInputs.forEach(input => {
+                if (input.value && input !== document.getElementById('advanceAmount') && parseFloat(input.value) > 0) {
+                    hasExpenses = true;
+                }
+            });
+            
+            if (hasExpenses) {
+                steps[2].classList.add('completed');
+                currentStep = 3;
+            } else {
+                steps[2].classList.add('active');
+                return;
+            }
+            
+            // Step 4: Ready to submit
+            steps[3].classList.add('active');
+        }
+        
+        function showPreview() {
+            generatePrintContent();
+            const printArea = document.getElementById('printArea');
+            if (printArea.style.display === 'none') {
+                printArea.style.display = 'block';
+                document.getElementById('previewBtn').innerHTML = '<i class="fas fa-eye-slash me-1"></i>Ẩn xem trước';
+            } else {
+                printArea.style.display = 'none';
+                document.getElementById('previewBtn').innerHTML = '<i class="fas fa-eye me-1"></i>Xem trước';
+            }
+        }
+        
+        function printDocument() {
+            generatePrintContent();
+            
+            const nonPrintElements = document.querySelectorAll('.no-print, .form-container, .header-container');
+            const originalDisplays = [];
+            
+            nonPrintElements.forEach((element, index) => {
+                originalDisplays[index] = element.style.display;
+                element.style.display = 'none';
+            });
+            
+            const printArea = document.getElementById('printArea');
+            printArea.style.display = 'block';
+            
+            window.print();
+            
+            setTimeout(function() {
+                nonPrintElements.forEach((element, index) => {
+                    element.style.display = originalDisplays[index];
+                });
+                
+                if (document.getElementById('previewBtn').innerHTML.includes('Xem trước')) {
+                    printArea.style.display = 'none';
+                }
+            }, 100);
+        }
+        
+        function generatePrintContent() {
+            const printArea = document.getElementById('printArea');
+            
+            // Get form values
+            const day = document.getElementById('requestDay').value || '';
+            const month = document.getElementById('requestMonth').value || '';
+            const year = document.getElementById('requestYear').value || '2023';
+            const requesterName = document.getElementById('requesterName').value || '';
+            const accountingNumber = document.getElementById('accountingNumber').value || '';
+            const department = document.getElementById('department').value || '';
+            const unit = document.getElementById('unit').value || '';
+            const paymentContent = document.getElementById('paymentContent').value || '';
+            
+            const advanceAmount = parseFloat(document.getElementById('advanceAmount').value) || 0;
+            const advanceDay = document.getElementById('advanceDay').value || '';
+            const advanceMonth = document.getElementById('advanceMonth').value || '';
+            const advanceYear = document.getElementById('advanceYear').value || '';
+            
+            const bankAccount = document.getElementById('bankAccount').value || '';
+            const accountHolder = document.getElementById('accountHolder').value || '';
+            const bankName = document.getElementById('bankName').value || '';
+            const amountInWords = document.getElementById('amountInWords').value || '';
+            
+            // Generate expense rows
+            const expenseDetailInputs = document.querySelectorAll('input[name="expenseDetail[]"]');
+            const invoiceNumberInputs = document.querySelectorAll('input[name="invoiceNumber[]"]');
+            const expenseAmountInputs = document.querySelectorAll('input[name="expenseAmount[]"]');
+            const paymentTypeSelects = document.querySelectorAll('select[name="paymentType[]"]');
+            const expenseNoteInputs = document.querySelectorAll('input[name="expenseNote[]"]');
+            
+            let expenseRows = '';
+            let totalSpent = 0;
+            let rowsAdded = 0;
+            
+            expenseDetailInputs.forEach((input, i) => {
+                const detail = input.value || '';
+                const invoice = invoiceNumberInputs[i]?.value || '';
+                const amount = parseFloat(expenseAmountInputs[i]?.value) || 0;
+                const paymentType = paymentTypeSelects[i]?.value || '';
+                const note = expenseNoteInputs[i]?.value || '';
+                
+                if (detail || invoice || amount > 0 || paymentType || note) {
+                    if (amount > 0) {
+                        totalSpent += amount;
+                    }
+                    
+                    expenseRows += `
+                        <tr>
+                            <td style="text-align: center;">${i + 1}</td>
+                            <td>${detail}</td>
+                            <td>${invoice}</td>
+                            <td style="text-align: right;">${amount > 0 ? amount.toLocaleString('vi-VN') : ''}</td>
+                            <td style="text-align: center;">${paymentType}</td>
+                            <td>${note}</td>
+                        </tr>
+                    `;
+                    rowsAdded++;
+                }
+            });
+            
+            // Add empty rows to ensure at least 3 rows
+            while (rowsAdded < 3) {
+                expenseRows += `
+                    <tr>
+                        <td style="text-align: center;">${rowsAdded + 1}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                `;
+                rowsAdded++;
+            }
+            
+            // Calculate differences
+            const difference = advanceAmount - totalSpent;
+            const refundAmount = difference > 0 ? difference : 0;
+            const additionalAmount = difference < 0 ? Math.abs(difference) : 0;
+            
+            printArea.innerHTML = `
+                <div style="text-align: center; font-size: 18px; font-weight: bold; margin-bottom: 20px;">
+                    ĐỀ NGHỊ HOÀN ỨNG
+                </div>
+                
+                <div style="text-align: right; margin-bottom: 20px; font-size: 12px;">
+                    Ngày ${day || '___'} tháng ${month || '___'} năm ${year}
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Kính gửi: Ban giám đốc công ty</strong></p>
+                    <table style="width: 100%; border: none; margin: 10px 0;">
+                        <tr>
+                            <td style="border: none; width: 50%; padding: 5px 0;">
+                                * Họ tên người đề nghị: <u style="padding: 0 5px;">${requesterName || '________________________'}</u>
+                            </td>
+                            <td style="border: none; width: 50%; padding: 5px 0;">
+                                Số CT (kế toán ghi): <u style="padding: 0 5px;">${accountingNumber || '__________'}</u>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border: none; width: 50%; padding: 5px 0;">
+                                * Bộ phận: <u style="padding: 0 5px;">${department || '______________'}</u>
+                            </td>
+                            <td style="border: none; width: 50%; padding: 5px 0;">
+                                Đơn vị: <u style="padding: 0 5px;">${unit || '______________'}</u>
+                            </td>
+                        </tr>
+                    </table>
+                    <p>* Nội dung thanh toán: <u style="padding: 0 5px;">${paymentContent || '_________________________________'}</u></p>
+                </div>
+                
+                <p><strong>Đề nghị thanh toán theo bảng dưới đây:</strong></p>
+                
+                <table class="print-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 5%;">STT</th>
+                            <th style="width: 35%;">Nội dung chi tiết</th>
+                            <th style="width: 15%;">Số hóa đơn</th>
+                            <th style="width: 15%;">Số tiền</th>
+                            <th style="width: 15%;">Hình thức TU/HU (TM/CK)</th>
+                            <th style="width: 15%;">Note</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr style="background-color: #f0f0f0;">
+                            <td style="font-weight: bold;">I</td>
+                            <td style="font-weight: bold;">Số tiền đã tạm ứng</td>
+                            <td></td>
+                            <td style="text-align: right; font-weight: bold;">${advanceAmount > 0 ? advanceAmount.toLocaleString('vi-VN') : ''}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td>(Ngày ${advanceDay || '___'} tháng ${advanceMonth || '___'} năm ${advanceYear || '____'})</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr style="background-color: #f0f0f0;">
+                            <td style="font-weight: bold;">II</td>
+                            <td style="font-weight: bold;">Số tiền đã chi (Diễn giải nội dung)</td>
+                            <td></td>
+                            <td style="text-align: right; font-weight: bold;">${totalSpent > 0 ? totalSpent.toLocaleString('vi-VN') : '-'}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        ${expenseRows}
+                        <tr style="background-color: #f0f0f0;">
+                            <td style="font-weight: bold;">III</td>
+                            <td style="font-weight: bold;">Chênh lệch</td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>1</td>
+                            <td>Số tiền hoàn lại công ty (I-II)</td>
+                            <td></td>
+                            <td style="text-align: right; font-weight: bold;">${refundAmount > 0 ? refundAmount.toLocaleString('vi-VN') : '-'}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                        <tr>
+                            <td>2</td>
+                            <td>Số tiền đề nghị thanh toán thêm (II-I)</td>
+                            <td></td>
+                            <td style="text-align: right; font-weight: bold;">${additionalAmount > 0 ? additionalAmount.toLocaleString('vi-VN') : '-'}</td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p style="margin: 20px 0;">(Số tiền bằng chữ: <u style="padding: 0 5px;">${amountInWords || '_________________________________'}</u>)</p>
+                
+                <div style="margin: 20px 0;">
+                    <p><strong>Thông tin nhận tiền chuyển khoản:</strong></p>
+                    <p>Số tài khoản: <u style="padding: 0 5px;">${bankAccount || '________________________'}</u></p>
+                    <p>Chủ tài khoản: <u style="padding: 0 5px;">${accountHolder || '________________________'}</u></p>
+                    <p>Ngân hàng: <u style="padding: 0 5px;">${bankName || '________________________'}</u></p>
+                </div>
+                
+                <p style="margin: 30px 0;"><strong>Kính mong Ban giám đốc duyệt!</strong></p>
+                
+                <div class="print-signatures">
+                    <div class="print-signature">
+                        <div class="print-signature-title">Giám đốc</div>
+                    </div>
+                    <div class="print-signature">
+                        <div class="print-signature-title">Kế toán trưởng</div>
+                    </div>
+                    <div class="print-signature">
+                        <div class="print-signature-title">Trưởng bộ phận</div>
+                    </div>
+                    <div class="print-signature">
+                        <div class="print-signature-title">Người đề nghị</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        // Initialize tooltips
+        document.addEventListener('DOMContentLoaded', function() {
+            // Initialize Bootstrap tooltips
+            var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-bs-toggle="tooltip"]'));
+            var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+                return new bootstrap.Tooltip(tooltipTriggerEl);
+            });
+        });
+    </script>
+</body>
+</html>

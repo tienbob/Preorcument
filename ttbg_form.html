@@ -1,0 +1,557 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Thủ tục bàn giao (TTBG) Form - LTS Manager - LTS Manager - LTS Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./company_layout.css">
+    <style>
+        /* Header styles */
+        .header-container {
+            background-color: #17a2b8;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .form-container, .content-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        /* Responsive */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                top: 48px;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px 10px;
+                margin-top: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="brand">
+            <i class="fas fa-cube me-2"></i> LTS MANAGER
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="icon-button me-2">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="icon-button me-3">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div class="user-avatar">
+                TD
+            </div>
+        </div>
+    </div>
+
+     <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <ul class="nav flex-column">            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-calendar-alt"></i> Quản lý ngày nghỉ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-users"></i> Quản lý QT
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tasks"></i> Quản lý dự án
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-clock"></i> Chấm công
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-chart-line"></i> Đánh giá định kỳ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-graduation-cap"></i> Quản lý kỹ năng
+                </a>
+            </li>
+            <!-- Procurement Section -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="procurementDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-shopping-cart"></i> Procurement
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="procurementDropdown">
+                    <li><a class="dropdown-item" href="index.html">
+                        <i class="fas fa-file-alt"></i> Request List
+                    </a></li>
+                    <li><a class="dropdown-item" href="purchase_list.html">
+                        <i class="fas fa-shopping-bag"></i> Purchase List
+                    </a></li>
+                    <li><a class="dropdown-item" href="supplier_select.html">
+                        <i class="fas fa-users"></i> Suppliers Select</a></li>
+                    <li><a class="dropdown-item" href="it_review_list.html">
+                        <i class="fas fa-laptop"></i> IT Review Queue</a></li>
+                    <li><a class="dropdown-item" href="dl_payment_confirmation_list.html">
+                        <i class="fas fa-truck"></i> DL Confirm Payment</a></li>
+                    <li><a class="dropdown-item" href="accountant_document_review.html">
+                        <i class="fas fa-list"></i> Document Review</a></li>
+                    <li><a class="dropdown-item" href="advance_payment_approval_page.html">                        <i class="fas fa-receipt"></i> Advance Payment Approval</a></li>
+                    <li><a class="dropdown-item" href="accountant_reimbursement_approval.html">
+                        <i class="fas fa-calculator"></i> Reimbursement Processing</a></li>
+                    <li><a class="dropdown-item" href="supplier_management.html">
+                        <i class="fas fa-building"></i> Supplier Management</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">        
+        <div class="header-container">
+            <h1>Thủ tục bàn giao (TTBG) </h1>
+            <p class="mb-0">Manage your Thủ tục bàn giao (TTBG)  efficiently</p>
+        </div>
+        <div class="form-container">
+                        <form id="ttbgForm">
+                            <!-- Audit Trail Fields (Hidden) -->
+                            <input type="hidden" id="initiationDate" name="initiationDate">
+                            <input type="hidden" id="initiatedBy" name="initiatedBy">
+                            <input type="hidden" id="purchaseRequestId" name="purchaseRequestId" value="REQ-123456">
+                            <input type="hidden" id="goodsReceiptId" name="goodsReceiptId" value="GR-456">
+                            <input type="hidden" id="requestedQuantityHidden" name="requestedQuantity" value="10">
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="ttbgInitiationDate" class="form-label">TTBG Initiation Date</label>
+                                    <input type="text" class="form-control" id="ttbgInitiationDate" name="ttbgInitiationDate" readonly>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="handoverNumber" class="form-label required-field">Handover Number</label>
+                                    <input type="text" class="form-control" id="handoverNumber" name="handoverNumber" required>
+                                    <div class="invalid-feedback">Please enter a handover number</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <label for="goodsDescription" class="form-label">Goods/Services Description</label>
+                                    <textarea class="form-control" id="goodsDescription" name="goodsDescription" rows="3"></textarea>
+                                    <div class="form-text">Pre-populated from Purchase Request. Minor modifications allowed if necessary.</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="quantityHandedOver" class="form-label required-field">Quantity Handed Over</label>
+                                    <input type="number" class="form-control" id="quantityHandedOver" name="quantityHandedOver" min="1" required>
+                                    <div class="invalid-feedback">Please enter the quantity handed over</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="receivingDepartment" class="form-label required-field">Receiving Department/User</label>
+                                    <select class="form-select" id="receivingDepartment" name="receivingDepartment" required>
+                                        <option value="">Select Department</option>
+                                        <option value="IT">IT Department</option>
+                                        <option value="HR">Human Resources</option>
+                                        <option value="Finance">Finance</option>
+                                        <option value="Marketing">Marketing</option>
+                                        <option value="Operations">Operations</option>
+                                        <option value="Research">Research & Development</option>
+                                        <option value="Legal">Legal</option>
+                                        <option value="Sales">Sales</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select a receiving department</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <label for="handoverLocation" class="form-label required-field">Handover Location</label>
+                                    <input type="text" class="form-control" id="handoverLocation" name="handoverLocation" required>
+                                    <div class="invalid-feedback">Please enter the handover location</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <label for="handoverCondition" class="form-label">Handover Condition</label>
+                                    <input type="text" class="form-control" id="handoverCondition" name="handoverCondition" placeholder="E.g., New in original packaging, Installed and tested, etc.">
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="acceptanceConfirmation" class="form-label required-field">Acceptance Confirmation</label>
+                                    <select class="form-select" id="acceptanceConfirmation" name="acceptanceConfirmation" required>
+                                        <option value="">Select Status</option>
+                                        <option value="Accepted">Accepted</option>
+                                        <option value="Rejected">Rejected</option>
+                                        <option value="Partial Acceptance">Partial Acceptance</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select an acceptance status</div>
+                                </div>
+                                <div class="col-md-6 acceptance-date-field hidden-field">
+                                    <label for="acceptanceDate" class="form-label">Acceptance Date</label>
+                                    <input type="date" class="form-control" id="acceptanceDate" name="acceptanceDate">
+                                    <div class="invalid-feedback">Please select an acceptance date</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4 acceptance-notes-row">
+                                <div class="col-md-12">
+                                    <label for="acceptanceNotes" class="form-label">Acceptance Notes</label>
+                                    <textarea class="form-control" id="acceptanceNotes" name="acceptanceNotes" rows="3"></textarea>
+                                    <div class="form-text">Required if "Rejected" or "Partial Acceptance" is selected</div>
+                                    <div class="invalid-feedback">Please provide notes explaining the rejection or partial acceptance</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <label class="form-label">Supporting Documents</label>
+                                    
+                                    <!-- Handover Receipt -->
+                                    <div class="document-item">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-4">
+                                                <label for="handoverReceipt" class="mb-0">Handover Receipt</label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input type="file" class="form-control" id="handoverReceipt" name="handoverReceipt">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Acceptance Form -->
+                                    <div class="document-item">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-4">
+                                                <label for="acceptanceForm" class="mb-0">Acceptance Form (Signed)</label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input type="file" class="form-control" id="acceptanceForm" name="acceptanceForm">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Inspection Report -->
+                                    <div class="document-item">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-4">
+                                                <label for="inspectionReport" class="mb-0">Inspection Report (if applicable)</label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input type="file" class="form-control" id="inspectionReport" name="inspectionReport">
+                                            </div>
+                                        </div>
+                                    </div>
+                                    
+                                    <!-- Other Documents -->
+                                    <div class="document-item">
+                                        <div class="row align-items-center">
+                                            <div class="col-md-4">
+                                                <label for="otherDocuments" class="mb-0">Other Documents</label>
+                                            </div>
+                                            <div class="col-md-8">
+                                                <input type="file" class="form-control" id="otherDocuments" name="otherDocuments" multiple>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <label for="notes" class="form-label">Notes/Comments</label>
+                                    <textarea class="form-control" id="notes" name="notes" rows="3"></textarea>
+                                </div>
+                            </div>
+                            
+                            <!-- Actions -->                            <div class="row mt-4">
+                                <div class="col-md-12">
+                                    <button type="submit" class="btn btn-success" id="submitTTBGBtn">
+                                        <i class="fas fa-paper-plane me-1"></i> Send to Department
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+        </div>
+    </div>
+    
+    <!-- Document Details Modal -->
+    <div class="modal fade" id="documentDetailsModal" tabindex="-1" aria-labelledby="documentDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="documentDetailsModalLabel">TTBG Document Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <ul class="nav nav-tabs" id="ttbgDetailsTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="ttbg-summary-tab" data-bs-toggle="tab" data-bs-target="#ttbg-summary" type="button" role="tab" aria-selected="true">Summary</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="delivery-tab" data-bs-toggle="tab" data-bs-target="#delivery-details" type="button" role="tab" aria-selected="false">Delivery Details</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="acceptance-tab" data-bs-toggle="tab" data-bs-target="#acceptance-details" type="button" role="tab" aria-selected="false">Acceptance Details</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="ttbg-history-tab" data-bs-toggle="tab" data-bs-target="#ttbg-history" type="button" role="tab" aria-selected="false">History</button>
+                        </li>
+                    </ul>
+                    
+                    <div class="tab-content p-3" id="ttbgDetailsTabContent">
+                        <!-- Summary Tab -->
+                        <div class="tab-pane fade show active" id="ttbg-summary" role="tabpanel" aria-labelledby="ttbg-summary-tab">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Role-based access control
+            checkUserRole();
+            
+            // Initialize date pickers
+            initDatePickers();
+            
+            // Set current date for TTBG initiation
+            const today = new Date();
+            const formattedDate = formatDate(today);
+            document.getElementById('ttbgInitiationDate').value = formattedDate;
+            document.getElementById('initiationDate').value = formattedDate;
+            
+            // Mock user data (in a real system, this would come from the authentication system)
+            document.getElementById('initiatedBy').value = 'Admin User';
+            
+            // Populate purchase request and goods receipt details
+            // In a real application, these would be fetched from the backend based on the IDs
+            populateReferenceDetails();
+            
+            // Pre-populate goods description from purchase request
+            document.getElementById('goodsDescription').value = document.getElementById('productDescription').textContent;
+            
+            // Pre-populate quantity handed over from requested quantity
+            document.getElementById('quantityHandedOver').value = document.getElementById('requestedQuantity').textContent;
+            
+            // Pre-populate receiving department from request department
+            document.getElementById('receivingDepartment').value = 'IT'; // Assuming IT Department from the mock data
+            
+            // Update status badge when ttbgStatus changes
+            document.getElementById('ttbgStatus').addEventListener('change', function() {
+                updateStatusBadge(this.value);
+            });
+            
+            // Add event listeners
+            document.getElementById('ttbgForm').addEventListener('submit', handleFormSubmit);
+            document.getElementById('acceptanceConfirmation').addEventListener('change', handleAcceptanceChange);
+            document.getElementById('quantityHandedOver').addEventListener('input', checkQuantityMatch);
+            document.getElementById('cancelBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'buy_contract_form.html';
+            });
+            document.getElementById('viewPurchaseRequest').addEventListener('click', function(e) {
+                e.preventDefault();
+                const requestId = document.getElementById('requestId').textContent;
+                // In a real application, this would navigate to the purchase request details page
+                alert(`Navigating to Purchase Request: ${requestId}`);
+                // window.location.href = `purchase_request_details.html?id=${requestId}`;
+            });
+            document.getElementById('viewGoodsReceipt').addEventListener('click', function(e) {
+                e.preventDefault();
+                const goodsReceiptId = document.getElementById('goodsReceiptId').textContent;
+                // In a real application, this would navigate to the goods receipt details page
+                alert(`Navigating to Goods Receipt: ${goodsReceiptId}`);
+                // window.location.href = `goods_receipt_details.html?id=${goodsReceiptId}`;
+            });
+        });
+        
+        // Check if user has appropriate role
+        function checkUserRole() {
+            // In a real application, this would check the user's role from the authentication system
+            const userRole = getUserRole(); // This is a mock function
+            
+            if (!isAuthorizedRole(userRole)) {
+                document.getElementById('ttbgFormContent').classList.add('hidden-field');
+                document.getElementById('roleAccessError').classList.remove('hidden-field');
+            }
+        }
+        
+        // Check if the role is authorized
+        function isAuthorizedRole(role) {
+            const authorizedRoles = ['Admin', 'IT Member', 'Logistics Manager', 'Warehouse Manager'];
+            return authorizedRoles.includes(role);
+        }
+        
+        // Mock function to get user role - in a real app, this would come from authentication service
+        function getUserRole() {
+            // For demo purposes, let's assume the user is an Admin
+            return 'Admin';
+            
+            // Uncomment below to test access denied
+            // return 'User';
+        }
+        
+        // Format date as YYYY-MM-DD
+        function formatDate(date) {
+            return date.getFullYear() + '-' + 
+                  String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+                  String(date.getDate()).padStart(2, '0');
+        }
+        
+        // Initialize date pickers
+        function initDatePickers() {
+            flatpickr('.date-picker', {
+                dateFormat: 'Y-m-d',
+                allowInput: true
+            });
+        }
+        
+        // Populate reference details (purchase request and goods receipt)
+        function populateReferenceDetails() {
+            // In a real application, this data would come from the backend
+            // For now, we're using the mock data from the HTML placeholders
+        }
+        
+        // Update status badge
+        function updateStatusBadge(status) {
+            const statusBadge = document.getElementById('statusBadge');
+            statusBadge.className = 'status-badge';
+            
+            switch(status) {
+                case 'Initiated':
+                    statusBadge.classList.add('status-initiated');
+                    break;
+                case 'In Progress':
+                    statusBadge.classList.add('status-in-progress');
+                    break;
+                case 'Completed':
+                    statusBadge.classList.add('status-completed');
+                    break;
+                case 'Rejected':
+                    statusBadge.classList.add('status-rejected');
+                    break;
+                default:
+                    statusBadge.classList.add('status-initiated');
+            }
+            
+            statusBadge.textContent = status;
+        }
+        
+        // Handle acceptance confirmation change
+        function handleAcceptanceChange() {
+            const acceptance = document.getElementById('acceptanceConfirmation').value;
+            const acceptanceDateField = document.querySelector('.acceptance-date-field');
+            const acceptanceNotesField = document.getElementById('acceptanceNotes');
+            
+            // Show/hide acceptance date
+            if (acceptance === 'Accepted') {
+                acceptanceDateField.classList.remove('hidden-field');
+                document.getElementById('acceptanceDate').value = formatDate(new Date());
+            } else {
+                acceptanceDateField.classList.add('hidden-field');
+            }
+            
+            // Make notes required for Rejected or Partial Acceptance
+            if (acceptance === 'Rejected' || acceptance === 'Partial Acceptance') {
+                acceptanceNotesField.setAttribute('required', '');
+            } else {
+                acceptanceNotesField.removeAttribute('required');
+            }
+        }
+        
+        // Check if quantity handed over matches purchase request quantity
+        function checkQuantityMatch() {
+            const requestedQuantity = parseInt(document.getElementById('requestedQuantityHidden').value);
+            const handedOverQuantity = parseInt(document.getElementById('quantityHandedOver').value);
+            
+            if (!isNaN(handedOverQuantity) && !isNaN(requestedQuantity) && handedOverQuantity !== requestedQuantity) {
+                document.getElementById('originalQuantity').textContent = requestedQuantity;
+                document.getElementById('handedOverQuantity').textContent = handedOverQuantity;
+                document.getElementById('warning-alert').style.display = 'block';
+            } else {
+                document.getElementById('warning-alert').style.display = 'none';
+            }
+        }
+        
+        // Form validation
+        function validateForm() {
+            const form = document.getElementById('ttbgForm');
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            return isValid;
+        }
+    </script>
+
+    <script>
+        // Handle nested dropdowns in sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup for submenus
+            const subMenuToggleButtons = document.querySelectorAll('.dropdown-item.dropdown-toggle');
+            
+            subMenuToggleButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Find the nearest submenu to this toggle button
+                    const submenu = this.nextElementSibling;
+                    
+                    // Toggle the show class on this submenu
+                    submenu.classList.toggle('show');
+                    
+                    // Close other submenus at the same level
+                    const siblings = Array.from(this.parentElement.parentElement.children)
+                        .filter(child => child !== this.parentElement)
+                        .map(child => child.querySelector('.dropdown-submenu'))
+                        .filter(Boolean);
+                    
+                    siblings.forEach(sibling => {
+                        sibling.classList.remove('show');
+                    });
+                });
+            });
+            
+            // Close submenus when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown-submenu') && !e.target.classList.contains('dropdown-toggle')) {
+                    document.querySelectorAll('.dropdown-submenu.show').forEach(menu => {
+                        menu.classList.remove('show');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

@@ -1,0 +1,794 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accountant Reimbursement Processing - LTS Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./company_layout.css">
+    <style>
+        /* Header styles */
+        .header-container {
+            background-color: #17a2b8;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .form-container, .content-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        /* Status and badge styles */
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        .status-pending {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-approved {
+            background-color: #d1e7dd;
+            color: #0f5132;
+        }
+        .status-rejected {
+            background-color: #f8d7da;
+            color: #842029;
+        }
+        .status-processing {
+            background-color: #cff4fc;
+            color: #055160;
+        }
+        .status-settlement {
+            background-color: #e2e3e5;
+            color: #383d41;
+        }
+        
+        /* Tab and navigation styles */
+        .nav-pills .nav-link.active {
+            background-color: #17a2b8;
+        }
+        
+        .document-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        .document-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #adb5bd;
+        }
+        .document-card.advance-request {
+            border-left: 4px solid #ffc107;
+        }
+        .document-card.settlement {
+            border-left: 4px solid #17a2b8;
+        }
+        .document-card.approved {
+            border-left: 4px solid #28a745;
+        }
+        .document-card.rejected {
+            border-left: 4px solid #dc3545;
+        }
+        
+        .document-header {
+            padding: 12px 15px;
+            background-color: #f8f9fa;
+            border-bottom: 1px solid #dee2e6;
+            border-top-left-radius: 8px;
+            border-top-right-radius: 8px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .document-body {
+            padding: 15px;
+        }
+        .document-footer {
+            padding: 12px 15px;
+            background-color: #f8f9fa;
+            border-top: 1px solid #dee2e6;
+            border-bottom-left-radius: 8px;
+            border-bottom-right-radius: 8px;
+        }
+        
+        .required-field::after {
+            content: "*";
+            color: red;
+            margin-left: 3px;
+        }
+        
+        .signature-pad {
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            width: 100%;
+            height: 120px;
+            background-color: #fff;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+        }
+        .signature-pad.signed {
+            background-color: #f8f9fa;
+            color: #6c757d;
+        }
+        
+        .filters-container {
+            background-color: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="brand">
+            <i class="fas fa-cube me-2"></i> LTS MANAGER
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="icon-button me-2">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="icon-button me-3">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div class="user-avatar">
+                AC
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <ul class="nav flex-column">            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-calendar-alt"></i> Quản lý ngày nghỉ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-users"></i> Quản lý QT
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tasks"></i> Quản lý dự án
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-clock"></i> Chấm công
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-chart-line"></i> Đánh giá định kỳ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-graduation-cap"></i> Quản lý kỹ năng
+                </a>
+            </li>
+            <!-- Procurement Section -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="procurementDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-shopping-cart"></i> Procurement
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="procurementDropdown">
+                    <li><a class="dropdown-item" href="index.html">
+                        <i class="fas fa-file-alt"></i> Request List
+                    </a></li>
+                    <li><a class="dropdown-item" href="purchase_list.html">
+                        <i class="fas fa-shopping-bag"></i> Purchase List
+                    </a></li>
+                    <li><a class="dropdown-item" href="supplier_select.html">
+                        <i class="fas fa-users"></i> Suppliers Select</a></li>
+                    <li><a class="dropdown-item" href="it_review_list.html">
+                        <i class="fas fa-laptop"></i> IT Review Queue</a></li>
+                    <li><a class="dropdown-item" href="dl_payment_confirmation_list.html">
+                        <i class="fas fa-truck"></i> DL Confirm Payment</a></li>
+                    <li><a class="dropdown-item" href="accountant_document_review.html">
+                        <i class="fas fa-list"></i> Document Review</a></li>
+                    <li><a class="dropdown-item" href="advance_payment_approval_page.html">
+                        <i class="fas fa-receipt"></i> Advance Payment Approval</a></li>                    <li><a class="dropdown-item" href="accountant_reimbursement_approval.html">
+                        <i class="fas fa-calculator"></i> Reimbursement Processing</a></li>
+                    <li><a class="dropdown-item" href="supplier_management.html">
+                        <i class="fas fa-building"></i> Supplier Management</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-container">
+            <h1>Accountant Reimbursement Processing</h1>
+            <p class="mb-0">Review advance payment requests and process settlement forms for employees</p>
+        </div>
+        
+        <!-- Dashboard Summary -->
+        <div class="content-container">
+            <div class="row mb-4">
+                <div class="col-md-2">
+                    <div class="card text-white bg-primary">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">Advance Requests</h6>
+                            <h3 class="mb-0">8</h3>
+                            <small>For Review Only</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card text-white bg-warning">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">Pending Settlements</h6>
+                            <h3 class="mb-0">5</h3>
+                            <small>Awaiting Approval</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card text-white bg-info">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">Processing</h6>
+                            <h3 class="mb-0">3</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card text-white bg-success">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">Approved</h6>
+                            <h3 class="mb-0">18</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card text-white bg-danger">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">Rejected</h6>
+                            <h3 class="mb-0">2</h3>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-2">
+                    <div class="card text-white bg-secondary">
+                        <div class="card-body text-center">
+                            <h6 class="card-title">Total</h6>
+                            <h3 class="mb-0">36</h3>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Filters -->
+            <div class="filters-container">
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <label for="statusFilter" class="form-label">Status</label>
+                        <select class="form-select" id="statusFilter">
+                            <option value="all" selected>All</option>
+                            <option value="pending">Pending</option>
+                            <option value="processing">Processing</option>
+                            <option value="approved">Approved</option>
+                            <option value="rejected">Rejected</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="typeFilter" class="form-label">Form Type</label>
+                        <select class="form-select" id="typeFilter">
+                            <option value="all" selected>All Types</option>
+                            <option value="advance_request">Advance Payment Requests</option>
+                            <option value="settlement">Payment Settlements</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="departmentFilter" class="form-label">Department</label>
+                        <select class="form-select" id="departmentFilter">
+                            <option value="all" selected>All Departments</option>
+                            <option value="IT">IT</option>
+                            <option value="Marketing">Marketing</option>
+                            <option value="Sales">Sales</option>
+                            <option value="HR">HR</option>
+                            <option value="Finance">Finance</option>
+                        </select>
+                    </div>
+                    <div class="col-md-3">
+                        <label for="searchFilter" class="form-label">Search</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="searchFilter" placeholder="Search...">
+                            <button class="btn btn-outline-secondary" type="button">
+                                <i class="fas fa-search"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Reimbursement Processing Tabs -->
+        <div class="content-container">
+            <ul class="nav nav-pills mb-3" id="reimbursementTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link active" id="advance-requests-tab" data-bs-toggle="pill" data-bs-target="#advance-requests" type="button" role="tab" aria-controls="advance-requests" aria-selected="true">
+                        <i class="fas fa-eye me-2"></i>Advance Requests - Review (8)
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="settlements-tab" data-bs-toggle="pill" data-bs-target="#settlements" type="button" role="tab" aria-controls="settlements" aria-selected="false">
+                        <i class="fas fa-calculator me-2"></i>Settlements - Approval (5)
+                    </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                    <button class="nav-link" id="processed-tab" data-bs-toggle="pill" data-bs-target="#processed" type="button" role="tab" aria-controls="processed" aria-selected="false">
+                        <i class="fas fa-check-circle me-2"></i>Processed (20)
+                    </button>
+                </li>
+            </ul>
+            
+            <div class="tab-content" id="reimbursementTabsContent">
+                <!-- Advance Payment Requests Tab -->
+                <div class="tab-pane fade show active" id="advance-requests" role="tabpanel" aria-labelledby="advance-requests-tab">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Information:</strong> You can review advance payment requests for informational purposes. 
+                        Approval authority rests with the Finance Manager or designated approver.
+                    </div>
+                    
+                    <!-- Advance Request 1 -->
+                    <div class="document-card advance-request">
+                        <div class="document-header">
+                            <div>
+                                <h5 class="mb-0">Advance Payment Request: ADV-REQ-2025-089</h5>
+                                <small class="text-muted">Jennifer Adams - Marketing Conference</small>
+                            </div>
+                            <span class="badge bg-primary status-badge">Manager Approved - Awaiting Finance</span>
+                        </div>
+                        <div class="document-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p class="mb-1"><strong>Employee:</strong> Jennifer Adams</p>
+                                    <p class="mb-1"><strong>Department:</strong> Marketing</p>
+                                    <p class="mb-1"><strong>Request Date:</strong> May 30, 2025</p>
+                                    <p class="mb-0"><strong>Purpose:</strong> Business Conference</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="mb-1"><strong>Advance Amount:</strong> $2,500.00</p>
+                                    <p class="mb-1"><strong>Settlement Due:</strong> June 15, 2025</p>
+                                    <p class="mb-1"><strong>Manager Approval:</strong> ✓ Sarah Wilson</p>
+                                    <p class="mb-0"><strong>Budget Code:</strong> MKTG-CONF-2025</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="mb-2"><strong>Expense Breakdown:</strong></p>
+                                    <ul class="list-unstyled" style="font-size: 0.9rem;">
+                                        <li>• Hotel: $1,200.00</li>
+                                        <li>• Airfare: $800.00</li>
+                                        <li>• Meals: $300.00</li>
+                                        <li>• Registration: $200.00</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="document-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-muted"><i class="fas fa-lock me-1"></i>Read-only access - No approval authority</small>
+                                <div>
+                                    <button class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#viewAdvanceRequestModal">
+                                        <i class="fas fa-eye me-1"></i> View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Advance Request 2 -->
+                    <div class="document-card advance-request">
+                        <div class="document-header">
+                            <div>
+                                <h5 class="mb-0">Advance Payment Request: ADV-REQ-2025-090</h5>
+                                <small class="text-muted">Mark Thompson - Client Visit</small>
+                            </div>
+                            <span class="badge bg-success status-badge">Finance Approved - Processing Payment</span>
+                        </div>
+                        <div class="document-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p class="mb-1"><strong>Employee:</strong> Mark Thompson</p>
+                                    <p class="mb-1"><strong>Department:</strong> Sales</p>
+                                    <p class="mb-1"><strong>Request Date:</strong> May 28, 2025</p>
+                                    <p class="mb-0"><strong>Purpose:</strong> Client Presentation</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="mb-1"><strong>Advance Amount:</strong> $1,200.00</p>
+                                    <p class="mb-1"><strong>Settlement Due:</strong> June 20, 2025</p>
+                                    <p class="mb-1"><strong>Finance Approval:</strong> ✓ Emily Chen</p>
+                                    <p class="mb-0"><strong>Budget Code:</strong> SALES-CLIENT-2025</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="mb-2"><strong>Expense Breakdown:</strong></p>
+                                    <ul class="list-unstyled" style="font-size: 0.9rem;">
+                                        <li>• Transportation: $400.00</li>
+                                        <li>• Hotel: $500.00</li>
+                                        <li>• Client Meals: $300.00</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="document-footer">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <small class="text-success"><i class="fas fa-check-circle me-1"></i>Approved - Payment being processed</small>
+                                <div>
+                                    <button class="btn btn-outline-primary">
+                                        <i class="fas fa-eye me-1"></i> View Details
+                                    </button>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Payment Settlements Tab -->
+                <div class="tab-pane fade" id="settlements" role="tabpanel" aria-labelledby="settlements-tab">
+                    <!-- Settlement 1 -->
+                    <div class="document-card settlement">
+                        <div class="document-header">
+                            <div>
+                                <h5 class="mb-0">Payment Settlement: SET-2025-045</h5>
+                                <small class="text-muted">Robert Kim - IT Training Settlement</small>
+                            </div>
+                            <span class="badge bg-info status-badge">Settlement Review</span>
+                        </div>
+                        <div class="document-body">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <p class="mb-1"><strong>Employee:</strong> Robert Kim</p>
+                                    <p class="mb-1"><strong>Department:</strong> IT</p>
+                                    <p class="mb-1"><strong>Settlement Date:</strong> May 29, 2025</p>
+                                    <p class="mb-0"><strong>Original Advance:</strong> ADV-REQ-2025-067</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="mb-1"><strong>Advance Amount:</strong> $1,800.00</p>
+                                    <p class="mb-1"><strong>Total Expenses:</strong> $1,650.00</p>
+                                    <p class="mb-1"><strong>Amount to Return:</strong> $150.00</p>
+                                    <p class="mb-0"><strong>Budget Code:</strong> IT-TRAIN-2025</p>
+                                </div>
+                                <div class="col-md-4">
+                                    <p class="mb-2"><strong>Receipt Summary:</strong></p>
+                                    <ul class="list-unstyled" style="font-size: 0.9rem;">
+                                        <li>• Training: $1,200.00 ✓</li>
+                                        <li>• Hotel: $300.00 ✓</li>
+                                        <li>• Meals: $150.00 ✓</li>
+                                        <li>• Total Receipts: 8 items</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="document-footer">
+                            <div class="d-flex justify-content-end">
+                                <button class="btn btn-outline-secondary me-2" data-bs-toggle="modal" data-bs-target="#viewSettlementModal">
+                                    <i class="fas fa-eye me-1"></i> View Settlement
+                                </button>
+                                <button class="btn btn-danger me-2" data-bs-toggle="modal" data-bs-target="#rejectSettlementModal">
+                                    <i class="fas fa-times-circle me-1"></i> Reject
+                                </button>
+                                <button class="btn btn-success" data-bs-toggle="modal" data-bs-target="#approveSettlementModal">
+                                    <i class="fas fa-check-circle me-1"></i> Approve
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Additional settlements would be listed here -->
+                </div>
+                
+                <!-- Processed Tab -->
+                <div class="tab-pane fade" id="processed" role="tabpanel" aria-labelledby="processed-tab">
+                    <!-- Processed items would be listed here -->
+                    <p class="text-muted text-center mt-4 mb-0">Showing recent processed items. <a href="#">View all processed items</a></p>
+                </div>
+            </div>
+        </div>
+        
+        <!-- View Advance Request Modal -->
+        <div class="modal fade" id="viewAdvanceRequestModal" tabindex="-1" aria-labelledby="viewAdvanceRequestModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-primary text-white">
+                        <h5 class="modal-title" id="viewAdvanceRequestModalLabel">Advance Payment Request - Review Only</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-info-circle me-2"></i>
+                            <strong>Note:</strong> This is for review purposes only. You do not have approval authority for advance payment requests.
+                        </div>
+                        
+                        <h6>Request: ADV-REQ-2025-089</h6>
+                        <p class="text-muted">Jennifer Adams - Marketing Department</p>
+                        
+                        <div class="row mb-4">
+                            <div class="col-md-6">
+                                <h6>Employee Information</h6>
+                                <table class="table table-sm table-bordered">
+                                    <tbody>
+                                        <tr><th>Name</th><td>Jennifer Adams</td></tr>
+                                        <tr><th>Employee ID</th><td>EMP-2025-0234</td></tr>
+                                        <tr><th>Department</th><td>Marketing</td></tr>
+                                        <tr><th>Position</th><td>Marketing Manager</td></tr>
+                                        <tr><th>Manager</th><td>Sarah Wilson</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                            <div class="col-md-6">
+                                <h6>Trip Information</h6>
+                                <table class="table table-sm table-bordered">
+                                    <tbody>
+                                        <tr><th>Purpose</th><td>Digital Marketing Conference 2025</td></tr>
+                                        <tr><th>Destination</th><td>San Francisco, CA</td></tr>
+                                        <tr><th>Start Date</th><td>June 5, 2025</td></tr>
+                                        <tr><th>End Date</th><td>June 8, 2025</td></tr>
+                                        <tr><th>Duration</th><td>4 days</td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        
+                        <h6>Expense Breakdown</h6>
+                        <div class="table-responsive mb-4">
+                            <table class="table table-bordered">
+                                <thead class="table-light">
+                                    <tr>
+                                        <th>Category</th>
+                                        <th>Description</th>
+                                        <th>Amount</th>
+                                        <th>Notes</th>
+                                    </tr>
+                                </thead>
+                                <tbody>
+                                    <tr>
+                                        <td>Accommodation</td>
+                                        <td>Hotel San Francisco Downtown - 3 nights</td>
+                                        <td>$1,200.00</td>
+                                        <td>Conference hotel rate</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Transportation</td>
+                                        <td>Round-trip airfare</td>
+                                        <td>$800.00</td>
+                                        <td>Economy class</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Meals</td>
+                                        <td>Per diem allowance</td>
+                                        <td>$300.00</td>
+                                        <td>$75/day × 4 days</td>
+                                    </tr>
+                                    <tr>
+                                        <td>Conference</td>
+                                        <td>Registration fee</td>
+                                        <td>$200.00</td>
+                                        <td>Early bird discount</td>
+                                    </tr>
+                                </tbody>
+                                <tfoot class="table-light">
+                                    <tr>
+                                        <td colspan="2"><strong>Total Advance Requested</strong></td>
+                                        <td><strong>$2,500.00</strong></td>
+                                        <td></td>
+                                    </tr>
+                                </tfoot>
+                            </table>
+                        </div>
+                        
+                        <h6>Approval Status</h6>
+                        <div class="mb-3">
+                            <div class="d-flex justify-content-between align-items-center border p-2 rounded mb-2">
+                                <div>
+                                    <strong>Manager Approval:</strong> Sarah Wilson (Marketing Director)
+                                </div>
+                                <span class="badge bg-success">Approved - May 28, 2025</span>
+                            </div>
+                            <div class="d-flex justify-content-between align-items-center border p-2 rounded">
+                                <div>
+                                    <strong>Finance Approval:</strong> Pending Finance Manager Review
+                                </div>
+                                <span class="badge bg-warning">Awaiting Approval</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-outline-primary" onclick="window.open('advance_payment_request_form.html', '_blank')">
+                            <i class="fas fa-external-link-alt me-1"></i> Open Full Form
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- View Settlement Modal -->
+        <div class="modal fade" id="viewSettlementModal" tabindex="-1" aria-labelledby="viewSettlementModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-info text-white">
+                        <h5 class="modal-title" id="viewSettlementModalLabel">Payment Settlement Form</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <!-- Form content would be loaded here from advance_payment_settlement_form -->
+                        <p class="text-muted">This would display the complete payment settlement form with all receipts, calculations, and settlement details.</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        <button type="button" class="btn btn-primary" onclick="window.open('advance_payment_settlement_form.html', '_blank')">
+                            <i class="fas fa-external-link-alt me-1"></i> Open Full Form
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Approve Settlement Modal -->
+        <div class="modal fade" id="approveSettlementModal" tabindex="-1" aria-labelledby="approveSettlementModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header bg-success text-white">
+                        <h5 class="modal-title" id="approveSettlementModalLabel">Approve Payment Settlement</h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <h6>SET-2025-045</h6>
+                        <p class="text-muted">Robert Kim - Settlement requires $150.00 return</p>
+                        
+                        <div class="mb-3">
+                            <label for="settlementApprovalComments" class="form-label">Processing Comments</label>
+                            <textarea class="form-control" id="settlementApprovalComments" rows="3" placeholder="Enter settlement processing notes..."></textarea>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="refundMethod" class="form-label required-field">Refund Collection Method</label>
+                            <select class="form-select" id="refundMethod">
+                                <option value="">Select collection method</option>
+                                <option value="payroll_deduction">Payroll Deduction</option>
+                                <option value="cash_return">Cash Return</option>
+                                <option value="bank_transfer">Bank Transfer to Company</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label required-field">Accountant Signature</label>
+                            <div class="signature-pad" id="settlementSignaturePad">
+                                <span id="settlementSignatureText">Click here to sign</span>
+                            </div>
+                            <button class="btn btn-sm btn-outline-secondary" id="clearSettlementSignatureBtn">Clear Signature</button>
+                        </div>
+                        
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="settlementApprovalCheck">
+                            <label class="form-check-label" for="settlementApprovalCheck">
+                                I confirm all receipts are verified and settlement calculation is correct.
+                            </label>
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                        <button type="button" class="btn btn-success" id="confirmSettlementApproval">Complete Settlement</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Success/Error Alerts -->
+        <div class="alert alert-success" id="success-alert" style="display:none;">
+            <h4 class="alert-heading"><i class="fas fa-check-circle me-2"></i> Success!</h4>
+            <p id="successMessage">Operation completed successfully.</p>
+        </div>
+
+        <div class="alert alert-danger" id="error-alert" style="display:none;">
+            <h4 class="alert-heading"><i class="fas fa-exclamation-circle me-2"></i> Error!</h4>
+            <p id="errorMessage">An error occurred. Please try again.</p>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Signature pad functionality
+            setupSignaturePads();
+            
+            // Modal confirmation handlers
+            setupModalHandlers();
+        });
+        
+        function setupSignaturePads() {
+            // Remove advance signature pad setup - no longer needed
+            
+            // Settlement signature pad
+            const settlementSignaturePad = document.getElementById('settlementSignaturePad');
+            const settlementSignatureText = document.getElementById('settlementSignatureText');
+            const clearSettlementSignatureBtn = document.getElementById('clearSettlementSignatureBtn');
+            
+            if (settlementSignaturePad) {
+                settlementSignaturePad.addEventListener('click', function() {
+                    if (!this.classList.contains('signed')) {
+                        this.classList.add('signed');
+                        settlementSignatureText.textContent = 'Accountant Approved';
+                    }
+                });
+                
+                clearSettlementSignatureBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    settlementSignaturePad.classList.remove('signed');
+                    settlementSignatureText.textContent = 'Click here to sign';
+                });
+            }
+        }
+        
+        function setupModalHandlers() {
+            // Remove advance approval handler - no longer needed
+            
+            // Confirm settlement approval
+            const confirmSettlementApprovalBtn = document.getElementById('confirmSettlementApproval');
+            if (confirmSettlementApprovalBtn) {
+                confirmSettlementApprovalBtn.addEventListener('click', function() {
+                    const signatureProvided = document.getElementById('settlementSignaturePad').classList.contains('signed');
+                    const refundMethod = document.getElementById('refundMethod').value;
+                    const approvalCheck = document.getElementById('settlementApprovalCheck').checked;
+                    
+                    if (!signatureProvided || !refundMethod || !approvalCheck) {
+                        showError('Please complete all required fields including signature and confirmation.');
+                        return;
+                    }
+                    
+                    // Close modal
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('approveSettlementModal'));
+                    modal.hide();
+                    
+                    // Show success message
+                    showSuccess('Payment settlement SET-2025-045 has been completed. Employee will be notified of refund collection method.');
+                });
+            }
+        }
+        
+        function showSuccess(message) {
+            document.getElementById('successMessage').textContent = message;
+            document.getElementById('success-alert').style.display = 'block';
+            document.getElementById('success-alert').scrollIntoView({behavior: 'smooth'});
+            
+            setTimeout(function() {
+                document.getElementById('success-alert').style.display = 'none';
+            }, 5000);
+        }
+        
+        function showError(message) {
+            document.getElementById('errorMessage').textContent = message;
+            document.getElementById('error-alert').style.display = 'block';
+            
+            setTimeout(function() {
+                document.getElementById('error-alert').style.display = 'none';
+            }, 5000);
+        }
+    </script>
+</body>
+</html>

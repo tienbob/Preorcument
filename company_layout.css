@@ -1,0 +1,206 @@
+        body {
+            background-color: #f8f9fa !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+        /* Top navbar */
+        .top-navbar {
+            background-color: #051e34 !important;
+            color: white !important;
+            height: 48px !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 0 15px !important;
+            position: fixed !important;
+            top: 0 !important;
+            left: 0 !important;
+            right: 0 !important;
+            z-index: 1050 !important;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1) !important;
+        }        .top-navbar .brand {
+            display: flex !important;
+            align-items: center !important;
+            color: white !important;
+            text-decoration: none !important;
+            font-weight: bold !important;
+        }
+        .top-navbar .icon-button {
+            background: none !important;
+            border: none !important;
+            color: white !important;
+            cursor: pointer !important;
+            width: 36px !important;
+            height: 36px !important;
+            border-radius: 50% !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+        }
+        .top-navbar .icon-button:hover {
+            background-color: rgba(255,255,255,0.1) !important;
+        }
+        .user-avatar {
+            width: 32px !important;
+            height: 32px !important;
+            border-radius: 50% !important;
+            background-color: white !important;
+            color: #051e34 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+            font-weight: bold !important;
+        }        /* Left sidebar */
+        .sidebar {
+            position: fixed !important;
+            top: 48px !important; /* Below the top navbar */
+            left: 0 !important;
+            height: calc(100vh - 48px) !important;
+            width: 240px !important;
+            background: #051e34 !important;
+            color: #fff !important;
+            z-index: 1000 !important;
+            display: flex !important;
+            flex-direction: column !important;
+            overflow-y: auto !important;
+        }
+        .sidebar .nav {
+            flex: 1;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        .sidebar .nav-item {
+            width: 100%;
+        }
+        .sidebar .nav-link {
+            color: #fff;
+            opacity: 0.8;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            opacity: 1;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        .sidebar .dropdown-toggle::after {
+            margin-left: auto;
+        }
+        .sidebar .dropdown-menu {
+            background: #0a2b4a;
+            border: none;
+            margin: 0;
+            border-radius: 0;
+            padding: 0;
+            width: 100%;
+            position: static !important;
+            transform: none !important;
+        }        .sidebar .dropdown-item {
+            color: #fff;
+            padding: 8px 15px 8px 45px;
+            opacity: 0.8;
+        }
+        .sidebar .dropdown-item:hover, .sidebar .dropdown-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            opacity: 1;
+        }
+        
+        /* Multi-level dropdown styles */
+        .sidebar .dropdown-submenu {
+            position: relative;
+            left: 100%;
+            top: -38px;
+            display: none;
+            background: #0a2b4a;
+            border: none;
+            margin: 0;
+            border-radius: 0;
+            padding: 0;
+            width: 200px;
+        }
+        
+        .sidebar .dropdown-submenu.show {
+            display: block;
+        }
+        
+        .sidebar .dropdown-item.dropdown-toggle {
+            position: relative;
+        }
+        
+        .sidebar .dropdown-item.dropdown-toggle::after {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }        /* Main content */
+        .main-content {
+            margin-left: 240px !important;
+            margin-top: 48px !important; /* Space for the top navbar */
+            padding: 20px !important;
+            min-height: calc(100vh - 48px) !important;
+            background: #f8f9fa !important;
+        }
+        /* Form styles */
+        .header-container {
+            background-color: #007bff; /* Default color, will be replaced by {{HEADER_BG_COLOR}} */
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .form-container, .content-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .required-field::after {
+            content: "*";
+            color: red;
+            margin-left: 3px;
+        }
+        .hidden-field {
+            display: none;
+        }
+        /* Alerts */
+        #success-alert, #error-alert, #warning-alert {
+            display: none;
+            margin-top: 20px;
+        }
+        /* Status badges */
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: 600;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+        /* Responsive */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                top: 48px;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px 10px;
+                margin-top: 48px;
+            }
+        }

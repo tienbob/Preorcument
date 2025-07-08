@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>DL Payment Confirmation List - LTS Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./company_layout.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+            margin: 0;
+            padding: 0;
+        }
+        /* Top navbar */
+        .top-navbar {
+            background-color: #051e34;
+            color: white;
+            height: 48px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0 15px;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1050;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        .top-navbar .brand {
+            display: flex;
+            align-items: center;
+            color: white;
+            text-decoration: none;
+            font-weight: bold;
+        }
+        .top-navbar .icon-button {
+            background: none;
+            border: none;
+            color: white;
+            cursor: pointer;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .top-navbar .icon-button:hover {
+            background-color: rgba(255,255,255,0.1);
+        }
+        .user-avatar {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        /* Left sidebar */
+        .sidebar {
+            position: fixed;
+            top: 48px;
+            left: 0;
+            height: calc(100vh - 48px);
+            width: 240px;
+            background: #051e34;
+            color: #fff;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .sidebar .nav {
+            flex: 1;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        .sidebar .nav-item {
+            width: 100%;
+        }
+        .sidebar .nav-link {
+            color: #fff;
+            opacity: 0.8;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.2s;
+            border: none;
+            background: none;
+            width: 100%;
+            text-align: left;
+        }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            opacity: 1;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        .sidebar .dropdown-toggle::after {
+            margin-left: auto;
+        }
+        .sidebar .dropdown-menu {
+            background: #0a2b4a;
+            border: none;
+            margin: 0;
+            border-radius: 0;
+            padding: 0;
+            width: 100%;
+            position: static !important;
+            transform: none !important;
+        }
+        .sidebar .dropdown-item {
+            color: #fff;
+            padding: 8px 15px 8px 45px;
+            opacity: 0.8;
+        }        .sidebar .dropdown-item:hover, .sidebar .dropdown-item.active {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            opacity: 1;
+        }
+        
+        /* Multi-level dropdown styles */
+        .sidebar .dropdown-submenu {
+            position: relative;
+            left: 100%;
+            top: -38px;
+            display: none;
+            background: #0a2b4a;
+            border: none;
+            margin: 0;
+            border-radius: 0;
+            padding: 0;
+            width: 200px;
+        }
+        
+        .sidebar .dropdown-submenu.show {
+            display: block;
+        }
+        
+        .sidebar .dropdown-item.dropdown-toggle {
+            position: relative;
+        }
+        
+        .sidebar .dropdown-item.dropdown-toggle::after {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        /* Main content */
+        .main-content {
+            margin-left: 240px;
+            margin-top: 48px;
+            padding: 20px;
+            min-height: calc(100vh - 48px);
+            background: #f8f9fa;
+        }
+        /* DL Payment Confirmation List specific styles */
+        .header-container {
+            background-color: #dc3545;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .content-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        /* Status badges */
+        .status-badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+        }
+        .status-pending-payment {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .status-ready-payment {
+            background-color: #d1ecf1;
+            color: #0c5460;
+        }
+        .status-payment-confirmed {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .status-payment-rejected {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        /* Priority badges */
+        .priority-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .priority-low {
+            background-color: #d4edda;
+            color: #155724;
+        }
+        .priority-medium {
+            background-color: #fff3cd;
+            color: #856404;
+        }
+        .priority-high {
+            background-color: #f8d7da;
+            color: #721c24;
+        }
+        .priority-urgent {
+            background-color: #721c24;
+            color: white;
+            animation: pulse 2s infinite;
+        }
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+        /* Search and filter container */
+        .search-filter-container {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+        }
+        /* Table styles */
+        .table {
+            margin-bottom: 0;
+            font-size: 0.9rem;
+        }
+        .table thead th {
+            background-color: #f8f9fa;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+        .table tbody tr:hover {
+            background-color: rgba(220, 53, 69, 0.05);
+        }
+        /* Hidden class */
+        .hidden {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="brand">
+            <i class="fas fa-cube me-2"></i> LTS MANAGER
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="icon-button me-2">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="icon-button me-3">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div class="user-avatar">
+                TD
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <ul class="nav flex-column">            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-calendar-alt"></i> Quản lý ngày nghỉ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-users"></i> Quản lý QT
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tasks"></i> Quản lý dự án
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-clock"></i> Chấm công
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-chart-line"></i> Đánh giá định kỳ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-graduation-cap"></i> Quản lý kỹ năng
+                </a>
+            </li>
+            <!-- Procurement Section -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="procurementDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-shopping-cart"></i> Procurement
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="procurementDropdown">
+                    <li><a class="dropdown-item" href="index.html">
+                        <i class="fas fa-file-alt"></i> Request List
+                    </a></li>
+                    <li><a class="dropdown-item" href="purchase_list.html">
+                        <i class="fas fa-shopping-bag"></i> Purchase List
+                    </a></li>
+                    <li><a class="dropdown-item" href="supplier_select.html">
+                        <i class="fas fa-users"></i> Suppliers Select</a></li>
+                    <li><a class="dropdown-item" href="it_review_list.html">
+                        <i class="fas fa-laptop"></i> IT Review Queue</a></li>
+                    <li><a class="dropdown-item" href="dl_payment_confirmation_list.html">
+                        <i class="fas fa-truck"></i> DL Confirm Payment</a></li>
+                    <li><a class="dropdown-item" href="accountant_document_review.html">
+                        <i class="fas fa-list"></i> Document Review</a></li>
+                    <li><a class="dropdown-item" href="advance_payment_approval_page.html">
+                        <i class="fas fa-receipt"></i> Advance Payment Approval</a></li>                    <li><a class="dropdown-item" href="accountant_reimbursement_approval.html">
+                        <i class="fas fa-calculator"></i> Reimbursement Processing</a></li>
+                    <li><a class="dropdown-item" href="supplier_management.html">
+                        <i class="fas fa-building"></i> Supplier Management</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-container">
+            <h1>Director Level Payment Confirmation</h1>
+            <p class="mb-0">Review and confirm payment requests requiring director level approval</p>
+        </div>
+        
+        <!-- Summary Statistics -->
+        <div class="content-container">
+            <h3 class="mb-3">Payment Summary</h3>
+            <div class="row">
+                <div class="col-md-3">
+                    <div class="card border-warning">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-warning">Pending Review</h5>
+                            <h2 class="mb-0">5</h2>
+                            <small class="text-muted">Requests</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-info">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-info">Ready for Payment</h5>
+                            <h2 class="mb-0">3</h2>
+                            <small class="text-muted">Requests</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-success">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-success">Total Amount</h5>
+                            <h2 class="mb-0">$45,250</h2>
+                            <small class="text-muted">Pending</small>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-3">
+                    <div class="card border-danger">
+                        <div class="card-body text-center">
+                            <h5 class="card-title text-danger">Urgent</h5>
+                            <h2 class="mb-0">2</h2>
+                            <small class="text-muted">Due Today</small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Search and Filter -->
+        <div class="search-filter-container">
+            <div class="row">
+                <div class="col-md-3">
+                    <label for="searchInput" class="form-label">Search</label>
+                    <input type="text" class="form-control" id="searchInput" placeholder="Search by request ID, supplier...">
+                </div>
+                <div class="col-md-2">
+                    <label for="statusFilter" class="form-label">Status</label>
+                    <select class="form-select" id="statusFilter">
+                        <option value="">All Statuses</option>
+                        <option value="pending-payment">Pending Payment</option>
+                        <option value="ready-payment">Ready for Payment</option>
+                        <option value="payment-confirmed">Payment Confirmed</option>
+                        <option value="payment-rejected">Payment Rejected</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="priorityFilter" class="form-label">Priority</label>
+                    <select class="form-select" id="priorityFilter">
+                        <option value="">All Priorities</option>
+                        <option value="low">Low</option>
+                        <option value="medium">Medium</option>
+                        <option value="high">High</option>
+                        <option value="urgent">Urgent</option>
+                    </select>
+                </div>
+                <div class="col-md-2">
+                    <label for="amountFilter" class="form-label">Amount Range</label>
+                    <select class="form-select" id="amountFilter">
+                        <option value="">All Amounts</option>
+                        <option value="0-1000">$0 - $1,000</option>
+                        <option value="1000-5000">$1,000 - $5,000</option>
+                        <option value="5000-10000">$5,000 - $10,000</option>
+                        <option value="10000+">$10,000+</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <label for="dateFilter" class="form-label">Date Range</label>
+                    <select class="form-select" id="dateFilter">
+                        <option value="all">All Time</option>
+                        <option value="today">Due Today</option>
+                        <option value="week">Due This Week</option>
+                        <option value="month">Due This Month</option>
+                        <option value="overdue">Overdue</option>
+                    </select>
+                </div>
+            </div>
+            <div class="row mt-3">
+                <div class="col-md-12">
+                    <button class="btn btn-primary me-2" id="applyFilters">
+                        <i class="fas fa-filter"></i> Apply Filters
+                    </button>
+                    <button class="btn btn-outline-secondary" id="clearFilters">
+                        <i class="fas fa-times"></i> Clear
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Payment Requests Table -->
+        <div class="content-container">
+            <div class="table-responsive">
+                <table class="table table-hover" id="paymentTable">
+                    <thead>
+                        <tr>
+                            <th>Request ID</th>
+                            <th>Supplier</th>
+                            <th>Product/Service</th>
+                            <th>Amount</th>
+                            <th>Priority</th>
+                            <th>Due Date</th>
+                            <th>Status</th>
+                            <th>Actions</th>
+                        </tr>
+                    </thead>
+                    <tbody id="paymentTableBody">
+                        <tr>
+                            <td>REQ-103405</td>
+                            <td>TechPro Solutions</td>
+                            <td>Dell OptiPlex 7090 & Monitors</td>
+                            <td>$7,500.00</td>
+                            <td><span class="priority-badge priority-high">High</span></td>
+                            <td>2025-07-05</td>
+                            <td><span class="status-badge status-ready-payment">Ready for Payment</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary confirm-payment-btn" data-id="REQ-103405">
+                                    <i class="fas fa-check-circle"></i> Confirm Payment
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="REQ-103405">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>REQ-103398</td>
+                            <td>Global IT Systems</td>
+                            <td>Adobe Creative Suite Licenses</td>
+                            <td>$1,250.00</td>
+                            <td><span class="priority-badge priority-medium">Medium</span></td>
+                            <td>2025-07-08</td>
+                            <td><span class="status-badge status-pending-payment">Pending Payment</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary confirm-payment-btn" data-id="REQ-103398">
+                                    <i class="fas fa-check-circle"></i> Confirm Payment
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="REQ-103398">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>REQ-103387</td>
+                            <td>Alpha Computer Systems</td>
+                            <td>Enterprise Security Software</td>
+                            <td>$15,800.00</td>
+                            <td><span class="priority-badge priority-urgent">Urgent</span></td>
+                            <td>2025-06-25</td>
+                            <td><span class="status-badge status-ready-payment">Ready for Payment</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary confirm-payment-btn" data-id="REQ-103387">
+                                    <i class="fas fa-check-circle"></i> Confirm Payment
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="REQ-103387">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>REQ-103301</td>
+                            <td>Industrial Safety Co.</td>
+                            <td>Safety Equipment Package</td>
+                            <td>$8,200.00</td>
+                            <td><span class="priority-badge priority-high">High</span></td>
+                            <td>2025-07-10</td>
+                            <td><span class="status-badge status-pending-payment">Pending Payment</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary confirm-payment-btn" data-id="REQ-103301">
+                                    <i class="fas fa-check-circle"></i> Confirm Payment
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="REQ-103301">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>REQ-103212</td>
+                            <td>Office Solutions Inc.</td>
+                            <td>Conference Room Equipment</td>
+                            <td>$4,200.00</td>
+                            <td><span class="priority-badge priority-medium">Medium</span></td>
+                            <td>2025-07-15</td>
+                            <td><span class="status-badge status-payment-confirmed">Payment Confirmed</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-outline-success" disabled>
+                                    <i class="fas fa-check"></i> Confirmed
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="REQ-103212">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>REQ-103156</td>
+                            <td>Manufacturing Plus</td>
+                            <td>Production Line Upgrade</td>
+                            <td>$12,500.00</td>
+                            <td><span class="priority-badge priority-urgent">Urgent</span></td>
+                            <td>2025-06-25</td>
+                            <td><span class="status-badge status-ready-payment">Ready for Payment</span></td>
+                            <td>
+                                <button class="btn btn-sm btn-primary confirm-payment-btn" data-id="REQ-103156">
+                                    <i class="fas fa-check-circle"></i> Confirm Payment
+                                </button>
+                                <button class="btn btn-sm btn-outline-primary view-details-btn" data-id="REQ-103156">
+                                    <i class="fas fa-eye"></i> View
+                                </button>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div id="noPaymentsMessage" class="alert alert-info hidden">
+                No payment requests found matching your criteria.
+            </div>
+            
+            <div class="d-flex justify-content-between align-items-center mt-3">
+                <div>
+                    <span class="text-muted">Showing 6 of 18 items</span>
+                </div>
+                <nav aria-label="Page navigation">
+                    <ul class="pagination">
+                        <li class="page-item disabled">
+                            <a class="page-link" href="#" tabindex="-1" aria-disabled="true">Previous</a>
+                        </li>
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item">
+                            <a class="page-link" href="#">Next</a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+        
+        <!-- Success Alert -->
+        <div id="successAlert" class="alert alert-success alert-dismissible fade show hidden" role="alert">
+            <h4 class="alert-heading">Success</h4>
+            <p id="successMessage">Operation completed successfully.</p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+        
+        <!-- Error Alert -->
+        <div id="errorAlert" class="alert alert-danger alert-dismissible fade show hidden" role="alert">
+            <h4 class="alert-heading">Error</h4>
+            <p id="errorMessage">Something went wrong. Please try again.</p>
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    </div>
+
+    <!-- Payment Details Modal -->
+    <div class="modal fade" id="paymentDetailsModal" tabindex="-1" aria-labelledby="paymentDetailsModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="paymentDetailsModalLabel">Payment Request Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="row">
+                        <div class="col-md-6">
+                            <p><strong>Request ID:</strong> <span id="modalRequestId"></span></p>
+                            <p><strong>Supplier:</strong> <span id="modalSupplier"></span></p>
+                            <p><strong>Product/Service:</strong> <span id="modalProduct"></span></p>
+                            <p><strong>Payment Amount:</strong> <span id="modalAmount"></span></p>
+                        </div>
+                        <div class="col-md-6">
+                            <p><strong>Priority:</strong> <span id="modalPriority"></span></p>
+                            <p><strong>Due Date:</strong> <span id="modalDueDate"></span></p>
+                            <p><strong>Status:</strong> <span id="modalStatus"></span></p>
+                            <p><strong>Payment Method:</strong> <span id="modalPaymentMethod"></span></p>
+                        </div>
+                    </div>
+                    <div class="row mt-3">
+                        <div class="col-12">
+                            <p><strong>Description:</strong></p>
+                            <p id="modalDescription" class="text-muted"></p>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" id="modalConfirmPaymentBtn">Confirm Payment</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+
+    <script>
+        // Sample payment data for demonstration
+        const paymentData = {
+            'REQ-103405': {
+                id: 'REQ-103405',
+                supplier: 'TechPro Solutions',
+                product: 'Dell OptiPlex 7090 & Monitors',
+                amount: '$7,500.00',
+                priority: 'High',
+                dueDate: '2025-07-05',
+                status: 'Ready for Payment',
+                paymentMethod: 'Wire Transfer',
+                description: 'Desktop computers and monitors for IT department upgrade project.'
+            },
+            'REQ-103398': {
+                id: 'REQ-103398',
+                supplier: 'Global IT Systems',
+                product: 'Adobe Creative Suite Licenses',
+                amount: '$1,250.00',
+                priority: 'Medium',
+                dueDate: '2025-07-08',
+                status: 'Pending Payment',
+                paymentMethod: 'Bank Transfer',
+                description: 'Software licenses for marketing department creative work.'
+            }
+        };
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Filter functionality
+            document.getElementById('applyFilters').addEventListener('click', function() {
+                const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+                const statusFilter = document.getElementById('statusFilter').value;
+                const priorityFilter = document.getElementById('priorityFilter').value;
+                
+                const rows = document.querySelectorAll('#paymentTable tbody tr');
+                let visibleCount = 0;
+                
+                rows.forEach(row => {
+                    const cells = row.cells;
+                    const requestId = cells[0].textContent.toLowerCase();
+                    const supplier = cells[1].textContent.toLowerCase();
+                    const status = cells[6].textContent.toLowerCase().replace(/\s+/g, '-');
+                    const priority = cells[4].textContent.toLowerCase();
+                    
+                    let matches = true;
+                    
+                    if (searchTerm && !requestId.includes(searchTerm) && !supplier.includes(searchTerm)) {
+                        matches = false;
+                    }
+                    
+                    if (statusFilter && statusFilter !== 'all' && !status.includes(statusFilter.toLowerCase())) {
+                        matches = false;
+                    }
+                    
+                    if (priorityFilter && priorityFilter !== 'all' && !priority.includes(priorityFilter.toLowerCase())) {
+                        matches = false;
+                    }
+                    
+                    if (matches) {
+                        row.style.display = '';
+                        visibleCount++;
+                    } else {
+                        row.style.display = 'none';
+                    }
+                });
+                
+                // Update visible count
+                console.log(`Showing ${visibleCount} of ${rows.length} records`);
+            });
+
+            document.getElementById('clearFilters').addEventListener('click', function() {
+                document.getElementById('searchInput').value = '';
+                document.getElementById('statusFilter').value = '';
+                document.getElementById('priorityFilter').value = '';
+                document.getElementById('amountFilter').value = '';
+                document.getElementById('dateFilter').value = 'all';
+                
+                const rows = document.querySelectorAll('#paymentTable tbody tr');
+                rows.forEach(row => {
+                    row.style.display = '';
+                });
+                
+                document.getElementById('noPaymentsMessage').classList.add('hidden');
+                document.getElementById('paymentTable').style.display = 'block';
+            });
+
+            // View details functionality
+            document.querySelectorAll('.view-details-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const requestId = this.getAttribute('data-id');
+                    const data = paymentData[requestId];
+                    
+                    if (data) {
+                        document.getElementById('modalRequestId').textContent = data.id;
+                        document.getElementById('modalSupplier').textContent = data.supplier;
+                        document.getElementById('modalProduct').textContent = data.product;
+                        document.getElementById('modalAmount').textContent = data.amount;
+                        document.getElementById('modalPriority').textContent = data.priority;
+                        document.getElementById('modalDueDate').textContent = data.dueDate;
+                        document.getElementById('modalStatus').textContent = data.status;
+                        document.getElementById('modalPaymentMethod').textContent = data.paymentMethod;
+                        document.getElementById('modalDescription').textContent = data.description;
+                        
+                        // Set up modal confirm button
+                        const modalConfirmBtn = document.getElementById('modalConfirmPaymentBtn');
+                        modalConfirmBtn.setAttribute('data-id', requestId);
+                        
+                        const modal = new bootstrap.Modal(document.getElementById('paymentDetailsModal'));
+                        modal.show();
+                    }
+                });
+            });
+
+            // Confirm payment functionality
+            function handlePaymentConfirmation(requestId) {
+                // Navigate to the detailed confirmation page
+                window.location.href = `confirmation_page.html?requestId=${requestId}`;
+            }
+
+            // Confirm payment buttons
+            document.querySelectorAll('.confirm-payment-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    const requestId = this.getAttribute('data-id');
+                    handlePaymentConfirmation(requestId);
+                });
+            });
+
+            // Modal confirm payment button
+            document.getElementById('modalConfirmPaymentBtn').addEventListener('click', function() {
+                const requestId = this.getAttribute('data-id');
+                const modal = bootstrap.Modal.getInstance(document.getElementById('paymentDetailsModal'));
+                modal.hide();
+                handlePaymentConfirmation(requestId);            });
+        });
+    </script>
+    
+    <script>
+        // Handle nested dropdowns in sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup for submenus
+            const subMenuToggleButtons = document.querySelectorAll('.dropdown-item.dropdown-toggle');
+            
+            subMenuToggleButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Find the nearest submenu to this toggle button
+                    const submenu = this.nextElementSibling;
+                    
+                    // Toggle the show class on this submenu
+                    submenu.classList.toggle('show');
+                    
+                    // Close other submenus at the same level
+                    const siblings = Array.from(this.parentElement.parentElement.children)
+                        .filter(child => child !== this.parentElement)
+                        .map(child => child.querySelector('.dropdown-submenu'))
+                        .filter(Boolean);
+                    
+                    siblings.forEach(sibling => {
+                        sibling.classList.remove('show');
+                    });
+                });
+            });
+            
+            // Close submenus when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown-submenu') && !e.target.classList.contains('dropdown-toggle')) {
+                    document.querySelectorAll('.dropdown-submenu.show').forEach(menu => {
+                        menu.classList.remove('show');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>

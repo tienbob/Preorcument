@@ -1,0 +1,1254 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advance Payment Request - LTS Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./company_layout.css">
+    <style>
+        /* Header styles */
+        .header-container {
+            background-color: #198754;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .form-container, .content-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        
+        /* Print styles */
+        @media print {
+            @page {
+                margin: 0.5in;
+                size: A4;
+                /* Remove default headers and footers */
+                @top-left { content: ""; }
+                @top-center { content: ""; }
+                @top-right { content: ""; }
+                @bottom-left { content: ""; }
+                @bottom-center { content: ""; }
+                @bottom-right { content: ""; }
+            }
+            
+            * {
+                visibility: hidden;
+                -webkit-print-color-adjust: exact;
+                print-color-adjust: exact;
+            }
+            
+            .print-area, .print-area * {
+                visibility: visible;
+            }
+            
+            .print-area {
+                position: absolute;
+                left: 0;
+                top: 0;
+                width: 100%;
+                margin: 0;
+                padding: 15px 20px;
+                background: white !important;
+                font-family: 'Times New Roman', serif;
+                font-size: 12px;
+                line-height: 1.4;
+                color: black;
+            }
+            
+            /* Hide everything else completely */
+            .top-navbar,
+            .sidebar,
+            .header-container,
+            .form-container,
+            .no-print,
+            .btn,
+            .alert,
+            .modal {
+                display: none !important;
+                visibility: hidden !important;
+            }
+            
+            body {
+                margin: 0;
+                padding: 0;
+                background: white !important;
+            }
+            
+            .main-content {
+                margin: 0;
+                padding: 0;
+                background: white !important;
+                position: static;
+            }
+            
+            .print-header {
+                display: flex;
+                justify-content: space-between;
+                align-items: flex-start;
+                margin-bottom: 30px;
+            }
+            .print-logo {
+                width: 100px;
+            }
+            .print-title {
+                text-align: center;
+                flex-grow: 1;
+            }
+            .print-title h1 {
+                font-size: 18px;
+                font-weight: bold;
+                margin: 0;
+                text-transform: uppercase;
+            }
+            .print-date {
+                text-align: right;
+                margin: 20px 0;
+                font-size: 12px;
+            }
+            .print-table {
+                width: 100%;
+                border-collapse: collapse;
+                margin: 15px 0;
+                font-size: 11px;
+            }
+            .print-table th, .print-table td {
+                border: 1px solid black;
+                padding: 6px 8px;
+                text-align: left;
+                vertical-align: top;
+            }
+            .print-table th {
+                background-color: #f0f0f0;
+                font-weight: bold;
+                text-align: center;
+                font-size: 10px;
+            }
+            .print-signatures {
+                margin-top: 50px;
+                display: flex;
+                justify-content: space-between;
+                text-align: center;
+                font-size: 11px;
+            }
+            .print-signature {
+                width: 22%;
+            }
+            .print-signature-title {
+                font-weight: bold;
+                margin-bottom: 60px;
+            }
+        }
+        
+        .advance-request-form {
+            max-width: 800px;
+            margin: 0 auto;
+        }
+        
+        .print-preview {
+            display: none;
+            font-family: 'Times New Roman', serif;
+            font-size: 14px;
+            line-height: 1.4;
+            background: white;
+            padding: 40px;
+            margin: 20px 0;
+            border: 1px solid #ddd;
+        }
+        
+        .form-row-inline {
+            display: flex;
+            gap: 20px;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        
+        .form-row-inline label {
+            min-width: 150px;
+            margin-bottom: 0;
+        }
+        
+        .underline-input {
+            border: none;
+            border-bottom: 1px solid #000;
+            background: transparent;
+            padding: 2px 5px;
+            min-width: 200px;
+        }
+        
+        .expense-table-container {
+            margin: 20px 0;
+        }
+        
+        .expense-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+        
+        .expense-table th,
+        .expense-table td {
+            border: 1px solid #000;
+            padding: 8px;
+            text-align: center;
+            vertical-align: middle;
+        }
+        
+        .expense-table th {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }
+        
+        .signature-section {
+            margin-top: 40px;
+            display: flex;
+            justify-content: space-between;
+            text-align: center;
+        }
+        
+        .signature-box {
+            width: 18%;
+        }
+        
+        .signature-title {
+            font-weight: bold;
+            margin-bottom: 60px;
+            border-bottom: none;
+        }
+        
+        .approver-search-container {
+            position: relative;
+        }
+        
+        .approver-search-input {
+            border: none;
+            border-bottom: 1px solid #000;
+            background: transparent;
+            padding: 2px 5px;
+            min-width: 300px;
+        }
+        
+        .approver-dropdown {
+            position: absolute;
+            top: 100%;
+            left: 0;
+            right: 0;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+            z-index: 1000;
+            max-height: 200px;
+            overflow-y: auto;
+            display: none;
+        }
+        
+        .approver-dropdown.show {
+            display: block;
+        }
+        
+        .approver-option {
+            padding: 8px 12px;
+            cursor: pointer;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .approver-option:hover,
+        .approver-option.highlighted {
+            background-color: #f8f9fa;
+        }
+        
+        .approver-option:last-child {
+            border-bottom: none;
+        }
+        
+        .approver-name {
+            font-weight: bold;
+        }
+        
+        .approver-title {
+            font-size: 0.9em;
+            color: #666;
+        }
+        
+        .approver-department {
+            font-size: 0.8em;
+            color: #999;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="brand">
+            <i class="fas fa-cube me-2"></i> LTS MANAGER
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="icon-button me-2">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="icon-button me-3">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div class="user-avatar">
+                TD
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <ul class="nav flex-column">            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-calendar-alt"></i> Quản lý ngày nghỉ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-users"></i> Quản lý QT
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tasks"></i> Quản lý dự án
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-clock"></i> Chấm công
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-chart-line"></i> Đánh giá định kỳ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-graduation-cap"></i> Quản lý kỹ năng
+                </a>
+            </li>  
+            <!-- Procurement Section -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="procurementDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-shopping-cart"></i> Procurement
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="procurementDropdown">
+                    <li><a class="dropdown-item" href="index.html">
+                        <i class="fas fa-file-alt"></i> Request List
+                    </a></li>
+                    <li><a class="dropdown-item" href="purchase_list.html">
+                        <i class="fas fa-shopping-bag"></i> Purchase List
+                    </a></li>
+                    <li><a class="dropdown-item" href="supplier_select.html">
+                        <i class="fas fa-users"></i> Suppliers Select</a></li>
+                    <li><a class="dropdown-item" href="it_review_list.html">
+                        <i class="fas fa-laptop"></i> IT Review Queue</a></li>
+                    <li><a class="dropdown-item" href="dl_payment_confirmation_list.html">
+                        <i class="fas fa-truck"></i> DL Confirm Payment</a></li>
+                    <li><a class="dropdown-item" href="accountant_document_review.html">
+                        <i class="fas fa-list"></i> Document Review</a></li>
+                    <li><a class="dropdown-item" href="advance_payment_approval_page.html">
+                        <i class="fas fa-receipt"></i> Advance Payment Approval</a></li>                    <li><a class="dropdown-item" href="accountant_reimbursement_approval.html">
+                        <i class="fas fa-calculator"></i> Reimbursement Processing</a></li>
+                    <li><a class="dropdown-item" href="supplier_management.html">
+                        <i class="fas fa-building"></i> Supplier Management</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-container">
+            <h1>Đề Nghị Tạm Ứng</h1>
+            <p class="mb-0">Quản lý đề nghị tạm ứng hiệu quả</p>
+        </div>
+        
+        <div class="form-container advance-request-form">
+            <form id="advanceRequestForm">
+                <!-- Header Section -->
+                <div class="text-center mb-4">
+                    <h2 class="fw-bold text-uppercase">ĐỀ NGHỊ TẠM ỨNG</h2>
+                </div>
+                
+                <div class="text-end mb-4">
+                    <label>Ngày</label>
+                    <input type="number" class="underline-input" id="requestDay" min="1" max="31" style="width: 60px;">
+                    <label>tháng</label>
+                    <input type="number" class="underline-input" id="requestMonth" min="1" max="12" style="width: 60px;">
+                    <label>năm</label>
+                    <input type="number" class="underline-input" id="requestYear" value="2023" style="width: 80px;">
+                </div>
+                
+                <!-- Request Information -->
+                <div class="mb-4">
+                    <p><strong>Kính gửi: Ban giám đốc công ty</strong></p>
+                    
+                    <div class="form-row-inline">
+                        <label>* Họ tên người đề nghị:</label>
+                        <input type="text" class="underline-input flex-grow-1" id="requesterName" required>
+                        <label>Số CT (kế toán ghi):</label>
+                        <input type="number" class="underline-input" id="accountingNumber" style="width: 150px;">
+                    </div>
+                    
+                    <div class="form-row-inline">
+                        <label>* Bộ phận:</label>
+                        <input type="text" class="underline-input" id="department" required style="width: 200px;">
+                        <label>Đơn vị:</label>
+                        <input type="text" class="underline-input flex-grow-1" id="unit">
+                    </div>
+                    
+                    <div class="form-row-inline">
+                        <label>* Nội dung tạm ứng - budget chương trình:</label>
+                        <input type="text" class="underline-input flex-grow-1" id="advanceContent" required>
+                    </div>
+                    
+                    <div class="form-row-inline">
+                        <label>* Hạn tạm ứng:</label>
+                        <input type="date" class="underline-input" id="advanceDeadline" required style="width: 200px;">
+                    </div>
+                </div>
+                
+                <!-- Expense Table Section -->
+                <div class="mb-4">
+                    <p><strong>Đề nghị tạm ứng theo bảng dưới đây:</strong></p>
+                    
+                    <div class="expense-table-container">
+                        <table class="expense-table">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">STT</th>
+                                    <th style="width: 40%;">Nội dung chi tiết</th>
+                                    <th style="width: 20%;">Số tiền (VNĐ)</th>
+                                    <th style="width: 15%;">Hình thức TU (TM/CK)</th>
+                                    <th style="width: 25%;">Ghi chú</th>
+                                </tr>
+                            </thead>
+                            <tbody id="expenseTableBody">
+                                <tr>
+                                    <td>1</td>
+                                    <td><input type="text" class="form-control border-0" name="expenseDetail[]"></td>
+                                    <td><input type="number" class="form-control border-0 expense-amount" name="expenseAmount[]" min="0"></td>
+                                    <td>
+                                        <select class="form-select border-0" name="paymentType[]">
+                                            <option value="">Chọn</option>
+                                            <option value="TM">TM</option>
+                                            <option value="CK">CK</option>
+                                        </select>
+                                    </td>
+                                    <td><input type="text" class="form-control border-0" name="expenseNote[]"></td>
+                                </tr>
+                            </tbody>
+                            <tfoot>
+                                <tr>
+                                    <td colspan="2" class="text-center fw-bold">Tổng cộng</td>
+                                    <td class="fw-bold" id="totalAmount">-</td>
+                                    <td colspan="2"></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="2" class="text-center fw-bold">Số tiền tạm ứng</td>
+                                    <td colspan="3"></td>
+                                </tr>
+                            </tfoot>
+                        </table>
+                    </div>
+                    
+                    <button type="button" class="btn btn-outline-primary btn-sm" id="addExpenseRowBtn">
+                        <i class="fas fa-plus me-1"></i>Thêm dòng
+                    </button>
+                </div>
+                
+                <!-- Amount in Words -->
+                <div class="mb-4">
+                    <div class="form-row-inline">
+                        <label>(Số tiền viết bằng chữ: )</label>
+                        <input type="text" class="underline-input flex-grow-1" id="amountInWords" readonly>
+                    </div>
+                </div>
+                
+                <!-- Expected Return Date -->
+                <div class="mb-4">
+                    <div class="form-row-inline">
+                        <label>* Ngày hoàn ứng dự kiến:</label>
+                        <input type="date" class="underline-input" id="expectedReturnDate" required>
+                    </div>
+                </div>
+                
+                <!-- Bank Information -->
+                <div class="mb-4">
+                    <p><strong>Thông tin nhận tiền chuyển khoản:</strong></p>
+                    
+                    <div class="form-row-inline">
+                        <label>Số tài khoản:</label>
+                        <input type="number" class="underline-input flex-grow-1" id="bankAccount">
+                    </div>
+                    
+                    <div class="form-row-inline">
+                        <label>Chủ tài khoản:</label>
+                        <input type="text" class="underline-input flex-grow-1" id="accountHolder">
+                    </div>
+                    
+                    <div class="form-row-inline">
+                        <label>Ngân hàng:</label>
+                        <input type="text" class="underline-input flex-grow-1" id="bankName">
+                    </div>
+                </div>
+                
+                <!-- Approver Selection -->
+                <div class="mb-4">
+                    <div class="form-row-inline">
+                        <label>* Người phê duyệt:</label>
+                        <div class="approver-search-container">
+                            <input type="text" 
+                                   class="approver-search-input" 
+                                   id="approverSearch" 
+                                   placeholder="Tìm kiếm người phê duyệt..." 
+                                   autocomplete="off"
+                                   required>
+                            <input type="hidden" id="approver" name="approver" required>
+                            <div class="approver-dropdown" id="approverDropdown">
+                                <!-- Dropdown options will be populated here -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Closing Statement -->
+                <div class="mb-4">
+                    <p><strong>Kính mong Ban giám đốc duyệt!</strong></p>
+                </div>
+                
+                <!-- Signature Section -->
+                <div class="signature-section">
+                    <div class="signature-box">
+                        <div class="signature-title">Giám đốc</div>
+                    </div>
+                    <div class="signature-box">
+                        <div class="signature-title">Kế toán trưởng</div>
+                    </div>
+                    <div class="signature-box">
+                        <div class="signature-title">Trưởng bộ phận</div>
+                    </div>
+                    <div class="signature-box">
+                        <div class="signature-title">Người đề nghị</div>
+                    </div>
+                </div>
+                
+                <!-- Form Actions -->
+                <div class="row mt-5 no-print">
+                    <div class="col-md-12 text-center">
+                        <button type="button" id="previewBtn" class="btn btn-info me-2">
+                            <i class="fas fa-eye me-1"></i>Xem trước
+                        </button>
+                        <button type="button" id="printBtn" class="btn btn-primary me-2">
+                            <i class="fas fa-print me-1"></i>In đề nghị
+                        </button>
+                        <button type="submit" class="btn btn-success">
+                            <i class="fas fa-paper-plane me-1"></i>Gửi đề nghị
+                        </button>
+                    </div>
+                </div>
+            </form>
+        </div>
+        
+        <!-- Print Preview Area (Hidden) -->
+        <div class="print-area" id="printArea" style="display: none;">
+            <!-- Print content will be generated here -->
+        </div>
+        
+        <!-- Success Alert -->
+        <div id="success-alert" class="alert alert-success" role="alert" style="display: none;">
+            <h4 class="alert-heading">Đề nghị đã được gửi thành công!</h4>
+            <p>Đề nghị tạm ứng của bạn đã được gửi tới <span id="approverName">Ban giám đốc</span> để phê duyệt. Bạn có thể theo dõi trạng thái đề nghị trong dashboard.</p>
+            <hr>
+            <p class="mb-0">Mã đề nghị: <span id="displayRequestId"></span></p>
+            <div class="mt-3 navigation-buttons">
+                <a href="reimbursement_approval_page.html" class="btn btn-danger me-2">Đi tới Phê duyệt Tạm ứng</a>
+                <a href="exist_system_dashboard_page.html" class="btn btn-secondary">Quay lại Dashboard</a>
+            </div>
+        </div>
+        
+        <!-- Error Alert -->
+        <div id="error-alert" class="alert alert-danger" role="alert" style="display: none;">
+            <h4 class="alert-heading">Lỗi!</h4>
+            <p>Có vấn đề xảy ra khi gửi đề nghị. Vui lòng thử lại.</p>
+            <hr>
+            <p class="mb-0" id="error-message"></p>
+        </div>
+    </div>
+
+    <!-- Expense Item Template (Hidden) -->
+    <template id="expenseItemTemplate">
+        <div class="expense-item" data-expense-id="{{id}}">
+            <div class="expense-item-header">
+                <h5>Expense Item #<span class="expense-number">{{number}}</span></h5>
+                <span class="remove-expense" title="Remove this expense"><i class="fas fa-times"></i></span>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label required-field">Expense Category</label>
+                    <select class="form-select expense-category" name="expenseCategory[]" required>
+                        <option value="">Select Category</option>
+                        <option value="Travel">Travel</option>
+                        <option value="Meals">Meals</option>
+                        <option value="Accommodation">Accommodation</option>
+                        <option value="Office Supplies">Office Supplies</option>
+                        <option value="Training">Training</option>
+                        <option value="Entertainment">Entertainment</option>
+                        <option value="Communication">Communication</option>
+                        <option value="Equipment">Equipment</option>
+                        <option value="Other">Other</option>
+                    </select>
+                    <div class="invalid-feedback">Please select an expense category</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label required-field">Expense Date</label>
+                    <input type="text" class="form-control date-picker expense-date" name="expenseDate[]" required>
+                    <div class="invalid-feedback">Please select the expense date</div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-12">
+                    <label class="form-label required-field">Description</label>
+                    <textarea class="form-control expense-description" name="expenseDescription[]" rows="2" required></textarea>
+                    <div class="invalid-feedback">Please provide a description</div>
+                </div>
+            </div>
+            <div class="row mb-3">
+                <div class="col-md-6">
+                    <label class="form-label required-field">Amount</label>
+                    <div class="input-group">
+                        <select class="form-select expense-currency" name="expenseCurrency[]" style="max-width: 100px;">
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="JPY">JPY</option>
+                            <option value="CAD">CAD</option>
+                        </select>
+                        <input type="number" class="form-control expense-amount" name="expenseAmount[]" min="0" step="0.01" required>
+                    </div>
+                    <div class="invalid-feedback">Please enter the amount</div>
+                </div>
+                <div class="col-md-6">
+                    <label class="form-label required-field">Payment Method</label>
+                    <select class="form-select payment-method" name="paymentMethod[]" required>
+                        <option value="">Select Method</option>
+                        <option value="Cash">Cash</option>
+                        <option value="Credit Card">Credit Card</option>
+                        <option value="Debit Card">Debit Card</option>
+                        <option value="Personal Check">Personal Check</option>
+                        <option value="Company Card">Company Card</option>
+                        <option value="Digital Payment">Digital Payment</option>
+                    </select>
+                    <div class="invalid-feedback">Please select a payment method</div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-12">
+                    <label class="form-label required-field">Receipt Attachment</label>
+                    <input type="file" class="form-control expense-attachment" name="expenseAttachment[]" required>
+                    <div class="form-text">Attach receipt or invoice for this expense</div>
+                    <div class="invalid-feedback">Please attach a receipt</div>
+                    <div class="attachment-preview-container mt-2"></div>
+                </div>
+            </div>
+        </div>
+    </template>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        // Approver data - in real application, this would come from API
+        const approvers = [
+            {
+                id: 'manager1',
+                name: 'Nguyễn Văn A',
+                title: 'Quản lý',
+                department: 'Phòng IT',
+                email: 'nguyen.van.a@company.com'
+            },
+            {
+                id: 'manager2',
+                name: 'Trần Thị B',
+                title: 'Giám đốc',
+                department: 'Ban Giám đốc',
+                email: 'tran.thi.b@company.com'
+            },
+            {
+                id: 'manager3',
+                name: 'Lê Văn C',
+                title: 'Trưởng phòng',
+                department: 'Phòng Kế toán',
+                email: 'le.van.c@company.com'
+            },
+            {
+                id: 'manager4',
+                name: 'Phạm Thị D',
+                title: 'Phó giám đốc',
+                department: 'Ban Giám đốc',
+                email: 'pham.thi.d@company.com'
+            },
+            {
+                id: 'manager5',
+                name: 'Hoàng Văn E',
+                title: 'Trưởng phòng',
+                department: 'Phòng Nhân sự',
+                email: 'hoang.van.e@company.com'
+            },
+            {
+                id: 'manager6',
+                name: 'Võ Thị F',
+                title: 'Quản lý',
+                department: 'Phòng Marketing',
+                email: 'vo.thi.f@company.com'
+            }
+        ];
+
+        document.addEventListener('DOMContentLoaded', function() {
+            // Set current date
+            const today = new Date();
+            document.getElementById('requestDay').value = today.getDate();
+            document.getElementById('requestMonth').value = today.getMonth() + 1;
+            document.getElementById('requestYear').value = today.getFullYear();
+            
+            // Event listeners
+            document.getElementById('addExpenseRowBtn').addEventListener('click', addExpenseRow);
+            document.getElementById('previewBtn').addEventListener('click', showPreview);
+            document.getElementById('printBtn').addEventListener('click', printDocument);
+            document.getElementById('advanceRequestForm').addEventListener('submit', handleFormSubmit);
+            
+            // Calculate total when amounts change
+            document.addEventListener('input', function(e) {
+                if (e.target.classList.contains('expense-amount')) {
+                    calculateTotal();
+                }
+            });
+            
+            // Set default values
+            document.getElementById('requesterName').value = 'John Doe';
+            document.getElementById('department').value = 'IT';
+            document.getElementById('unit').value = 'LTS Group';
+            
+            // Initialize approver search
+            initializeApproverSearch();
+        });
+        
+        // Generate a unique ID for the request
+        function generateUniqueId() {
+            return Math.floor(100000 + Math.random() * 900000);
+        }
+        
+        function addExpenseRow() {
+            const tbody = document.getElementById('expenseTableBody');
+            const rowCount = tbody.children.length + 1;
+            
+            const newRow = document.createElement('tr');
+            newRow.innerHTML = `
+                <td>${rowCount}</td>
+                <td><input type="text" class="form-control border-0" name="expenseDetail[]"></td>
+                <td><input type="number" class="form-control border-0 expense-amount" name="expenseAmount[]" min="0"></td>
+                <td>
+                    <select class="form-select border-0" name="paymentType[]">
+                        <option value="">Chọn</option>
+                        <option value="TM">TM</option>
+                        <option value="CK">CK</option>
+                    </select>
+                </td>
+                <td><input type="text" class="form-control border-0" name="expenseNote[]"></td>
+            `;
+            
+            tbody.appendChild(newRow);
+        }
+        
+        function calculateTotal() {
+            const amountInputs = document.querySelectorAll('.expense-amount');
+            let total = 0;
+            
+            amountInputs.forEach(input => {
+                if (input.value) {
+                    total += parseFloat(input.value);
+                }
+            });
+            
+            document.getElementById('totalAmount').textContent = total.toLocaleString('vi-VN');
+            
+            // Convert to words (simplified Vietnamese number to words)
+            const amountInWords = convertNumberToVietnameseWords(total);
+            document.getElementById('amountInWords').value = amountInWords;
+        }
+        
+        function convertNumberToVietnameseWords(number) {
+            // Simplified conversion - in real implementation, use a proper library
+            if (number === 0) return 'Không đồng';
+            
+            const units = ['', 'một', 'hai', 'ba', 'bốn', 'năm', 'sáu', 'bảy', 'tám', 'chín'];
+            const scales = ['', 'nghìn', 'triệu', 'tỷ'];
+            
+            // This is a simplified version - implement full Vietnamese number conversion
+            return number.toLocaleString('vi-VN') + ' đồng';
+        }
+        
+        function showPreview() {
+            generatePrintContent();
+            const printArea = document.getElementById('printArea');
+            if (printArea.style.display === 'none') {
+                printArea.style.display = 'block';
+                document.getElementById('previewBtn').innerHTML = '<i class="fas fa-eye-slash me-1"></i>Ẩn xem trước';
+            } else {
+                printArea.style.display = 'none';
+                document.getElementById('previewBtn').innerHTML = '<i class="fas fa-eye me-1"></i>Xem trước';
+            }
+        }
+        
+        function printDocument() {
+            generatePrintContent();
+            
+            // Hide non-print elements temporarily
+            const nonPrintElements = document.querySelectorAll('.no-print, .form-container, .header-container');
+            const originalDisplays = [];
+            
+            nonPrintElements.forEach((element, index) => {
+                originalDisplays[index] = element.style.display;
+                element.style.display = 'none';
+            });
+            
+            // Show print area
+            const printArea = document.getElementById('printArea');
+            printArea.style.display = 'block';
+            
+            // Trigger print
+            window.print();
+            
+            // Restore elements after print
+            setTimeout(function() {
+                nonPrintElements.forEach((element, index) => {
+                    element.style.display = originalDisplays[index];
+                });
+                
+                // Hide print area if preview is not shown
+                if (document.getElementById('previewBtn').innerHTML.includes('Xem trước')) {
+                    printArea.style.display = 'none';
+                }
+            }, 100);
+        }
+        
+        function generatePrintContent() {
+            const printArea = document.getElementById('printArea');
+            
+            // Get form values
+            const day = document.getElementById('requestDay').value || '';
+            const month = document.getElementById('requestMonth').value || '';
+            const year = document.getElementById('requestYear').value || '2023';
+            const requesterName = document.getElementById('requesterName').value || '';
+            const accountingNumber = document.getElementById('accountingNumber').value || '';
+            const department = document.getElementById('department').value || '';
+            const unit = document.getElementById('unit').value || '';
+            const advanceContent = document.getElementById('advanceContent').value || '';
+            const advanceDeadline = document.getElementById('advanceDeadline').value || '';
+            const expectedReturnDate = document.getElementById('expectedReturnDate').value || '';
+            const bankAccount = document.getElementById('bankAccount').value || '';
+            const accountHolder = document.getElementById('accountHolder').value || '';
+            const bankName = document.getElementById('bankName').value || '';
+            const amountInWords = document.getElementById('amountInWords').value || '';
+            
+            // Format dates
+            let formattedAdvanceDeadline = '';
+            let formattedReturnDate = '';
+            
+            if (advanceDeadline) {
+                const deadline = new Date(advanceDeadline);
+                formattedAdvanceDeadline = deadline.toLocaleDateString('vi-VN');
+            }
+            
+            if (expectedReturnDate) {
+                const returnDate = new Date(expectedReturnDate);
+                formattedReturnDate = returnDate.toLocaleDateString('vi-VN');
+            }
+            
+            // Generate expense table rows
+            const expenseDetailInputs = document.querySelectorAll('input[name="expenseDetail[]"]');
+            const expenseAmountInputs = document.querySelectorAll('input[name="expenseAmount[]"]');
+            const paymentTypeSelects = document.querySelectorAll('select[name="paymentType[]"]');
+            const expenseNoteInputs = document.querySelectorAll('input[name="expenseNote[]"]');
+            
+            let tableRows = '';
+            let total = 0;
+            let rowsAdded = 0;
+            
+            // Generate table rows from form data
+            expenseDetailInputs.forEach((input, i) => {
+                const detail = input.value || '';
+                const amount = parseFloat(expenseAmountInputs[i]?.value) || 0;
+                const paymentType = paymentTypeSelects[i]?.value || '';
+                const note = expenseNoteInputs[i]?.value || '';
+                
+                if (detail || amount > 0 || paymentType || note) {
+                    if (amount > 0) {
+                        total += amount;
+                    }
+                    
+                    tableRows += `
+                        <tr>
+                            <td style="text-align: center;">${i + 1}</td>
+                            <td>${detail}</td>
+                            <td style="text-align: right;">${amount > 0 ? amount.toLocaleString('vi-VN') : ''}</td>
+                            <td style="text-align: center;">${paymentType}</td>
+                            <td>${note}</td>
+                        </tr>
+                    `;
+                    rowsAdded++;
+                }
+            });
+            
+            // Add empty rows to ensure at least 3 rows
+            while (rowsAdded < 3) {
+                tableRows += `
+                    <tr>
+                        <td style="text-align: center;">${rowsAdded + 1}</td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                `;
+                rowsAdded++;
+            }
+            
+            printArea.innerHTML = `
+                <div class="print-header">
+                    <div class="print-logo">
+                        <svg width="80" height="40" viewBox="0 0 100 50" xmlns="http://www.w3.org/2000/svg">
+                            <text x="10" y="15" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#4A90E2">LTS</text>
+                            <text x="10" y="30" font-family="Arial, sans-serif" font-size="8" fill="#333">GROUP</text>
+                        </svg>
+                    </div>
+                    <div class="print-title">
+                        <h1>ĐỀ NGHỊ TẠM ỨNG</h1>
+                    </div>
+                    <div style="width: 100px;"></div>
+                </div>
+                
+                <div class="print-date">
+                    Ngày ${day || '___'} tháng ${month || '___'} năm ${year}
+                </div>
+                
+                <div style="margin-bottom: 20px;">
+                    <p><strong>Kính gửi: Ban giám đốc công ty</strong></p>
+                    <table style="width: 100%; border: none; margin: 10px 0;">
+                        <tr>
+                            <td style="border: none; width: 50%; padding: 5px 0;">
+                                * Họ tên người đề nghị: <u style="padding: 0 5px;">${requesterName || '________________________'}</u>
+                            </td>
+                            <td style="border: none; width: 50%; padding: 5px 0;">
+                                Số CT (kế toán ghi): <u style="padding: 0 5px;">${accountingNumber || '__________'}</u>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td style="border: none; width: 50%; padding: 5px 0;">
+                                * Bộ phận: <u style="padding: 0 5px;">${department || '______________'}</u>
+                            </td>
+                            <td style="border: none; width: 50%; padding: 5px 0;">
+                                Đơn vị: <u style="padding: 0 5px;">${unit || '______________'}</u>
+                            </td>
+                        </tr>
+                    </table>
+                    <p>* Nội dung tạm ứng - budget chương trình: <u style="padding: 0 5px;">${advanceContent || '_________________________________'}</u></p>
+                    <p>* Hạn tạm ứng: <u style="padding: 0 5px;">${formattedAdvanceDeadline || '_______________'}</u></p>
+                </div>
+                
+                <p><strong>Đề nghị tạm ứng theo bảng dưới đây:</strong></p>
+                
+                <table class="print-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 50px;">STT</th>
+                            <th style="width: 40%;">Nội dung chi tiết</th>
+                            <th style="width: 20%;">Số tiền (VNĐ)</th>
+                            <th style="width: 15%;">Hình thức TU (TM/CK)</th>
+                            <th style="width: 25%;">Ghi chú</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        ${tableRows}
+                        <tr>
+                            <td colspan="2" style="text-align: center; font-weight: bold; background-color: #f0f0f0;">Tổng cộng</td>
+                            <td style="font-weight: bold; text-align: right; background-color: #f0f0f0;">${total > 0 ? total.toLocaleString('vi-VN') : '-'}</td>
+                            <td colspan="2" style="background-color: #f0f0f0;"></td>
+                        </tr>
+                        <tr>
+                            <td colspan="2" style="text-align: center; font-weight: bold; background-color: #f0f0f0;">Số tiền tạm ứng</td>
+                            <td colspan="3" style="background-color: #f0f0f0;"></td>
+                        </tr>
+                    </tbody>
+                </table>
+                
+                <p style="margin: 20px 0;">(Số tiền viết bằng chữ: <u style="padding: 0 5px;">${amountInWords || '_________________________________'}</u>)</p>
+                
+                <p>* Ngày hoàn ứng dự kiến: <u style="padding: 0 5px;">${formattedReturnDate || '_______________'}</u></p>
+                
+                <div style="margin: 20px 0;">
+                    <p><strong>Thông tin nhận tiền chuyển khoản:</strong></p>
+                    <p>Số tài khoản: <u style="padding: 0 5px;">${bankAccount || '________________________'}</u></p>
+                    <p>Chủ tài khoản: <u style="padding: 0 5px;">${accountHolder || '________________________'}</u></p>
+                    <p>Ngân hàng: <u style="padding: 0 5px;">${bankName || '________________________'}</u></p>
+                </div>
+                
+                <p style="margin: 30px 0;"><strong>Kính mong Ban giám đốc duyệt!</strong></p>
+                
+                <div class="print-signatures">
+                    <div class="print-signature">
+                        <div class="print-signature-title">Giám đốc</div>
+                    </div>
+                    <div class="print-signature">
+                        <div class="print-signature-title">Kế toán trưởng</div>
+                    </div>
+                    <div class="print-signature">
+                        <div class="print-signature-title">Trưởng bộ phận</div>
+                    </div>
+                    <div class="print-signature">
+                        <div class="print-signature-title">Người đề nghị</div>
+                    </div>
+                </div>
+            `;
+        }
+        
+        function initializeApproverSearch() {
+            const searchInput = document.getElementById('approverSearch');
+            const dropdown = document.getElementById('approverDropdown');
+            const hiddenInput = document.getElementById('approver');
+            let selectedIndex = -1;
+            
+            // Show all options initially
+            renderApproverOptions(approvers);
+            
+            searchInput.addEventListener('input', function() {
+                const searchTerm = this.value.toLowerCase();
+                const filteredApprovers = approvers.filter(approver => 
+                    approver.name.toLowerCase().includes(searchTerm) ||
+                    approver.title.toLowerCase().includes(searchTerm) ||
+                    approver.department.toLowerCase().includes(searchTerm)
+                );
+                
+                renderApproverOptions(filteredApprovers);
+                selectedIndex = -1;
+                
+                if (searchTerm === '') {
+                    hiddenInput.value = '';
+                    dropdown.classList.remove('show');
+                } else {
+                    dropdown.classList.add('show');
+                }
+            });
+            
+            searchInput.addEventListener('focus', function() {
+                if (this.value === '') {
+                    renderApproverOptions(approvers);
+                }
+                dropdown.classList.add('show');
+            });
+            
+            searchInput.addEventListener('keydown', function(e) {
+                const options = dropdown.querySelectorAll('.approver-option');
+                
+                if (e.key === 'ArrowDown') {
+                    e.preventDefault();
+                    selectedIndex = Math.min(selectedIndex + 1, options.length - 1);
+                    updateHighlight(options);
+                } else if (e.key === 'ArrowUp') {
+                    e.preventDefault();
+                    selectedIndex = Math.max(selectedIndex - 1, -1);
+                    updateHighlight(options);
+                } else if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (selectedIndex >= 0 && options[selectedIndex]) {
+                        selectApprover(options[selectedIndex]);
+                    }
+                } else if (e.key === 'Escape') {
+                    dropdown.classList.remove('show');
+                    selectedIndex = -1;
+                }
+            });
+            
+            // Close dropdown when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.approver-search-container')) {
+                    dropdown.classList.remove('show');
+                    selectedIndex = -1;
+                }
+            });
+        }
+        
+        function renderApproverOptions(approversToShow) {
+            const dropdown = document.getElementById('approverDropdown');
+            
+            if (approversToShow.length === 0) {
+                dropdown.innerHTML = '<div class="approver-option">Không tìm thấy kết quả</div>';
+                return;
+            }
+            
+            dropdown.innerHTML = approversToShow.map(approver => `
+                <div class="approver-option" data-id="${approver.id}" data-name="${approver.name}" data-title="${approver.title}">
+                    <div class="approver-name">${approver.name}</div>
+                    <div class="approver-title">${approver.title}</div>
+                    <div class="approver-department">${approver.department}</div>
+                </div>
+            `).join('');
+            
+            // Add click listeners to options
+            dropdown.querySelectorAll('.approver-option').forEach(option => {
+                option.addEventListener('click', function() {
+                    selectApprover(this);
+                });
+            });
+        }
+        
+        function updateHighlight(options) {
+            options.forEach((option, index) => {
+                if (index === selectedIndex) {
+                    option.classList.add('highlighted');
+                } else {
+                    option.classList.remove('highlighted');
+                }
+            });
+        }
+        
+        function selectApprover(option) {
+            const searchInput = document.getElementById('approverSearch');
+            const dropdown = document.getElementById('approverDropdown');
+            const hiddenInput = document.getElementById('approver');
+            
+            const id = option.dataset.id;
+            const name = option.dataset.name;
+            const title = option.dataset.title;
+            
+            if (id) {
+                searchInput.value = `${name} (${title})`;
+                hiddenInput.value = id;
+                dropdown.classList.remove('show');
+                
+                // Remove validation error if present
+                searchInput.classList.remove('is-invalid');
+            }
+        }
+        
+        function handleFormSubmit(e) {
+            e.preventDefault();
+            
+            // Validate required fields
+            const requiredFields = document.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            // Special validation for approver search
+            const approverSearch = document.getElementById('approverSearch');
+            const approverHidden = document.getElementById('approver');
+            if (!approverHidden.value) {
+                approverSearch.classList.add('is-invalid');
+                isValid = false;
+            }
+            
+            if (!isValid) {
+                window.scrollTo(0, 0);
+                document.getElementById('error-alert').style.display = 'block';
+                document.getElementById('error-message').textContent = 'Vui lòng điền đầy đủ các trường bắt buộc!';
+                return false;
+            }
+            
+            // Set form status and submission date
+            const submissionDate = new Date().toISOString();
+            const requestId = 'TAMUNG-' + generateUniqueId();
+            
+            // Get approver name for display
+            const selectedApprover = approvers.find(a => a.id === approverHidden.value);
+            const approverName = selectedApprover ? `${selectedApprover.name} (${selectedApprover.title})` : 'Ban giám đốc';
+            document.getElementById('approverName').textContent = approverName;
+            
+            // Display request ID
+            document.getElementById('displayRequestId').textContent = requestId;
+            
+            // Create FormData object for submission (in real app, this would be sent to server)
+            const formData = new FormData(document.getElementById('advanceRequestForm'));
+            formData.append('requestId', requestId);
+            formData.append('submissionDate', submissionDate);
+            formData.append('status', 'Submitted');
+            
+            // Hide error alert and show success
+            document.getElementById('error-alert').style.display = 'none';
+            document.getElementById('success-alert').style.display = 'block';
+            window.scrollTo(0, 0);
+            
+            // In a real application, you would:
+            // 1. Send data to server via AJAX
+            // 2. Store request in database with status "Submitted"
+            // 3. Start the approval workflow based on request type and amount
+            // 4. Record audit trail information
+            // 5. Send notification to the selected approver
+            // 6. Redirect to appropriate workflow page
+            
+            console.log('Form submitted with data:', Object.fromEntries(formData));
+        }
+    </script>
+
+    <script>
+        // Handle nested dropdowns in sidebar
+        document.addEventListener('DOMContentLoaded', function() {
+            // Setup for submenus
+            const subMenuToggleButtons = document.querySelectorAll('.dropdown-item.dropdown-toggle');
+            
+            subMenuToggleButtons.forEach(button => {
+                button.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    e.stopPropagation();
+                    
+                    // Find the nearest submenu to this toggle button
+                    const submenu = this.nextElementSibling;
+                    
+                    // Toggle the show class on this submenu
+                    submenu.classList.toggle('show');
+                    
+                    // Close other submenus at the same level
+                    const siblings = Array.from(this.parentElement.parentElement.children)
+                        .filter(child => child !== this.parentElement)
+                        .map(child => child.querySelector('.dropdown-submenu'))
+                        .filter(Boolean);
+                    
+                    siblings.forEach(sibling => {
+                        sibling.classList.remove('show');
+                    });
+                });
+            });
+            
+            // Close submenus when clicking outside
+            document.addEventListener('click', function(e) {
+                if (!e.target.closest('.dropdown-submenu') && !e.target.classList.contains('dropdown-toggle')) {
+                    document.querySelectorAll('.dropdown-submenu.show').forEach(menu => {
+                        menu.classList.remove('show');
+                    });
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+

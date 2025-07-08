@@ -1,0 +1,618 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>Buy Contract Form - LTS Manager - LTS Manager - LTS Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./company_layout.css">
+    <style>
+        /* Left sidebar */
+        .sidebar {
+            position: fixed;
+            top: 48px; /* Below the top navbar */
+            left: 0;
+            height: calc(100vh - 48px);
+            width: 240px;
+            background: #051e34;
+            color: #fff;
+            z-index: 1000;
+            display: flex;
+            flex-direction: column;
+            overflow-y: auto;
+        }
+        .sidebar .nav {
+            flex: 1;
+            padding: 0;
+            margin: 0;
+            list-style: none;
+        }
+        .sidebar .nav-item {
+            width: 100%;
+        }
+        .sidebar .nav-link {
+            border: none;
+            background: none;
+            color: #fff;
+            opacity: 0.8;
+            padding: 10px 15px;
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+            transition: all 0.2s;
+            width: 100%;
+            text-align: left;
+        }
+        .sidebar .nav-link.active, .sidebar .nav-link:hover {
+            background: rgba(255, 255, 255, 0.1);
+            color: #fff;
+            opacity: 1;
+        }
+        .sidebar .nav-link i {
+            margin-right: 10px;
+            width: 20px;
+            text-align: center;
+        }
+        .sidebar .dropdown-toggle::after {
+            margin-left: auto;
+        }
+        .sidebar .dropdown-menu {
+            background: #0a2b4a;
+            border: none;
+            margin: 0;
+            border-radius: 0;
+            padding: 0;
+            width: 100%;
+            position: static !important;
+            transform: none !important;
+        }
+        .sidebar .dropdown-item {
+            color: #fff;
+            padding: 8px 15px 8px 45px;
+            opacity: 0.8;
+        }
+        .sidebar .dropdown-item:hover, .sidebar .dropdown-item.active {
+            background: rgba(255, 255, 255, 0.1);
+        }
+        
+        /* Multi-level dropdown styles */
+        .sidebar .dropdown-submenu {
+            position: relative;
+            left: 100%;
+            top: -38px;
+            display: none;
+            background: #0a2b4a;
+            border: none;
+            margin: 0;
+            border-radius: 0;
+            padding: 0;
+            width: 200px;
+        }
+        
+        .sidebar .dropdown-submenu.show {
+            display: block;
+        }
+        
+        .sidebar .dropdown-item.dropdown-toggle {
+            position: relative;
+        }
+        
+        .sidebar .dropdown-item.dropdown-toggle::after {
+            position: absolute;
+            right: 10px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        
+        .sidebar .dropdown-item i {
+            margin-right: 8px;
+            width: 16px;
+            text-align: center;
+            font-size: 0.9rem;
+        }
+        
+        /* Main content */
+        .main-content {
+            margin-left: 240px;
+            margin-top: 48px; /* Space for the top navbar */
+            padding: 20px;
+            min-height: calc(100vh - 48px);
+            background: #f8f9fa;
+        }
+        /* Header styles */
+        .header-container {
+            background-color: #563d7c;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .form-container, .content-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        /* Responsive */
+        @media (max-width: 991.98px) {
+            .sidebar {
+                width: 100%;
+                height: auto;
+                position: relative;
+                top: 48px;
+            }
+            .main-content {
+                margin-left: 0;
+                padding: 20px 10px;
+                margin-top: 48px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="brand">
+            <i class="fas fa-cube me-2"></i> LTS MANAGER
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="icon-button me-2">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="icon-button me-3">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div class="user-avatar">
+                TD
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <ul class="nav flex-column">            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-calendar-alt"></i> Quản lý ngày nghỉ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-users"></i> Quản lý QT
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tasks"></i> Quản lý dự án
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-clock"></i> Chấm công
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-chart-line"></i> Đánh giá định kỳ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-graduation-cap"></i> Quản lý kỹ năng
+                </a>
+            </li>
+            <!-- Procurement Section -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="procurementDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-shopping-cart"></i> Procurement
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="procurementDropdown">
+                    <li><a class="dropdown-item" href="index.html">
+                        <i class="fas fa-file-alt"></i> Request List
+                    </a></li>
+                    <li><a class="dropdown-item" href="purchase_list.html">
+                        <i class="fas fa-shopping-bag"></i> Purchase List
+                    </a></li>
+                    <li><a class="dropdown-item" href="supplier_select.html">
+                        <i class="fas fa-users"></i> Suppliers Select</a></li>
+                    <li><a class="dropdown-item" href="it_review_list.html">
+                        <i class="fas fa-laptop"></i> IT Review Queue</a></li>
+                    <li><a class="dropdown-item" href="dl_payment_confirmation_list.html">
+                        <i class="fas fa-truck"></i> DL Confirm Payment</a></li>
+                    <li><a class="dropdown-item" href="accountant_document_review.html">
+                        <i class="fas fa-list"></i> Document Review</a></li>
+                    <li><a class="dropdown-item" href="advance_payment_approval_page.html">
+                        <i class="fas fa-receipt"></i> Advance Payment Approval</a></li>                    <li><a class="dropdown-item" href="accountant_reimbursement_approval.html">
+                        <i class="fas fa-calculator"></i> Reimbursement Processing</a></li>
+                    <li><a class="dropdown-item" href="supplier_management.html">
+                        <i class="fas fa-building"></i> Supplier Management</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">        <div class="header-container">
+            <h1>Buy Contract </h1>
+            <p class="mb-0">Manage your Buy Contract  efficiently</p>
+        </div>
+        <div class="form-container">
+                        <form id="buyContractForm">
+                            <!-- Audit Trail Fields (Hidden) -->
+                            <input type="hidden" id="creationDate" name="creationDate">
+                            <input type="hidden" id="createdBy" name="createdBy">
+                            <input type="hidden" id="purchaseRequestId" name="purchaseRequestId" value="REQ-123456">
+                            <input type="hidden" id="purchaseRequestAmount" name="purchaseRequestAmount" value="5000.00">
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="contractNumber" class="form-label required-field">Contract Number</label>
+                                    <input type="text" class="form-control" id="contractNumber" name="contractNumber" required>
+                                    <div class="invalid-feedback">Please enter a contract number</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="contractDate" class="form-label required-field">Contract Date</label>
+                                    <input type="text" class="form-control date-picker" id="contractDate" name="contractDate" required>
+                                    <div class="invalid-feedback">Please select a contract date</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <label for="contractTitle" class="form-label required-field">Contract Title/Description</label>
+                                    <input type="text" class="form-control" id="contractTitle" name="contractTitle" required>
+                                    <div class="invalid-feedback">Please enter a contract title</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="supplierContactPerson" class="form-label required-field">Supplier Contact Person</label>
+                                    <input type="text" class="form-control" id="supplierContactPerson" name="supplierContactPerson" required>
+                                    <div class="invalid-feedback">Please enter the supplier contact person</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="supplierContactDetails" class="form-label">Supplier Contact Details</label>
+                                    <input type="text" class="form-control" id="supplierContactDetails" name="supplierContactDetails" placeholder="Phone/Email">
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="contractValue" class="form-label required-field">Contract Value</label>
+                                    <div class="input-group">
+                                        <select class="form-select" id="currency" name="currency" style="max-width: 100px;">
+                                            <option value="USD">USD</option>
+                                            <option value="EUR">EUR</option>
+                                            <option value="GBP">GBP</option>
+                                            <option value="JPY">JPY</option>
+                                            <option value="CAD">CAD</option>
+                                        </select>
+                                        <input type="number" class="form-control" id="contractValue" name="contractValue" min="0.01" step="0.01" required>
+                                    </div>
+                                    <div class="invalid-feedback">Please enter the contract value</div>
+                                </div>
+                                <div class="col-md-6">
+                                    <label for="paymentTerms" class="form-label">Payment Terms</label>
+                                    <select class="form-select" id="paymentTerms" name="paymentTerms">
+                                        <option value="">Select Payment Terms</option>
+                                        <option value="Net 30">Net 30</option>
+                                        <option value="Net 45">Net 45</option>
+                                        <option value="Net 60">Net 60</option>
+                                        <option value="50% Upfront/50% on Delivery">50% Upfront/50% on Delivery</option>
+                                        <option value="100% Upfront">100% Upfront</option>
+                                        <option value="Milestone Based">Milestone Based</option>
+                                        <option value="Other">Other (Specify in Notes)</option>
+                                    </select>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <label for="deliveryTerms" class="form-label">Delivery Terms</label>
+                                    <input type="text" class="form-control" id="deliveryTerms" name="deliveryTerms">
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-6">
+                                    <label for="contractStatus" class="form-label required-field">Contract Status</label>
+                                    <select class="form-select" id="contractStatus" name="contractStatus" required>
+                                        <option value="">Select Status</option>
+                                        <option value="Active">Active</option>
+                                        <option value="Expired">Expired</option>
+                                        <option value="Completed">Completed</option>
+                                        <option value="Terminated">Terminated</option>
+                                    </select>
+                                    <div class="invalid-feedback">Please select a contract status</div>
+                                </div>
+                                <div class="col-md-6 expirationDateField">
+                                    <label for="expirationDate" class="form-label">Expiration Date</label>
+                                    <input type="text" class="form-control date-picker" id="expirationDate" name="expirationDate">
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-12">
+                                    <label for="contractDocument" class="form-label required-field">Contract Document</label>
+                                    <input type="file" class="form-control" id="contractDocument" name="contractDocument" accept=".pdf,.doc,.docx" required>
+                                    <div class="form-text">Please attach the signed contract document (PDF is preferred)</div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-4">
+                                <div class="col-md-12 text-end">
+                                    <button type="button" class="btn btn-secondary me-2" onclick="location.href='advance_payment_request_form.html'">
+                                        <i class="fas fa-arrow-left me-1"></i>Back
+                                    </button>
+                                    <button type="submit" class="btn btn-success">
+                                        <i class="fas fa-save me-1"></i>Save Contract
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    
+                    <!-- Success Alert -->
+                    <div id="success-alert" class="alert alert-success" role="alert">
+                        <h4 class="alert-heading">Contract Saved Successfully!</h4>
+                        <p>The contract has been successfully linked to the purchase request.</p>
+                        <hr>
+                        <p class="mb-0">Contract Number: <span id="savedContractNumber"></span></p>
+                    </div>
+                    
+                    <!-- Warning Alert -->
+                    <div id="warning-alert" class="alert alert-warning" role="alert">
+                        <h4 class="alert-heading">Value Mismatch Warning</h4>
+                        <p>The contract value does not match the purchase request amount. Please verify the values.</p>
+                        <hr>
+                        <p class="mb-0">Purchase Request Amount: $<span id="originalAmount"></span> | Contract Value: $<span id="contractValueEntered"></span></p>
+                    </div>
+                    
+                    <!-- Error Alert -->
+                    <div id="error-alert" class="alert alert-danger" role="alert">
+                        <h4 class="alert-heading">Error!</h4>
+                        <p>There was a problem with your submission. Please try again.</p>
+                        <hr>
+                        <p class="mb-0" id="error-message"></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Role-based access control
+            checkUserRole();
+            
+            // Initialize date pickers
+            initDatePickers();
+            
+            // Set current date for audit trail
+            const today = new Date();
+            document.getElementById('creationDate').value = formatDate(today);
+            
+            // Mock user data (in a real system, this would come from the authentication system)
+            document.getElementById('createdBy').value = 'Admin User';
+            
+            // Populate purchase request details
+            // In a real application, these would be fetched from the backend based on the purchase request ID
+            populatePurchaseRequestDetails();
+            
+            // Add event listeners
+            document.getElementById('buyContractForm').addEventListener('submit', handleFormSubmit);
+            document.getElementById('contractStatus').addEventListener('change', toggleExpirationDateField);
+            document.getElementById('contractValue').addEventListener('input', checkValueMatch);
+            document.getElementById('contractDocument').addEventListener('change', handleDocumentUpload);
+            document.getElementById('previewDocument').addEventListener('click', previewDocument);
+            document.getElementById('cancelBtn').addEventListener('click', function(e) {
+                e.preventDefault();
+                window.location.href = 'contract_creation_form.html';
+            });
+            
+            // Initial toggle of expiration date field
+            toggleExpirationDateField();
+        });
+        
+        // Check if user has appropriate role
+        function checkUserRole() {
+            // In a real application, this would check the user's role from the authentication system
+            const userRole = getUserRole(); // This is a mock function
+            
+            if (userRole !== 'Admin' && userRole !== 'Accountant') {
+                document.getElementById('contractFormContent').classList.add('hidden-field');
+                document.getElementById('roleAccessError').classList.remove('hidden-field');
+            }
+        }
+        
+        // Mock function to get user role - in a real app, this would come from authentication service
+        function getUserRole() {
+            // For demo purposes, let's assume the user is an Admin
+            return 'Admin';
+            
+            // Uncomment below to test access denied
+            // return 'User';
+        }
+        
+        // Format date as YYYY-MM-DD
+        function formatDate(date) {
+            return date.getFullYear() + '-' + 
+                  String(date.getMonth() + 1).padStart(2, '0') + '-' + 
+                  String(date.getDate()).padStart(2, '0');
+        }
+        
+        // Initialize date pickers
+        function initDatePickers() {
+            flatpickr('.date-picker', {
+                dateFormat: 'Y-m-d',
+                allowInput: true
+            });
+        }
+        
+        // Populate purchase request details
+        function populatePurchaseRequestDetails() {
+            // In a real application, this data would come from the backend
+            // For now, we're using the mock data from the HTML placeholders
+        }
+        
+        // Toggle expiration date field based on contract status
+        function toggleExpirationDateField() {
+            const contractStatus = document.getElementById('contractStatus').value;
+            const expirationDateField = document.querySelector('.expirationDateField');
+            const expirationDateInput = document.getElementById('expirationDate');
+            
+            if (contractStatus === 'Active') {
+                expirationDateField.style.display = 'block';
+                expirationDateInput.setAttribute('required', '');
+            } else {
+                expirationDateField.style.display = 'none';
+                expirationDateInput.removeAttribute('required');
+            }
+        }
+        
+        // Check if contract value matches purchase request amount
+        function checkValueMatch() {
+            const purchaseAmount = parseFloat(document.getElementById('purchaseRequestAmount').value);
+            const contractValue = parseFloat(document.getElementById('contractValue').value);
+            
+            if (!isNaN(contractValue) && !isNaN(purchaseAmount) && contractValue !== purchaseAmount) {
+                document.getElementById('originalAmount').textContent = purchaseAmount.toFixed(2);
+                document.getElementById('contractValueEntered').textContent = contractValue.toFixed(2);
+                document.getElementById('warning-alert').style.display = 'block';
+            } else {
+                document.getElementById('warning-alert').style.display = 'none';
+            }
+        }
+        
+        // Handle document upload preview
+        function handleDocumentUpload(event) {
+            const file = event.target.files[0];
+            if (file) {
+                document.getElementById('documentPreviewContainer').classList.remove('hidden-field');
+                document.getElementById('documentName').textContent = file.name;
+                
+                // Format file size
+                let size = file.size;
+                let sizeStr = '';
+                if (size < 1024) {
+                    sizeStr = size + ' bytes';
+                } else if (size < 1024 * 1024) {
+                    sizeStr = (size / 1024).toFixed(2) + ' KB';
+                } else {
+                    sizeStr = (size / (1024 * 1024)).toFixed(2) + ' MB';
+                }
+                
+                document.getElementById('documentSize').textContent = sizeStr;
+                
+                // Update icon based on file type
+                const previewIcon = document.querySelector('.preview-icon');
+                if (file.type === 'application/pdf') {
+                    previewIcon.className = 'fas fa-file-pdf preview-icon';
+                } else if (file.type.includes('word')) {
+                    previewIcon.className = 'fas fa-file-word preview-icon';
+                } else {
+                    previewIcon.className = 'fas fa-file preview-icon';
+                }
+            }
+        }
+        
+        // Preview document function
+        function previewDocument(e) {
+            e.preventDefault();
+            const file = document.getElementById('contractDocument').files[0];
+            if (file) {
+                // In a production environment, we'd create a blob URL or handle this server-side
+                // For this demo, let's just show an alert
+                alert(`Preview not available in demo. File: ${file.name}`);
+            }
+        }
+        
+        // Handle form submission
+        function handleFormSubmit(event) {
+            event.preventDefault();
+            
+            if (validateForm()) {
+                const requestId = document.getElementById('purchaseRequestId').value;
+                
+                document.getElementById('successMessage').innerHTML = 
+                    `Buy contract has been saved successfully for Request #${requestId}.<br>
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-primary btn-sm me-2" onclick="location.href='ttbg_form.html?requestId=${requestId}'">
+                            <i class="fas fa-box-open me-1"></i>Product Import (TTBG)
+                        </button>
+                        <button type="button" class="btn btn-outline-secondary btn-sm" onclick="location.href='request_list.html'">
+                            <i class="fas fa-home me-1"></i>Back to Request List
+                        </button>
+                    </div>`;
+                document.getElementById('success-alert').style.display = 'block';
+                document.getElementById('success-alert').scrollIntoView({behavior: 'smooth'});
+            }
+        }
+        
+        // Form validation
+        function validateForm() {
+            const form = document.getElementById('buyContractForm');
+            const requiredFields = form.querySelectorAll('[required]');
+            let isValid = true;
+            
+            requiredFields.forEach(field => {
+                if (!field.value.trim()) {
+                    field.classList.add('is-invalid');
+                    isValid = false;
+                } else {
+                    field.classList.remove('is-invalid');
+                }
+            });
+            
+            return isValid;
+        }
+        
+        // Handle nested dropdowns in sidebar
+        // Setup for submenus
+        const subMenuToggleButtons = document.querySelectorAll('.dropdown-item.dropdown-toggle');
+        
+        subMenuToggleButtons.forEach(button => {
+            button.addEventListener('click', function(e) {
+                e.preventDefault();
+                e.stopPropagation();
+                
+                // Find the nearest submenu to this toggle button
+                const submenu = this.nextElementSibling;
+                
+                // Toggle the show class on this submenu
+                submenu.classList.toggle('show');
+                
+                // Close other submenus at the same level
+                const siblings = Array.from(this.parentElement.parentElement.children)
+                    .filter(child => child !== this.parentElement)
+                    .map(child => child.querySelector('.dropdown-submenu'))
+                    .filter(Boolean);
+                
+                siblings.forEach(sibling => {
+                    sibling.classList.remove('show');
+                });
+            });
+        });
+        
+        // Close submenus when clicking outside
+        document.addEventListener('click', function(e) {
+            if (!e.target.closest('.dropdown-submenu') && !e.target.classList.contains('dropdown-toggle')) {
+                document.querySelectorAll('.dropdown-submenu.show').forEach(menu => {
+                    menu.classList.remove('show');
+                });
+            }
+        });
+    </script>
+</body>
+</html>
+

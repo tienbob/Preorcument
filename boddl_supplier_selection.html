@@ -1,0 +1,1155 @@
+<!-- BODDL Selects Supplier Page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Supplier Management - LTS Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./company_layout.css">
+    <style>
+        /* BODDL specific styles */
+        .header-container {
+            background-color: #20c997;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .content-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }        .supplier-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .supplier-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #adb5bd;
+            transform: translateY(-2px);
+        }
+        .supplier-card.selected {
+            border: 2px solid #20c997;
+            background-color: #f0fff8;
+        }
+        .supplier-card .supplier-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+        .supplier-badge {
+            font-size: 0.8rem;
+            padding: 3px 10px;
+            border-radius: 15px;
+        }
+        .comparison-table {
+            width: 100%;
+        }
+        .comparison-table th {
+            background-color: #f8f9fa;
+            position: sticky;
+            top: 0;
+        }
+        .comparison-header {
+            padding: 10px;
+            text-align: center;
+            border-bottom: 2px solid #dee2e6;
+        }
+        .comparison-logo {
+            height: 50px;
+            margin-bottom: 10px;
+            object-fit: contain;
+        }
+        .criteria-row {
+            background-color: #f8f9fa;
+            font-weight: bold;
+        }        .winner-cell {
+            background-color: #d1f3e6;
+            font-weight: bold;
+        }
+          /* Product Images Carousel Styles */
+        .image-row {
+            background-color: #fff;
+        }
+        
+        .image-carousel {
+            position: relative;
+            max-width: 140px;
+            margin: 0 auto;
+            padding: 10px;
+        }
+        
+        .carousel-container {
+            position: relative;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            overflow: hidden;
+            background: #f8f9fa;
+        }
+        
+        .carousel-slides {
+            position: relative;
+            width: 100%;
+            height: 100px;
+        }
+        
+        .carousel-image {
+            width: 100%;
+            height: 100px;
+            object-fit: cover;
+            display: none;
+            transition: opacity 0.3s ease;
+        }
+        
+        .carousel-image.active {
+            display: block;
+        }
+        
+        .carousel-btn {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            background: rgba(0, 0, 0, 0.5);
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+            transition: background-color 0.3s ease;
+        }
+        
+        .carousel-btn:hover {
+            background: rgba(0, 0, 0, 0.7);
+        }
+        
+        .prev-btn {
+            left: 5px;
+        }
+        
+        .next-btn {
+            right: 5px;
+        }
+        
+        .carousel-indicators {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-top: 8px;
+        }
+        
+        .indicator {
+            width: 8px;
+            height: 8px;
+            border-radius: 50%;
+            background: #ccc;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+        
+        .indicator.active {
+            background: #007bff;
+        }
+        
+        .indicator:hover {
+            background: #0056b3;
+        }
+        
+        /* Responsive adjustments for carousel */
+        @media (max-width: 768px) {
+            .image-carousel {
+                max-width: 120px;
+            }
+            
+            .carousel-slides {
+                height: 80px;
+            }
+            
+            .carousel-image {
+                height: 80px;
+            }
+            
+            .carousel-btn {
+                width: 25px;
+                height: 25px;
+                font-size: 14px;
+            }
+        }
+        
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: 600;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+        
+        /* Requested Item Image Styles */
+        .card.border-success {
+            border-width: 3px !important;
+            box-shadow: 0 8px 25px rgba(32, 201, 151, 0.15);
+        }
+        .card.border-success .card-header {
+            background: linear-gradient(135deg, #20c997 0%, #17a2b8 100%) !important;
+        }
+        .requested-item-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+        }
+        .requested-item-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        .requested-item-container {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px dashed #e9ecef;
+            transition: all 0.3s ease;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .requested-item-container:hover {
+            border-color: #20c997;
+            background: #f0fff8;
+        }
+        
+        /* Responsive adjustments for mobile */
+        @media (max-width: 768px) {
+            .requested-item-image {
+                max-height: 250px;
+            }
+            .requested-item-container {
+                min-height: 200px;
+                padding: 15px;
+            }
+            .card.border-success {
+                border-width: 2px !important;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .requested-item-image {
+                max-height: 200px;
+            }
+            .requested-item-container {
+                min-height: 150px;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="brand">
+            <i class="fas fa-cube me-2"></i> LTS MANAGER
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="icon-button me-2">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="icon-button me-3">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div class="user-avatar">
+                TD
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <ul class="nav flex-column">            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-calendar-alt"></i> Quản lý ngày nghỉ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-users"></i> Quản lý QT
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tasks"></i> Quản lý dự án
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-clock"></i> Chấm công
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-chart-line"></i> Đánh giá định kỳ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-graduation-cap"></i> Quản lý kỹ năng
+                </a>
+            </li>
+            <!-- Procurement Section -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="procurementDropdown" data-bs-toggle="dropdown" aria-expanded="false">
+                    <i class="fas fa-shopping-cart"></i> Procurement
+                </a>
+                <ul class="dropdown-menu" aria-labelledby="procurementDropdown">
+                    <li><a class="dropdown-item" href="index.html">
+                        <i class="fas fa-file-alt"></i> Request List
+                    </a></li>
+                    <li><a class="dropdown-item" href="purchase_list.html">
+                        <i class="fas fa-shopping-bag"></i> Purchase List
+                    </a></li>
+                    <li><a class="dropdown-item" href="supplier_select.html">
+                        <i class="fas fa-users"></i> Suppliers Select</a></li>
+                    <li><a class="dropdown-item" href="it_review_list.html">
+                        <i class="fas fa-laptop"></i> IT Review Queue</a></li>
+                    <li><a class="dropdown-item" href="dl_payment_confirmation_list.html">
+                        <i class="fas fa-truck"></i> DL Confirm Payment</a></li>
+                    <li><a class="dropdown-item" href="accountant_document_review.html">
+                        <i class="fas fa-list"></i> Document Review</a></li>                    <li><a class="dropdown-item" href="advance_payment_approval_page.html">
+                        <i class="fas fa-receipt"></i> Advance Payment Approval</a></li>
+                    <li><a class="dropdown-item" href="accountant_reimbursement_approval.html">
+                        <i class="fas fa-calculator"></i> Reimbursement Processing</a></li>
+                    <li><a class="dropdown-item" href="supplier_management.html">
+                        <i class="fas fa-building"></i> Supplier Management</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-container">
+            <h1>Supplier Selection</h1>
+            <p class="mb-0">Review and select the best supplier for purchase request: REQ-2025-0542</p>
+        </div>
+        
+        <!-- Request Overview -->
+        <div class="content-container">
+            <h3 class="mb-4">Purchase Request Overview</h3>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><strong>Request ID:</strong> REQ-2025-0542</p>
+                    <p><strong>Requested By:</strong> John Smith</p>
+                    <p><strong>Department:</strong> IT</p>
+                    <p><strong>Date Requested:</strong> May 25, 2025</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Status:</strong> <span class="badge bg-warning">Awaiting Supplier Selection</span></p>
+                    <p><strong>Total Budget:</strong> $8,000.00</p>
+                    <p><strong>Priority:</strong> <span class="badge bg-primary">Medium</span></p>
+                    <p><strong>Required By:</strong> June 30, 2025</p>                </div>
+            </div>
+            
+            <!-- Requested Item Details Image -->
+            <h4 class="mb-3">Requested Items</h4>
+            <div class="mb-4">
+                <div class="card border-success">
+                    <div class="card-header bg-success text-white text-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-image me-2"></i>Product Details & Specifications
+                        </h5>
+                        <small>Information provided by requester</small>
+                    </div>
+                    <div class="card-body">
+                        <div class="requested-item-container">
+                            <img src="img.jpg"
+                                 alt="Requested Item Specification Image" 
+                                 class="requested-item-image" 
+                                 onclick="enlargeRequestedItemImage(this)"
+                                 title="Click to enlarge">
+                        </div>
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-click me-1"></i>Click image to enlarge
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Supplier Comparison -->
+        <div class="content-container">
+            <h3 class="mb-4">Supplier Comparison</h3>
+            
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered comparison-table">
+                    <thead>
+                        <tr>
+                            <th style="width: 20%;">Criteria</th>
+                            <th style="width: 26%;">
+                                <div class="comparison-header">
+                                    <img src="https://via.placeholder.com/100x50?text=TechPro" alt="TechPro Solutions" class="comparison-logo">
+                                    <h5>TechPro Solutions</h5>
+                                </div>
+                            </th>
+                            <th style="width: 26%;">
+                                <div class="comparison-header">
+                                    <img src="https://via.placeholder.com/100x50?text=GlobalIT" alt="Global IT Systems" class="comparison-logo">
+                                    <h5>Global IT Systems</h5>
+                                </div>
+                            </th>
+                            <th style="width: 26%;">
+                                <div class="comparison-header">
+                                    <img src="https://via.placeholder.com/100x50?text=AlphaComp" alt="Alpha Computer Systems" class="comparison-logo">
+                                    <h5>Alpha Computer Systems</h5>
+                                </div>
+                            </th>
+                        </tr>                      </thead>
+                    <tbody>
+                        <tr class="criteria-row">
+                            <td>Total Quote</td>
+                            <td class="text-center winner-cell">
+                                $7,500.00 
+                                <button class="btn btn-sm btn-outline-info ms-2" onclick="showTotalDetails('supplier1')">
+                                    <i class="fas fa-info-circle"></i> Details
+                                </button>
+                            </td>
+                            <td class="text-center">
+                                $7,650.00
+                                <button class="btn btn-sm btn-outline-info ms-2" onclick="showTotalDetails('supplier2')">
+                                    <i class="fas fa-info-circle"></i> Details
+                                </button>
+                            </td>
+                            <td class="text-center">
+                                $7,580.00
+                                <button class="btn btn-sm btn-outline-info ms-2" onclick="showTotalDetails('supplier3')">
+                                    <i class="fas fa-info-circle"></i> Details
+                                </button>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>Desktop Computers</td>
+                            <td class="text-center">$1,250.00 x 5 = $6,250.00</td>
+                            <td class="text-center winner-cell">$1,199.00 x 5 = $5,995.00</td>
+                            <td class="text-center">$1,189.00 x 5 = $5,945.00</td>
+                        </tr>
+                        <tr>
+                            <td>Monitors</td>
+                            <td class="text-center winner-cell">$250.00 x 5 = $1,250.00</td>
+                            <td class="text-center">$331.00 x 5 = $1,655.00</td>
+                            <td class="text-center">$327.00 x 5 = $1,635.00</td>
+                        </tr>
+                        <tr class="criteria-row">
+                            <td>Delivery Time</td>
+                            <td class="text-center winner-cell">7-10 days</td>
+                            <td class="text-center">14-21 days</td>
+                            <td class="text-center">10-14 days</td>
+                        </tr>
+                        <tr class="criteria-row">
+                            <td>Payment Terms</td>
+                            <td class="text-center">Net 30</td>
+                            <td class="text-center">Net 45</td>
+                            <td class="text-center winner-cell">Net 30 with 2% discount</td>
+                        </tr>
+                        <tr class="criteria-row">
+                            <td>Warranty</td>
+                            <td class="text-center winner-cell">3 years onsite</td>
+                            <td class="text-center">2 years standard</td>
+                            <td class="text-center">3 years standard</td>
+                        </tr>                        <tr class="criteria-row">
+                            <td>Customer Service</td>
+                            <td class="text-center winner-cell">24/7 support</td>
+                            <td class="text-center">Business hours only</td>
+                            <td class="text-center">Business hours + emergency</td>
+                        </tr>                        <tr class="criteria-row image-row">
+                            <td><strong>Product Images</strong></td>
+                            <td class="text-center">
+                                <div class="image-carousel" id="carousel1">
+                                    <div class="carousel-container">
+                                        <div class="carousel-slides">
+                                            <img src="https://via.placeholder.com/120x90?text=PC1" alt="Desktop Computer 1" class="carousel-image active">
+                                            <img src="https://via.placeholder.com/120x90?text=MON1" alt="Monitor 1" class="carousel-image">
+                                            <img src="https://via.placeholder.com/120x90?text=ACC1" alt="Accessories 1" class="carousel-image">
+                                        </div>
+                                        <button class="carousel-btn prev-btn" onclick="prevSlide('carousel1')">‹</button>
+                                        <button class="carousel-btn next-btn" onclick="nextSlide('carousel1')">›</button>
+                                    </div>
+                                    <div class="carousel-indicators">
+                                        <span class="indicator active" onclick="currentSlide('carousel1', 1)"></span>
+                                        <span class="indicator" onclick="currentSlide('carousel1', 2)"></span>
+                                        <span class="indicator" onclick="currentSlide('carousel1', 3)"></span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="image-carousel" id="carousel2">
+                                    <div class="carousel-container">
+                                        <div class="carousel-slides">
+                                            <img src="https://via.placeholder.com/120x90?text=PC2" alt="Desktop Computer 2" class="carousel-image active">
+                                            <img src="https://via.placeholder.com/120x90?text=MON2" alt="Monitor 2" class="carousel-image">
+                                            <img src="https://via.placeholder.com/120x90?text=ACC2" alt="Accessories 2" class="carousel-image">
+                                        </div>
+                                        <button class="carousel-btn prev-btn" onclick="prevSlide('carousel2')">‹</button>
+                                        <button class="carousel-btn next-btn" onclick="nextSlide('carousel2')">›</button>
+                                    </div>
+                                    <div class="carousel-indicators">
+                                        <span class="indicator active" onclick="currentSlide('carousel2', 1)"></span>
+                                        <span class="indicator" onclick="currentSlide('carousel2', 2)"></span>
+                                        <span class="indicator" onclick="currentSlide('carousel2', 3)"></span>
+                                    </div>
+                                </div>
+                            </td>
+                            <td class="text-center">
+                                <div class="image-carousel" id="carousel3">
+                                    <div class="carousel-container">
+                                        <div class="carousel-slides">
+                                            <img src="https://via.placeholder.com/120x90?text=PC3" alt="Desktop Computer 3" class="carousel-image active">
+                                            <img src="https://via.placeholder.com/120x90?text=MON3" alt="Monitor 3" class="carousel-image">
+                                            <img src="https://via.placeholder.com/120x90?text=ACC3" alt="Accessories 3" class="carousel-image">
+                                        </div>
+                                        <button class="carousel-btn prev-btn" onclick="prevSlide('carousel3')">‹</button>
+                                        <button class="carousel-btn next-btn" onclick="nextSlide('carousel3')">›</button>
+                                    </div>
+                                    <div class="carousel-indicators">
+                                        <span class="indicator active" onclick="currentSlide('carousel3', 1)"></span>
+                                        <span class="indicator" onclick="currentSlide('carousel3', 2)"></span>
+                                        <span class="indicator" onclick="currentSlide('carousel3', 3)"></span>
+                                    </div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <!-- Decision Recommendation -->
+            <div class="alert alert-info mb-4">
+                <h4><i class="fas fa-info-circle me-2"></i> Recommendation</h4>
+                <p>Based on the comparison criteria, <strong>TechPro Solutions</strong> is recommended as the preferred supplier for this purchase due to:</p>
+                <ul>
+                    <li>Most competitive overall pricing</li>
+                    <li>Fastest delivery time (7-10 days)</li>
+                    <li>Superior warranty and customer support</li>
+                    <li>Extensive prior experience with our company</li>
+                </ul>
+            </div>
+        </div>
+        
+        <!-- Supplier Selection -->
+        <div class="content-container">
+            <h3 class="mb-4">Final Supplier Selection</h3>
+            
+            <div class="row">
+                <!-- Supplier 1 -->
+                <div class="col-md-4 mb-4">
+                    <div class="supplier-card selected" id="supplier1">
+                        <div class="supplier-header">
+                            <h4 class="mb-0">TechPro Solutions</h4>
+                            <span class="badge bg-success supplier-badge">Recommended</span>
+                        </div>
+                        <p class="text-muted mb-3">Hardware Vendor</p>
+                        <div class="mb-3">
+                            <p><strong>Total Quote:</strong> $7,500.00</p>
+                            <p><strong>Delivery Time:</strong> 7-10 days</p>
+                            <p><strong>Payment Terms:</strong> Net 30</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Supplier 2 -->
+                <div class="col-md-4 mb-4">
+                    <div class="supplier-card" id="supplier2">
+                        <div class="supplier-header">
+                            <h4 class="mb-0">Global IT Systems</h4>
+                            <span class="badge bg-secondary supplier-badge">Alternative</span>
+                        </div>
+                        <p class="text-muted mb-3">Computer Hardware Specialist</p>
+                        <div class="mb-3">
+                            <p><strong>Total Quote:</strong> $7,650.00</p>
+                            <p><strong>Delivery Time:</strong> 14-21 days</p>
+                            <p><strong>Payment Terms:</strong> Net 45</p>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Supplier 3 -->
+                <div class="col-md-4 mb-4">
+                    <div class="supplier-card" id="supplier3">
+                        <div class="supplier-header">
+                            <h4 class="mb-0">Alpha Computer Systems</h4>
+                            <span class="badge bg-secondary supplier-badge">Alternative</span>
+                        </div>
+                        <p class="text-muted mb-3">Enterprise Hardware Provider</p>
+                        <div class="mb-3">
+                            <p><strong>Total Quote:</strong> $7,580.00</p>
+                            <p><strong>Delivery Time:</strong> 10-14 days</p>
+                            <p><strong>Payment Terms:</strong> Net 30 with 2% discount</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Decision Notes -->
+            <div class="mb-4">
+                <label class="form-label">Decision Notes (Optional)</label>
+                <textarea class="form-control" rows="4" placeholder="Enter any notes regarding your supplier selection...">TechPro Solutions selected based on competitive pricing, delivery time, and proven reliability with previous orders.</textarea>
+            </div>
+            
+            <!-- Actions -->
+            <div class="d-flex justify-content-between">                <button class="btn btn-secondary" onclick="location.href='supplier_select.html'">
+                    <i class="fas fa-arrow-left me-1"></i> Back to request selection list
+                </button>
+                <div>
+                    <button class="btn btn-danger me-2" id="rejectAllBtn" data-bs-toggle="modal" data-bs-target="#rejectSuppliersModal">
+                        <i class="fas fa-times-circle me-1"></i> Reject All Suppliers
+                    </button>
+                    <button class="btn btn-primary me-2" id="saveSelectionBtn">
+                        <i class="fas fa-save me-1"></i> Save Selection
+                    </button>
+                    <button class="btn btn-success" id="confirmSelectionBtn">
+                        <i class="fas fa-check-circle me-1"></i> Confirm Selection
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Reject Suppliers Modal -->
+        <div class="modal fade" id="rejectSuppliersModal" tabindex="-1" aria-labelledby="rejectSuppliersModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-lg">
+                <div class="modal-content">
+                    <div class="modal-header bg-danger text-white">
+                        <h5 class="modal-title" id="rejectSuppliersModalLabel">
+                            <i class="fas fa-times-circle me-2"></i>Reject All Suppliers
+                        </h5>
+                        <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="alert alert-warning">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Important:</strong> Rejecting all suppliers will require sourcing new vendors for this purchase request.
+                        </div>
+                        
+                        <form id="rejectSuppliersForm">
+                            <div class="mb-4">
+                                <label class="form-label required-field">Reason for Rejection</label>
+                                <select class="form-select" id="rejectionReason" required>
+                                    <option value="">Select a reason...</option>
+                                    <option value="pricing">Pricing too high</option>
+                                    <option value="delivery">Delivery time too long</option>
+                                    <option value="quality">Quality concerns</option>
+                                    <option value="terms">Unfavorable payment terms</option>
+                                    <option value="reliability">Supplier reliability issues</option>
+                                    <option value="specifications">Products don't meet specifications</option>
+                                    <option value="other">Other (please specify)</option>
+                                </select>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label required-field">Detailed Explanation</label>
+                                <textarea class="form-control" id="rejectionDetails" rows="4" 
+                                    placeholder="Please provide detailed explanation for rejecting all suppliers..."
+                                    required></textarea>
+                            </div>
+                            
+                            <hr>
+                            
+                            <h6 class="mb-3"><i class="fas fa-lightbulb text-warning me-2"></i>Recommendations for New Suppliers</h6>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Budget Adjustment</label>
+                                <div class="input-group">
+                                    <span class="input-group-text">$</span>
+                                    <input type="number" class="form-control" id="suggestedBudget" 
+                                        placeholder="Suggested budget adjustment" step="0.01">
+                                    <span class="input-group-text">.00</span>
+                                </div>
+                                <div class="form-text">Current budget: $8,000.00</div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Delivery Timeline Adjustment</label>
+                                <input type="date" class="form-control" id="suggestedDelivery">
+                                <div class="form-text">Current required by: June 30, 2025</div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Specification Changes</label>
+                                <textarea class="form-control" id="specificationChanges" rows="3" 
+                                    placeholder="Suggest any changes to product specifications that might help find better suppliers..."></textarea>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Preferred Supplier Types</label>
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="localSuppliers">
+                                            <label class="form-check-label" for="localSuppliers">
+                                                Local suppliers only
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="certifiedSuppliers">
+                                            <label class="form-check-label" for="certifiedSuppliers">
+                                                Certified suppliers only
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="premiumBrands">
+                                            <label class="form-check-label" for="premiumBrands">
+                                                Premium brands preferred
+                                            </label>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="existingVendors">
+                                            <label class="form-check-label" for="existingVendors">
+                                                Existing vendors only
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="bulkDiscounts">
+                                            <label class="form-check-label" for="bulkDiscounts">
+                                                Suppliers offering bulk discounts
+                                            </label>
+                                        </div>
+                                        <div class="form-check">
+                                            <input class="form-check-input" type="checkbox" id="fastDelivery">
+                                            <label class="form-check-label" for="fastDelivery">
+                                                Fast delivery capabilities
+                                            </label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Recommended Suppliers</label>
+                                <textarea class="form-control" id="recommendedSuppliers" rows="3" 
+                                    placeholder="List any specific suppliers you recommend contacting for this request..."></textarea>
+                            </div>
+                            
+                            <div class="mb-4">
+                                <label class="form-label">Additional Instructions</label>
+                                <textarea class="form-control" id="additionalInstructions" rows="3" 
+                                    placeholder="Any additional instructions for the procurement team..."></textarea>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                            <i class="fas fa-times me-1"></i>Cancel
+                        </button>
+                        <button type="button" class="btn btn-danger" id="confirmRejectBtn">
+                            <i class="fas fa-paper-plane me-1"></i>Submit Rejection & Recommendations
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Total Details Modal -->
+        <div class="modal fade" id="totalDetailsModal" tabindex="-1" aria-labelledby="totalDetailsModalLabel" aria-hidden="true">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="totalDetailsModalLabel">Total Amount Breakdown</h5>
+                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                    </div>
+                    <div class="modal-body" id="totalDetailsContent">
+                        <!-- Content will be populated by JavaScript -->
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Success Message -->
+        <div class="alert alert-success" id="success-alert" style="display:none;">
+            <h4 class="alert-heading"><i class="fas fa-check-circle me-2"></i> Success!</h4>
+            <p id="successMessage">Supplier selection has been saved.</p>
+        </div>
+
+        <!-- Error Message -->
+        <div class="alert alert-danger" id="error-alert" style="display:none;">
+            <h4 class="alert-heading"><i class="fas fa-exclamation-circle me-2"></i> Error!</h4>
+            <p id="errorMessage">An error occurred. Please try again.</p>
+        </div>
+    </div>
+    
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script>
+        // Handle supplier selection
+        document.addEventListener('DOMContentLoaded', function() {
+            const supplierCards = document.querySelectorAll('.supplier-card');
+            const supplierRadios = document.querySelectorAll('input[name="supplierRadio"]');
+              // Add event listeners to supplier cards for direct selection
+            supplierCards.forEach((card, index) => {
+                card.addEventListener('click', function() {
+                    // Remove 'selected' class from all cards
+                    supplierCards.forEach(c => {
+                        c.classList.remove('selected');
+                    });
+                    
+                    // Add 'selected' class to the clicked card
+                    this.classList.add('selected');
+                    
+                    // Check the corresponding radio button
+                    supplierRadios[index].checked = true;
+                });
+                
+                // Add hover effect
+                card.style.cursor = 'pointer';
+            });
+            
+            // Also keep radio button functionality for accessibility
+            supplierRadios.forEach((radio, index) => {
+                radio.addEventListener('change', function() {
+                    // Remove 'selected' class from all cards
+                    supplierCards.forEach(card => {
+                        card.classList.remove('selected');
+                    });
+                    
+                    // Add 'selected' class to the selected card
+                    if (this.checked) {
+                        supplierCards[index].classList.add('selected');
+                    }
+                });
+            });
+            
+            // Save Selection button
+            document.getElementById('saveSelectionBtn').addEventListener('click', function() {
+                document.getElementById('successMessage').innerHTML = 
+                    `Supplier selection has been saved. You can come back later to confirm.<br>
+                    <div class="mt-3">                        <button type="button" class="btn btn-primary btn-sm me-2" onclick="location.href='supplier_select.html'">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Product List
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="location.href='purchase_list.html'">
+                            <i class="fas fa-home me-1"></i>Go to Purchase Hub
+                        </button>
+                    </div>`;
+                document.getElementById('success-alert').style.display = 'block';
+                
+                // Scroll to success message
+                document.getElementById('success-alert').scrollIntoView({behavior: 'smooth'});
+            });
+              // Confirm Selection button
+            document.getElementById('confirmSelectionBtn').addEventListener('click', function() {
+                // Get request ID from URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const requestId = urlParams.get('requestId') || 'Unknown';
+                
+                // Get selected supplier
+                let selectedSupplier = "";
+                supplierRadios.forEach((radio, index) => {
+                    if (radio.checked) {
+                        selectedSupplier = supplierCards[index].querySelector('h4').textContent;
+                    }
+                });
+                  document.getElementById('successMessage').innerHTML = 
+                    `${selectedSupplier} has been successfully selected as the supplier for Request #${requestId}.<br>
+                    <div class="mt-3">
+                        <button type="button" class="btn btn-outline-secondary btn-sm me-2" onclick="location.href='supplier_select.html?requestId=${requestId}'">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Supplier List
+                        </button>
+                    </div>`;
+                document.getElementById('success-alert').style.display = 'block';
+                
+                // Scroll to success message
+                document.getElementById('success-alert').scrollIntoView({behavior: 'smooth'});
+            });
+            
+            // Confirm Rejection button
+            document.getElementById('confirmRejectBtn').addEventListener('click', function() {
+                const form = document.getElementById('rejectSuppliersForm');
+                const rejectionReason = document.getElementById('rejectionReason').value;
+                const rejectionDetails = document.getElementById('rejectionDetails').value;
+                
+                // Validate required fields
+                if (!rejectionReason || !rejectionDetails.trim()) {
+                    document.getElementById('errorMessage').textContent = 'Please fill in all required fields (Reason and Detailed Explanation).';
+                    document.getElementById('error-alert').style.display = 'block';
+                    document.getElementById('error-alert').scrollIntoView({behavior: 'smooth'});
+                    return;
+                }
+                
+                // Get request ID from URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const requestId = urlParams.get('requestId') || 'REQ-2025-0542';
+                
+                // Collect all form data
+                const formData = {
+                    rejectionReason: rejectionReason,
+                    rejectionDetails: rejectionDetails,
+                    suggestedBudget: document.getElementById('suggestedBudget').value,
+                    suggestedDelivery: document.getElementById('suggestedDelivery').value,
+                    specificationChanges: document.getElementById('specificationChanges').value,
+                    preferredTypes: {
+                        localSuppliers: document.getElementById('localSuppliers').checked,
+                        certifiedSuppliers: document.getElementById('certifiedSuppliers').checked,
+                        premiumBrands: document.getElementById('premiumBrands').checked,
+                        existingVendors: document.getElementById('existingVendors').checked,
+                        bulkDiscounts: document.getElementById('bulkDiscounts').checked,
+                        fastDelivery: document.getElementById('fastDelivery').checked
+                    },
+                    recommendedSuppliers: document.getElementById('recommendedSuppliers').value,
+                    additionalInstructions: document.getElementById('additionalInstructions').value
+                };
+                
+                // Close modal
+                const modal = bootstrap.Modal.getInstance(document.getElementById('rejectSuppliersModal'));
+                modal.hide();
+                
+                // Show success message
+                document.getElementById('successMessage').innerHTML = 
+                    `All suppliers have been rejected for Request #${requestId}.<br>
+                    Your recommendations have been sent to the procurement team for sourcing new suppliers.<br>
+                    <div class="mt-3">                        <button type="button" class="btn btn-primary btn-sm me-2" onclick="location.href='supplier_select.html?requestId=${requestId}'">
+                            <i class="fas fa-arrow-left me-1"></i>Back to Product List
+                        </button>
+                        <button type="button" class="btn btn-outline-primary btn-sm" onclick="location.href='request_list.html'">
+                            <i class="fas fa-home me-1"></i>Back to Request List
+                        </button>
+                    </div>`;
+                document.getElementById('success-alert').style.display = 'block';
+                
+                // Scroll to success message
+                document.getElementById('success-alert').scrollIntoView({behavior: 'smooth'});
+                
+                console.log('Rejection submitted with recommendations:', formData);
+            });
+            
+            // Handle "Other" reason selection
+            document.getElementById('rejectionReason').addEventListener('change', function() {
+                const detailsTextarea = document.getElementById('rejectionDetails');
+                if (this.value === 'other') {
+                    detailsTextarea.placeholder = 'Please specify the reason for rejection and provide detailed explanation...';
+                } else {
+                    detailsTextarea.placeholder = 'Please provide detailed explanation for rejecting all suppliers...';
+                }
+            });
+        });
+        
+        // Function to show total calculation details
+        function showTotalDetails(supplierId) {
+            const supplierData = {
+                'supplier1': {
+                    name: 'TechPro Solutions Inc.',
+                    subtotal: 6500.00,
+                    vat: 975.00,
+                    vatRate: 15,
+                    shippingFee: 25.00,
+                    total: 7500.00
+                },
+                'supplier2': {
+                    name: 'Global IT Systems Ltd.',
+                    subtotal: 6650.00,
+                    vat: 997.50,
+                    vatRate: 15,
+                    shippingFee: 2.50,
+                    total: 7650.00
+                },
+                'supplier3': {
+                    name: 'Alpha Computer Systems',
+                    subtotal: 6580.00,
+                    vat: 987.00,
+                    vatRate: 15,
+                    shippingFee: 13.00,
+                    total: 7580.00
+                }
+            };
+            
+            const supplier = supplierData[supplierId];
+            if (!supplier) return;
+            
+            const content = `
+                <h6 class="fw-bold">${supplier.name}</h6>
+                <table class="table table-sm">
+                    <tbody>
+                        <tr>
+                            <td>Subtotal (Product Cost)</td>
+                            <td class="text-end">$${supplier.subtotal.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td>VAT (${supplier.vatRate}%)</td>
+                            <td class="text-end">$${supplier.vat.toFixed(2)}</td>
+                        </tr>
+                        <tr>
+                            <td>Shipping/Handling Fee</td>
+                            <td class="text-end">$${supplier.shippingFee.toFixed(2)}</td>
+                        </tr>
+                        <tr class="table-success fw-bold">
+                            <td>Total Amount</td>
+                            <td class="text-end">$${supplier.total.toFixed(2)}</td>
+                        </tr>
+                    </tbody>
+                </table>
+                <small class="text-muted">
+                    <i class="fas fa-info-circle"></i> 
+                    Calculation: $${supplier.subtotal.toFixed(2)} + $${supplier.vat.toFixed(2)} (VAT) + $${supplier.shippingFee.toFixed(2)} (Shipping) = $${supplier.total.toFixed(2)}
+                </small>
+            `;
+            
+            document.getElementById('totalDetailsContent').innerHTML = content;
+            const modal = new bootstrap.Modal(document.getElementById('totalDetailsModal'));
+            modal.show();
+        }        // Function to clean up comparison table by removing empty fields
+        function cleanComparisonTable() {
+            const table = document.querySelector('.comparison-table');
+            if (!table) return;
+            
+            const rows = table.querySelectorAll('tbody tr');
+            
+            rows.forEach(row => {
+                const cells = row.querySelectorAll('td');
+                if (cells.length > 1) {
+                    // Check if all cells except the first one (criteria name) are empty
+                    let hasData = false;
+                    for (let i = 1; i < cells.length; i++) {
+                        const cellText = cells[i].textContent.trim();
+                        if (cellText && cellText !== '-' && cellText !== 'N/A' && cellText !== '') {
+                            hasData = true;
+                            break;
+                        }
+                    }
+                    
+                    // Hide row if no data
+                    if (!hasData) {
+                        row.style.display = 'none';
+                    }
+                }
+            });
+        }
+        
+        // Initialize page functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            // Clean table on page load
+            cleanComparisonTable();
+        });
+          // Function to enlarge requested item image
+        function enlargeRequestedItemImage(img) {
+            const modal = document.createElement('div');
+            modal.className = 'modal fade';
+            modal.innerHTML = `
+                <div class="modal-dialog modal-xl">
+                    <div class="modal-content">
+                        <div class="modal-header">
+                            <h5 class="modal-title">Requested Item Details - Full View</h5>
+                            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                        </div>
+                        <div class="modal-body text-center">
+                            <img src="${img.src}" class="img-fluid" alt="Requested Item Details Full View" style="max-height: 80vh; object-fit: contain;">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                        </div>
+                    </div>
+                </div>
+            `;
+            document.body.appendChild(modal);
+            const bsModal = new bootstrap.Modal(modal);
+            bsModal.show();
+            
+            // Remove modal from DOM when hidden
+            modal.addEventListener('hidden.bs.modal', function() {
+                document.body.removeChild(modal);
+            });
+        }
+        
+        // Carousel functionality
+        function nextSlide(carouselId) {
+            const carousel = document.getElementById(carouselId);
+            const images = carousel.querySelectorAll('.carousel-image');
+            const indicators = carousel.querySelectorAll('.indicator');
+            let currentIndex = 0;
+            
+            // Find current active image
+            images.forEach((img, index) => {
+                if (img.classList.contains('active')) {
+                    currentIndex = index;
+                }
+            });
+            
+            // Remove active class from current image and indicator
+            images[currentIndex].classList.remove('active');
+            indicators[currentIndex].classList.remove('active');
+            
+            // Move to next image (or first if at end)
+            currentIndex = (currentIndex + 1) % images.length;
+            
+            // Add active class to new image and indicator
+            images[currentIndex].classList.add('active');
+            indicators[currentIndex].classList.add('active');
+        }
+        
+        function prevSlide(carouselId) {
+            const carousel = document.getElementById(carouselId);
+            const images = carousel.querySelectorAll('.carousel-image');
+            const indicators = carousel.querySelectorAll('.indicator');
+            let currentIndex = 0;
+            
+            // Find current active image
+            images.forEach((img, index) => {
+                if (img.classList.contains('active')) {
+                    currentIndex = index;
+                }
+            });
+            
+            // Remove active class from current image and indicator
+            images[currentIndex].classList.remove('active');
+            indicators[currentIndex].classList.remove('active');
+            
+            // Move to previous image (or last if at beginning)
+            currentIndex = (currentIndex - 1 + images.length) % images.length;
+            
+            // Add active class to new image and indicator
+            images[currentIndex].classList.add('active');
+            indicators[currentIndex].classList.add('active');
+        }
+        
+        function currentSlide(carouselId, slideIndex) {
+            const carousel = document.getElementById(carouselId);
+            const images = carousel.querySelectorAll('.carousel-image');
+            const indicators = carousel.querySelectorAll('.indicator');
+            
+            // Remove active class from all images and indicators
+            images.forEach(img => img.classList.remove('active'));
+            indicators.forEach(indicator => indicator.classList.remove('active'));
+            
+            // Add active class to selected image and indicator
+            images[slideIndex - 1].classList.add('active');
+            indicators[slideIndex - 1].classList.add('active');
+        }
+    </script>
+</body>
+</html>

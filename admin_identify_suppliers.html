@@ -1,0 +1,866 @@
+<!-- Admin Identifying Potential Suppliers Page -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Identifying Suppliers - LTS Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./company_layout.css">
+    <style>
+        /* Admin Identify Suppliers specific styles */
+        .header-container {
+            background-color: #28a745;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .content-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .supplier-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+            cursor: pointer;
+        }
+        .supplier-card:hover {
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+            border-color: #adb5bd;
+            transform: translateY(-2px);
+        }
+        .supplier-card.selected {
+            border-color: #28a745;
+            background-color: #f8fff8;
+        }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: 600;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+        .recommendation-badge {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        .recommended {
+            background-color: #d4edda;
+            color: #155724;
+        }        .alternative {
+            background-color: #e2e3e5;
+            color: #41464b;
+        }
+          /* IT Recommendation badges */
+        .it-recommendation {
+            padding: 3px 8px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            font-weight: 500;
+            display: inline-block;
+            margin-left: 5px;
+        }
+        .it-recommended {
+            background-color: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+        .it-not-recommended {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        .it-no-issues {
+            /* No badge needed - supplier is acceptable */
+            display: none;
+        }
+        
+        /* Supplier card enhancements */
+        .supplier-container {
+            margin-left: 240px !important;
+            margin-top: 48px !important;
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .supplier-header-badges {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 5px;
+        } 
+        .supplier-main-badges {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+          /* Product Information Image Styles */
+        .card.border-primary {
+            border-width: 3px !important;
+            box-shadow: 0 8px 25px rgba(13, 110, 253, 0.15);
+        }
+        .card.border-primary .card-header {
+            background: linear-gradient(135deg, #0d6efd 0%, #0056b3 100%) !important;
+        }
+        .product-info-image {
+            max-width: 100%;
+            height: auto;
+            max-height: 400px;
+            object-fit: contain;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            display: block;
+            margin: 0 auto;
+        }
+        .product-info-image:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.2);
+        }
+        .product-image-container {
+            background: #ffffff;
+            border-radius: 12px;
+            padding: 20px;
+            border: 2px dashed #e9ecef;
+            transition: all 0.3s ease;
+            min-height: 300px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }        .product-image-container:hover {
+            border-color: #0d6efd;
+            background: #f8f9ff;
+        }
+        
+        /* Responsive adjustments for mobile */
+        @media (max-width: 768px) {
+            .product-info-image {
+                max-height: 250px;
+            }
+            .product-image-container {
+                min-height: 200px;
+                padding: 15px;
+            }
+            .card.border-primary {
+                border-width: 2px !important;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .product-info-image {
+                max-height: 200px;
+            }
+            .product-image-container {
+                min-height: 150px;
+                padding: 10px;
+            }
+        }        .product-summary {
+            background-color: #f8f9fa;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 15px;
+        }
+        
+        /* Supplier Selection Modal Styles */
+        .suppliers-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 20px;
+            max-height: 500px;
+            overflow-y: auto;
+            padding: 10px;
+        }
+        
+        .supplier-selection-card {
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 20px;
+            background: white;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            position: relative;
+        }
+        
+        .supplier-selection-card:hover {
+            border-color: #0d6efd;
+            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.1);
+            transform: translateY(-2px);
+        }
+        
+        .supplier-selection-card.selected {
+            border-color: #28a745;
+            background-color: #f8fff8;
+            box-shadow: 0 5px 15px rgba(40, 167, 69, 0.2);
+        }
+        
+        .supplier-selection-card .selection-checkbox {
+            position: absolute;
+            top: 15px;
+            right: 15px;
+            width: 20px;
+            height: 20px;
+            border: 2px solid #dee2e6;
+            border-radius: 4px;
+            background: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            color: white;
+        }
+        
+        .supplier-selection-card.selected .selection-checkbox {
+            background: #28a745;
+            border-color: #28a745;
+        }
+        
+        .supplier-selection-card .supplier-name {
+            font-weight: bold;
+            font-size: 1.1rem;
+            color: #2c3e50;
+            margin-bottom: 5px;
+            padding-right: 30px;
+        }
+        
+        .supplier-selection-card .supplier-type {
+            background: #e9ecef;
+            color: #495057;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            display: inline-block;
+            margin-bottom: 10px;
+        }
+        
+        .supplier-selection-card .supplier-contact {
+            color: #6c757d;
+            font-size: 0.9rem;
+            margin-bottom: 8px;
+        }
+        
+        .supplier-selection-card .supplier-status {
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.75rem;
+            font-weight: 500;
+        }
+        
+        .supplier-selection-card .supplier-status.active {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .supplier-selection-card .supplier-status.pending {
+            background: #fff3cd;
+            color: #856404;
+        }
+        
+        .supplier-selection-card .supplier-status.inactive {
+            background: #f8d7da;
+            color: #721c24;        }
+        
+        /* Supplier Details Form Styles */
+        .supplier-details-card {
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            background-color: #f8f9fa;
+        }
+        .supplier-details-header {
+            background-color: #e9ecef;
+            padding: 15px;
+            margin: -20px -20px 20px -20px;
+            border-radius: 7px 7px 0 0;
+            border-bottom: 1px solid #dee2e6;
+        }        .cost-breakdown {
+            background-color: #fff;
+            border: 1px solid #e3e6f0;
+            border-radius: 5px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+        .cost-breakdown-header {
+            font-weight: 600;
+            color: #5a5c69;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #e3e6f0;
+        }
+        .cost-item {
+            margin-bottom: 10px;
+            padding: 10px;
+            border: 1px solid #f1f1f1;
+            border-radius: 4px;
+            background-color: #fafafa;
+        }
+        .cost-item:last-of-type {
+            margin-bottom: 15px;
+        }
+        .cost-item-description {
+            margin-bottom: 8px;
+        }
+        .cost-item-value {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        .cost-item-input {
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 6px 10px;
+            font-size: 0.9rem;
+            flex: 1;
+            background-color: #fff;
+        }
+        .cost-item-input:focus {
+            outline: none;
+            border-color: #007bff;
+            box-shadow: 0 0 0 0.2rem rgba(0, 123, 255, 0.25);
+        }
+        .cost-total-row {
+            padding: 15px 10px 10px 10px;
+            margin: 15px -15px -15px -15px;
+            border-top: 2px solid #e3e6f0;
+            background-color: #f8f9fa;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+        .btn-add-cost-item {
+            background-color: #f8f9fa;
+            border: 1px dashed #dee2e6;
+            color: #6c757d;
+            padding: 8px 15px;
+            border-radius: 4px;
+            font-size: 0.9rem;
+            width: 100%;
+            transition: all 0.2s;
+        }        .btn-add-cost-item:hover {
+            background-color: #e9ecef;
+            border-color: #adb5bd;
+            border-style: solid;
+        }
+        
+        /* Supplier card cost breakdown styles */
+        .supplier-card .cost-breakdown-display {
+            font-size: 0.9rem;
+        }
+        .supplier-card .cost-breakdown-display .border-bottom {
+            border-color: #e9ecef !important;
+        }        .supplier-card .cost-breakdown-display .border-top {
+            border-color: #dee2e6 !important;
+        }        /* Fix notification positioning */
+        #success-alert, #error-alert {
+            position: fixed;
+            top: 80px;
+            left: 50%;
+            transform: translateX(-50%);
+            z-index: 2000;
+            min-width: 400px;
+            max-width: 600px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.15);
+            animation: slideDown 0.3s ease-out;
+        }
+        
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+        
+        /* Ensure notifications appear above everything */
+        .main-content {
+            position: relative;
+            z-index: 10;
+        }
+        
+        @media (max-width: 768px) {
+            .suppliers-grid {
+                grid-template-columns: 1fr;
+                max-height: 400px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="brand">
+            <i class="fas fa-cube me-2"></i> LTS MANAGER
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="icon-button me-2">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="icon-button me-3">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div class="user-avatar">
+                TD
+            </div>
+        </div>
+    </div>
+
+    <!-- Sidebar Navigation -->
+    <div class="sidebar">
+        <ul class="nav flex-column">            
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tachometer-alt"></i> Dashboard
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-calendar-alt"></i> Quản lý ngày nghỉ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-users"></i> Quản lý QT
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-tasks"></i> Quản lý dự án
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-clock"></i> Chấm công
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-chart-line"></i> Đánh giá định kỳ
+                </a>
+            </li>
+            <li class="nav-item">
+                <a class="nav-link" href="#">
+                    <i class="fas fa-graduation-cap"></i> Quản lý kỹ năng
+                </a>
+            </li>
+            <!-- Procurement Section -->
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle active" href="#" id="procurementDropdown" data-bs-toggle="dropdown" aria-expanded="true">
+                    <i class="fas fa-shopping-cart"></i> Procurement
+                </a>                <ul class="dropdown-menu show" aria-labelledby="procurementDropdown">
+                    <li><a class="dropdown-item" href="index.html">
+                        <i class="fas fa-file-alt"></i> Request List
+                    </a></li>
+                    <li><a class="dropdown-item" href="purchase_list.html">
+                        <i class="fas fa-shopping-bag"></i> Purchase List
+                    </a></li>                    
+                    <li><a class="dropdown-item active" href="supplier_select.html">
+                        <i class="fas fa-users"></i> Suppliers Select</a></li>
+                    <li><a class="dropdown-item" href="it_review_list.html">
+                        <i class="fas fa-laptop"></i> IT Review Queue</a></li>
+                    <li><a class="dropdown-item" href="dl_payment_confirmation_list.html">
+                        <i class="fas fa-truck"></i> DL Confirm Payment</a></li>
+                    <li><a class="dropdown-item" href="accountant_document_review.html">
+                        <i class="fas fa-list"></i> Document Review</a></li>
+                    <li><a class="dropdown-item" href="advance_payment_approval_page.html">                        <i class="fas fa-receipt"></i> Advance Payment Approval</a></li>
+                    <li><a class="dropdown-item" href="accountant_reimbursement_approval.html">
+                        <i class="fas fa-calculator"></i> Reimbursement Processing</a></li>
+                    <li><a class="dropdown-item" href="supplier_management.html">
+                        <i class="fas fa-building"></i> Supplier Management</a></li>
+                </ul>
+            </li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-container">
+            <h1>Admin Identifying Potential Suppliers</h1>
+            <p class="mb-0">Review and identify potential suppliers for requested products</p>
+        </div>
+        
+        <!-- Request Details -->
+        <div class="content-container">
+            <h3>Request Details</h3>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><strong>Request ID:</strong> REQ-2025-0542</p>
+                    <p><strong>Requester Name:</strong> John Smith</p>
+                    <p><strong>Department:</strong> IT</p>
+                    <p><strong>Date Requested:</strong> May 25, 2025</p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Product Category:</strong> Computer Hardware</p>
+                    <p><strong>Justification:</strong> Upgrade existing workstations</p>
+                    <p><strong>Priority:</strong> <span class="badge bg-warning">Medium</span></p>
+                    <p><strong>Status:</strong> <span class="badge bg-info">Supplier Selection</span></p>
+                </div>            
+            </div>
+              <!-- Product Information Image -->
+            <h3>Product Information</h3>
+            <div class="mb-4">
+                <div class="card border-primary">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h5 class="mb-0">
+                            <i class="fas fa-image me-2"></i>Product Details & Specifications
+                        </h5>
+                        <small>Information provided by requester</small>
+                    </div>
+                    <div class="card-body">
+                        <div class="product-image-container">
+                            <img src="img.jpg"
+                                 alt="Product Specification Image" 
+                                 class="product-info-image" 
+                                 onclick="enlargeImage(this)"
+                                 title="Click to enlarge">
+                        </div>
+                        <div class="text-center mt-3">
+                            <small class="text-muted">
+                                <i class="fas fa-click me-1"></i>Click image to enlarge
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+                    
+        </div>
+                
+    </div>
+            
+</div>
+        
+</div>
+          <!-- Supplier Selection -->
+        <div class="supplier-container">            <div class="d-flex justify-content-between align-items-center mb-4">
+                <h3>Potential Suppliers</h3>                <div>
+                    <button class="btn btn-primary me-2" data-bs-toggle="modal" data-bs-target="#supplierSelectionModal">
+                        <i class="fas fa-plus me-1"></i> Select Suppliers
+                    </button>                    <button class="btn btn-outline-secondary me-2" onclick="location.href='supplier_management.html'">
+                        <i class="fas fa-cog me-1"></i> Manage Suppliers
+                    </button>
+                </div>
+            </div>            
+            <!-- Supplier Cards -->
+            <div id="dynamic-suppliers-container">
+                <!-- Dynamic suppliers will be added here -->
+                <div class="text-center py-5 text-muted" id="empty-suppliers-message">
+                    <i class="fas fa-box-open fa-3x mb-3"></i>
+                    <p class="mb-0">Click "Select Suppliers" button above to add potential suppliers for this request.</p>
+                </div>            </div>
+            
+            <!-- Actions -->
+            <div class="d-flex justify-content-between mt-4">
+                <button class="btn btn-secondary" onclick="location.href='request_list.html'">
+                    <i class="fas fa-arrow-left me-1"></i> Back to Request List
+                </button>
+                <div>                    
+                    <button class="btn btn-info me-2" id="sendToITBtn" title="Send to IT Review">
+                        <i class="fas fa-laptop me-1"></i> Send to IT Review
+                    </button>
+                    <button class="btn btn-success" id="sendToReviewBtn">
+                        <i class="fas fa-paper-plane me-1"></i> Send to Review
+                    </button>
+                </div>            
+            </div>
+            
+            <!-- Success Message -->
+            <div class="alert alert-success" id="success-alert" style="display:none;">
+                <h4 class="alert-heading"><i class="fas fa-check-circle me-2"></i> Success!</h4>
+                <p id="successMessage">Potential suppliers have been identified and saved.</p>
+            </div>
+
+            <!-- Error Message -->
+            <div class="alert alert-danger" id="error-alert" style="display:none;">
+                <h4 class="alert-heading"><i class="fas fa-exclamation-circle me-2"></i> Error!</h4>
+                <p id="errorMessage">An error occurred. Please try again.</p>
+            </div>
+        </div>
+        
+    </div>
+
+    <!-- Supplier Selection Modal -->
+    <div class="modal fade" id="supplierSelectionModal" tabindex="-1" aria-labelledby="supplierSelectionModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="supplierSelectionModalLabel">
+                        <i class="fas fa-building me-2"></i>Select Suppliers
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Select Suppliers:</strong> Choose one or more suppliers from your supplier management system to add as potential suppliers for this request.
+                    </div>
+                    
+                    <!-- Search and Filter Controls -->
+                    <div class="row mb-4">
+                        <div class="col-md-8">
+                            <div class="input-group">
+                                <span class="input-group-text"><i class="fas fa-search"></i></span>
+                                <input type="text" class="form-control" id="modalSearchSuppliers" placeholder="Search suppliers by name, contact, or specialization...">
+                            </div>
+                        </div>
+                        <div class="col-md-4">
+                            <select class="form-select" id="modalFilterByType">
+                                <option value="">All Types</option>
+                                <option value="Hardware Vendor">Hardware Vendor</option>
+                                <option value="Software Provider">Software Provider</option>
+                                <option value="Manufacturer">Manufacturer</option>
+                                <option value="Service Provider">Service Provider</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <!-- Selected Suppliers Summary -->
+                    <div id="selectedSuppliersCount" class="alert alert-secondary" style="display: none;">
+                        <i class="fas fa-check-circle me-2"></i>
+                        <span id="selectedCountText">0 suppliers selected</span>                        <button type="button" class="btn btn-sm btn-outline-secondary ms-2" onclick="window.clearAllSelections()">
+                            Clear All
+                        </button>
+                    </div>
+                    
+                    <!-- Suppliers List -->
+                    <div class="suppliers-grid" id="suppliersGrid">
+                        <!-- Suppliers will be loaded here -->
+                    </div>
+                    
+                    <!-- Empty State -->
+                    <div id="noSuppliersMessage" class="text-center py-5" style="display: none;">
+                        <i class="fas fa-building fa-3x text-muted mb-3"></i>
+                        <h5 class="text-muted">No Suppliers Found</h5>
+                        <p class="text-muted">No suppliers match your search criteria or no suppliers have been added to the system yet.</p>
+                        <button class="btn btn-primary" onclick="window.open('supplier_management.html', '_blank')">
+                            <i class="fas fa-plus me-1"></i>Add Suppliers to System
+                        </button>
+                    </div>                
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>                    <button type="button" class="btn btn-success" id="confirmSupplierSelection" disabled onclick="window.proceedToSupplierDetails()">
+                        <i class="fas fa-arrow-right me-1"></i>Continue with Selected Suppliers (<span id="selectedCount">0</span>)
+                    </button>
+                </div>
+            </div>        
+        </div>
+    </div>
+
+    <!-- Supplier Details Form Modal -->
+    <div class="modal fade" id="supplierDetailsFormModal" tabindex="-1" aria-labelledby="supplierDetailsFormModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+            <div class="modal-content">
+                <div class="modal-header bg-success text-white">
+                    <h5 class="modal-title" id="supplierDetailsFormModalLabel">
+                        <i class="fas fa-edit me-2"></i>Configure Supplier Details
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Configure Details:</strong> Fill in payment terms, estimate cost, and shipping information for each selected supplier.
+                    </div>
+                    
+                    <form id="supplierDetailsForm">
+                        <div id="supplierDetailsContainer">
+                            <!-- Supplier detail forms will be generated here -->
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-success" id="saveSupplierDetails">
+                        <i class="fas fa-check me-1"></i>Add Suppliers to Request
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Send to Review Modal -->
+    <div class="modal fade" id="sendToReviewModal" tabindex="-1" aria-labelledby="sendToReviewModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-primary text-white">
+                    <h5 class="modal-title" id="sendToReviewModalLabel">
+                        <i class="fas fa-paper-plane me-2"></i>Send Suppliers to Review
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Selected Suppliers:</strong> The shortlisted suppliers will be sent to the assigned reviewer for evaluation and selection.
+                    </div>
+                    
+                    <form id="sendToReviewForm">
+                        <div class="mb-4">
+                            <label for="assignToReviewer" class="form-label required-field">Assign to Reviewer</label>
+                            <div class="position-relative">
+                                <input type="text" class="form-control" id="assignToReviewer" name="assignToReviewer" 
+                                       placeholder="Search and select company account..." 
+                                       autocomplete="off" required>
+                                <div class="invalid-feedback">Please assign this review to a company account</div>
+                                
+                                <!-- Search Results Dropdown -->
+                                <div id="reviewerSearchResults" class="dropdown-menu w-100" style="display: none; max-height: 200px; overflow-y: auto;">
+                                    <!-- Results will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            <div class="form-text">Search by company name or account number</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Selected Suppliers for Review</label>
+                            <div id="selectedSuppliersList" class="border rounded p-3 bg-light">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        
+                        <div class="mb-4">
+                            <label for="priority" class="form-label">Priority Level</label>
+                            <select class="form-select" id="priority" name="priority">
+                                <option value="medium">Medium Priority</option>
+                                <option value="high">High Priority</option>
+                                <option value="urgent">Urgent</option>
+                                <option value="low">Low Priority</option>
+                            </select>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-success" id="confirmSendToReviewBtn">
+                        <i class="fas fa-paper-plane me-1"></i>Send to Review
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>    
+    <!-- IT Account Selection Modal -->
+    <div class="modal fade" id="itAccountModal" tabindex="-1" aria-labelledby="itAccountModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header bg-info text-white">
+                    <h5 class="modal-title" id="itAccountModalLabel">
+                        <i class="fas fa-laptop me-2"></i>Send to IT Review
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle me-2"></i>
+                        <strong>Select IT Account:</strong> Choose an IT department account to handle the technical review of the selected suppliers.
+                    </div>
+                    
+                    <form id="itAccountForm">
+                        <div class="mb-4">
+                            <label for="itAccountSearch" class="form-label required-field">Assign to IT Account</label>
+                            <div class="position-relative">
+                                <input type="text" class="form-control" id="itAccountSearch" name="itAccountSearch" 
+                                       placeholder="Search and select IT account..." 
+                                       autocomplete="off" required>
+                                <div class="invalid-feedback">Please select an IT account</div>
+                                
+                                <!-- Search Results Dropdown -->
+                                <div id="itAccountSearchResults" class="dropdown-menu w-100" style="display: none; max-height: 200px; overflow-y: auto;">
+                                    <!-- Results will be populated by JavaScript -->
+                                </div>
+                            </div>
+                            <div class="form-text">Search by IT staff name, department, or specialization</div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label class="form-label">Selected Suppliers</label>
+                            <div id="itSelectedSuppliersList" class="border rounded p-3 bg-light">
+                                <!-- Will be populated by JavaScript -->
+                            </div>
+                        </div>
+                        
+                        <div class="mb-4">
+                            <label for="itPriority" class="form-label">Priority Level</label>
+                            <select class="form-select" id="itPriority" name="itPriority">
+                                <option value="medium">Medium Priority</option>
+                                <option value="high">High Priority</option>
+                                <option value="urgent">Urgent</option>
+                                <option value="low">Low Priority</option>
+                            </select>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label for="itNotes" class="form-label">Additional Notes (Optional)</label>
+                            <textarea class="form-control" id="itNotes" name="itNotes" rows="3" 
+                                      placeholder="Any specific technical requirements or notes for the IT reviewer..."></textarea>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-info" id="confirmSendToITBtn">
+                        <i class="fas fa-paper-plane me-1"></i>Send to IT Review
+                    </button>
+                </div>
+            </div>
+        </div>    </div>
+
+    <!-- Delete Confirmation Modal -->
+    <div class="modal fade" id="deleteConfirmModal" tabindex="-1" aria-labelledby="deleteConfirmModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header bg-danger text-white">
+                    <h5 class="modal-title" id="deleteConfirmModalLabel">
+                        <i class="fas fa-exclamation-triangle me-2"></i>Confirm Deletion
+                    </h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="d-flex align-items-center mb-3">
+                        <i class="fas fa-exclamation-triangle text-warning fa-2x me-3"></i>
+                        <div>
+                            <h6 class="mb-1">Delete Supplier</h6>
+                            <p class="mb-0 text-muted">This action cannot be undone.</p>
+                        </div>
+                    </div>
+                    <p>Are you sure you want to remove <strong id="supplierToDelete"></strong> from the supplier list?</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        <i class="fas fa-times me-1"></i>Cancel
+                    </button>
+                    <button type="button" class="btn btn-danger" id="confirmDeleteBtn">
+                        <i class="fas fa-trash me-1"></i>Delete Supplier
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+      <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="./js/admin_identify_suppliers.js"></script>
+      <!-- Supplier Selection Script -->
+</body>
+</html>

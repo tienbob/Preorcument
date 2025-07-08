@@ -1,0 +1,444 @@
+<!-- IRDMB Confirmation: Admin Confirms and Records Contract Details -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">    <title>HDMB Confirmation - LTS Manager</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <link rel="stylesheet" href="./company_layout.css">
+    <style>
+        /* IRDMB specific styles */
+        .header-container {
+            background-color: #fd7e14;
+            color: white;
+            padding: 15px 30px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        .content-container {
+            background-color: #fff;
+            border-radius: 10px;
+            box-shadow: 0 0 15px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            margin-bottom: 20px;
+        }
+        .required-field::after {
+            content: "*";
+            color: red;
+            margin-left: 3px;
+        }
+        .status-badge {
+            padding: 5px 10px;
+            border-radius: 15px;
+            font-weight: 600;
+            display: inline-block;
+            font-size: 0.8rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Top Navbar -->
+    <div class="top-navbar">
+        <div class="brand">
+            <i class="fas fa-cube me-2"></i> LTS MANAGER
+        </div>
+        <div class="d-flex align-items-center">
+            <button class="icon-button me-2">
+                <i class="fas fa-bell"></i>
+            </button>
+            <button class="icon-button me-3">
+                <i class="fas fa-cog"></i>
+            </button>
+            <div class="user-avatar">
+                TD
+            </div>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <div class="header-container">
+            <h1>HDMB Confirmation</h1>
+            <p class="mb-0">Admin Confirmation and Recording of Contract Details</p>
+        </div>
+        
+        <!-- Contract Information -->
+        <div class="content-container">
+            <h3 class="mb-4">Contract Information</h3>
+            
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <p><strong>Contract ID:</strong> CONT-2025-0128</p>
+                    <p><strong>Related Request:</strong> REQ-2025-0542</p>
+                    <p><strong>Contract Date:</strong> June 5, 2025</p>
+                    <p><strong>Contract Status:</strong> <span class="badge bg-warning">Pending Confirmation</span></p>
+                </div>
+                <div class="col-md-6">
+                    <p><strong>Supplier:</strong> TechPro Solutions</p>
+                    <p><strong>Contract Value:</strong> $7,500.00</p>
+                    <p><strong>Contract Type:</strong> Product Purchase</p>
+                    <p><strong>Payment Terms:</strong> Net 30</p>
+                </div>
+            </div>
+            
+            <!-- Products and Services -->
+            <h4 class="mb-3">Products & Services</h4>
+            <div class="table-responsive mb-4">
+                <table class="table table-bordered">
+                    <thead class="table-light">
+                        <tr>
+                            <th>Product/Service</th>
+                            <th>Description</th>
+                            <th>Quantity</th>
+                            <th>Unit Price</th>
+                            <th>Total</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>Dell OptiPlex 7090</td>
+                            <td>Desktop Computer, i7-11700, 16GB DDR4, 512GB SSD</td>
+                            <td>5</td>
+                            <td>$1,250.00</td>
+                            <td>$6,250.00</td>
+                        </tr>
+                        <tr>
+                            <td>Dell UltraSharp U2720Q</td>
+                            <td>27" 4K IPS Monitor</td>
+                            <td>5</td>
+                            <td>$250.00</td>
+                            <td>$1,250.00</td>
+                        </tr>
+                    </tbody>
+                    <tfoot class="table-light">
+                        <tr>
+                            <td colspan="4" class="text-end"><strong>Total Contract Value:</strong></td>
+                            <td><strong>$7,500.00</strong></td>
+                        </tr>
+                    </tfoot>
+                </table>
+            </div>
+            
+            <!-- Delivery Timeline -->
+            <h4 class="mb-3">Delivery Timeline</h4>
+            <div class="row mb-4">
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label required-field">Expected Delivery Date</label>
+                        <input type="text" class="form-control datepicker" value="June 15, 2025">
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Delivery Method</label>
+                        <select class="form-select">
+                            <option selected>Standard Shipping</option>
+                            <option>Express Delivery</option>
+                            <option>Pickup</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="mb-3">
+                        <label class="form-label">Delivery Instructions</label>
+                        <textarea class="form-control" rows="4" placeholder="Enter any special delivery instructions...">Deliver to IT department, 4th floor. Contact John Smith upon arrival.</textarea>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Administrative Confirmation -->
+        <div class="content-container">
+            <h3 class="mb-4">Administrative Confirmation</h3>
+            
+            <!-- Document Requirements -->
+            <div class="mb-4">
+                <h4 class="mb-3">Required Documents</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="docPurchaseOrder" checked>
+                            <label class="form-check-label" for="docPurchaseOrder">
+                                Purchase Order (PO) Document
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="docSupplierQuote" checked>
+                            <label class="form-check-label" for="docSupplierQuote">
+                                Supplier Quotation
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="docContractCopy" checked>
+                            <label class="form-check-label" for="docContractCopy">
+                                Signed Contract Copy
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="docApprovalForm" checked>
+                            <label class="form-check-label" for="docApprovalForm">
+                                Management Approval Form
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="docTechnicalSpec">
+                            <label class="form-check-label" for="docTechnicalSpec">
+                                Technical Specifications
+                            </label>
+                        </div>
+                        <div class="form-check mb-2">
+                            <input class="form-check-input" type="checkbox" id="docWarrantyInfo">
+                            <label class="form-check-label" for="docWarrantyInfo">
+                                Warranty Information
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Document Upload -->
+            <div class="mb-4">
+                <h4 class="mb-3">Upload Additional Documents</h4>
+                <div class="file-upload-container" id="fileUploadContainer">
+                    <i class="fas fa-cloud-upload-alt fa-2x mb-2"></i>
+                    <p class="mb-0">Drag and drop files here or click to upload</p>
+                    <input type="file" id="fileUpload" style="display: none;" multiple>
+                </div>
+                
+                <div class="attached-files">
+                    <p class="text-muted mb-2">Attached Files:</p>
+                    <ul class="list-group">
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-file-pdf text-danger me-2"></i>
+                                Purchase_Order_REQ-2025-0542.pdf
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-file-excel text-success me-2"></i>
+                                TechPro_Quotation.xlsx
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </li>
+                        <li class="list-group-item d-flex justify-content-between align-items-center">
+                            <div>
+                                <i class="fas fa-file-word text-primary me-2"></i>
+                                Contract_CONT-2025-0128.docx
+                            </div>
+                            <button class="btn btn-sm btn-outline-danger">
+                                <i class="fas fa-times"></i>
+                            </button>
+                        </li>
+                    </ul>
+                </div>
+            </div>
+            
+            <!-- Administrative Review -->
+            <div class="mb-4">
+                <h4 class="mb-3">Administrative Review</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label required-field">Budget Code</label>
+                            <input type="text" class="form-control" value="IT-EQUIP-2025">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required-field">Account Number</label>
+                            <input type="text" class="form-control" value="A-125-78934">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label required-field">Review Notes</label>
+                            <textarea class="form-control" rows="4">All required documents verified. Supplier history reviewed. Budget allocation confirmed. Contract in compliance with procurement policies.</textarea>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Confirmation -->
+            <div class="mb-4">
+                <h4 class="mb-3">Official Confirmation</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label required-field">Admin Name</label>
+                            <input type="text" class="form-control" value="Sarah Johnson">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required-field">Position/Title</label>
+                            <input type="text" class="form-control" value="Procurement Administrator">
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label required-field">Date</label>
+                            <input type="text" class="form-control datepicker" value="May 29, 2025">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="mb-3">
+                            <label class="form-label required-field">Digital Signature</label>
+                            <div class="signature-pad signed" id="signaturePad">
+                                <span id="signatureText">Sarah Johnson</span>
+                            </div>
+                            <button class="btn btn-sm btn-outline-secondary" id="clearSignatureBtn">Clear Signature</button>
+                        </div>
+                        <div class="form-check mb-3">
+                            <input class="form-check-input" type="checkbox" id="confirmationCheck" checked>
+                            <label class="form-check-label" for="confirmationCheck">
+                                I confirm that all contract details have been reviewed and recorded according to company policy.
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>              <!-- Actions -->
+            <div class="content-container">
+                <div class="d-flex justify-content-end">
+                    <button class="btn btn-success" id="submitConfirmationBtn">
+                        <i class="fas fa-check-circle me-1"></i> Submit Confirmation
+                    </button>
+                </div>
+            </div>
+            
+            <!-- Success Message -->
+            <div class="alert alert-success" id="success-alert" style="display:none;">
+                <h4 class="alert-heading"><i class="fas fa-check-circle me-2"></i> Success!</h4>
+                <p id="successMessage">Confirmation has been processed.</p>
+            </div>
+
+            <!-- Error Message -->
+            <div class="alert alert-danger" id="error-alert" style="display:none;">
+                <h4 class="alert-heading"><i class="fas fa-exclamation-circle me-2"></i> Error!</h4>
+                <p id="errorMessage">An error occurred. Please try again.</p>
+            </div>
+        </div>
+        
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+        <script>
+            // Initialize date pickers
+            document.addEventListener('DOMContentLoaded', function() {
+                // Initialize flatpickr for date inputs
+                flatpickr(".datepicker", {
+                    dateFormat: "F j, Y",
+                    allowInput: true
+                });
+                
+                // File upload functionality
+                const fileUploadContainer = document.getElementById('fileUploadContainer');
+                const fileUploadInput = document.getElementById('fileUpload');
+                
+                fileUploadContainer.addEventListener('click', function() {
+                    fileUploadInput.click();
+                });
+                
+                fileUploadInput.addEventListener('change', function() {
+                    // In a real application, this would handle file uploads
+                    console.log('Files selected:', this.files);
+                });
+                
+                // Signature pad functionality
+                const signaturePad = document.getElementById('signaturePad');
+                const signatureText = document.getElementById('signatureText');
+                const clearSignatureBtn = document.getElementById('clearSignatureBtn');
+                
+                signaturePad.addEventListener('click', function() {
+                    if (!this.classList.contains('signed')) {
+                        this.classList.add('signed');
+                        signatureText.textContent = 'Sarah Johnson';
+                    }
+                });
+                
+                clearSignatureBtn.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    signaturePad.classList.remove('signed');
+                    signatureText.textContent = '';
+                });
+                
+                // Save button functionality
+                document.getElementById('saveBtn').addEventListener('click', function() {
+                    document.getElementById('successMessage').innerHTML = 
+                        `Contract details have been saved.<br>
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-primary btn-sm me-2" onclick="location.href='contract_creation_form.html'">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Contract
+                            </button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="location.href='purchase_list.html'">
+                                <i class="fas fa-home me-1"></i>Go to Purchase Hub
+                            </button>
+                        </div>`;
+                    document.getElementById('success-alert').style.display = 'block';
+                    
+                    // Scroll to success message
+                    document.getElementById('success-alert').scrollIntoView({behavior: 'smooth'});
+                });
+                
+                // Confirm button functionality
+                document.getElementById('confirmBtn').addEventListener('click', function() {
+                    // Validation check
+                    const confirmationCheck = document.getElementById('confirmationCheck');
+                    const signedStatus = document.getElementById('signaturePad').classList.contains('signed');
+                    
+                    if (!confirmationCheck.checked || !signedStatus) {
+                        document.getElementById('errorMessage').textContent = 
+                            'Please sign and check the confirmation box before proceeding.';
+                        document.getElementById('error-alert').style.display = 'block';
+                        document.getElementById('error-alert').scrollIntoView({behavior: 'smooth'});
+                        return;
+                    }                // Get request ID from URL parameters
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const requestId = urlParams.get('requestId') || 'Unknown';
+                      document.getElementById('successMessage').innerHTML = 
+                        `Contract details for Request #${requestId} have been confirmed and recorded successfully!<br>
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-primary btn-sm me-2" onclick="location.href='create_product_import_page.html?requestId=${requestId}'">
+                                <i class="fas fa-box-open me-1"></i>Create Product Import (TTBG)
+                            </button>
+                            <button type="button" class="btn btn-outline-primary btn-sm" onclick="location.href='request_list.html'">
+                                <i class="fas fa-home me-1"></i>Back to Request List
+                            </button>
+                        </div>`;
+                    document.getElementById('success-alert').style.display = 'block';
+                    
+                    // Scroll to success message
+                    document.getElementById('success-alert').scrollIntoView({behavior: 'smooth'});                });
+                
+                // Submit Confirmation Button
+                document.getElementById('submitConfirmationBtn').addEventListener('click', function() {
+                    // Validate required documents are checked
+                    const requiredDocs = ['docPurchaseOrder', 'docSupplierQuote', 'docContractCopy', 'docApprovalForm'];
+                    const missingDocs = requiredDocs.filter(id => !document.getElementById(id).checked);
+                    
+                    if (missingDocs.length > 0) {
+                        document.getElementById('errorMessage').textContent = 'Please confirm all required documents are available.';
+                        document.getElementById('error-alert').style.display = 'block';
+                        return;
+                    }
+                    
+                    // Get request ID from URL parameters
+                    const urlParams = new URLSearchParams(window.location.search);
+                    const requestId = urlParams.get('requestId') || 'REQ-2025-0542';
+                    
+                    document.getElementById('successMessage').innerHTML = 
+                        `HDMB confirmation for Request #${requestId} has been submitted successfully.<br>
+                        <div class="mt-3">
+                            <button type="button" class="btn btn-primary btn-sm me-2" onclick="location.href='confirmation_page.html?requestId=${requestId}'">
+                                <i class="fas fa-file-signature me-1"></i>Director Confirmation
+                            </button>                            <button type="button" class="btn btn-outline-secondary btn-sm" onclick="location.href='supplier_select.html'">
+                                <i class="fas fa-arrow-left me-1"></i>Back to Product List
+                            </button>
+                        </div>`;
+                    document.getElementById('success-alert').style.display = 'block';
+                    document.getElementById('success-alert').scrollIntoView({behavior: 'smooth'});
+                });
+            });
+        </script>
+    </body>
+    </html>
